@@ -19,4 +19,4 @@ jobs:
         GOARCH: amd64
         GOOS: linux
         EXTRA_FILES: "LICENSE"
-        CMD_PATH: "./build.sh"
+        CMD_PATH: "./cmd/kafta"
