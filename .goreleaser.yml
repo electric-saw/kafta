@@ -12,4 +12,4 @@ before:
 release:
   github:
     owner: lucasviecelli
-  name_template: "{{.ProjectName}}-v{{.Version}}
+  name_template: "{{.ProjectName}}-v{{.Version}}"
