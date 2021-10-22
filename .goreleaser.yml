@@ -8,3 +8,8 @@ builds:
 before:
   hooks:
     - make build
+
+release:
+  github:
+    owner: lucasviecelli
+  name_template: "{{.ProjectName}}-v{{.Version}}
