@@ -10,5 +10,9 @@ builds:
     binary: kafta
     goos:
       - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
     targets:
       - linux_amd64
