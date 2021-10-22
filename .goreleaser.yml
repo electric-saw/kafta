@@ -1,0 +1,10 @@
+builds:
+  - main: ./cmd/kafta
+    id: "kafta"
+    binary: kafta
+    goos:
+      - linux
+
+before:
+  hooks:
+    - make build
