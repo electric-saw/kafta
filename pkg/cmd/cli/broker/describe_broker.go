@@ -1,14 +1,14 @@
 package broker
 
 import (
+	"fmt"
 	"os"
 	"sort"
 
+	"github.com/dustin/go-humanize"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
-	"github.com/dustin/go-humanize"
-	"github.com/jedib0t/go-pretty/table"
 	"github.com/spf13/cobra"
 )
 
@@ -56,64 +56,48 @@ func (d *describeBrokerOptions) run() {
 	broker := kafka.DescribeBroker(conn, d.brokerIdOrAddr)
 
 	sort.Strings(broker.ConsumerGroups)
-	d.printConsumerGroups(broker)
+	d.printDetails(broker)
 	if d.logSize {
 		d.printLogSize(broker)
 	}
 
 }
 
-func (d *describeBrokerOptions) printConsumerGroups(broker *kafka.BrokerMetadata) {
-	out := table.NewWriter()
-	out.SetOutputMirror(os.Stdout)
-	out.SetStyle(table.StyleRounded)
-	out.Style().Options.SeparateRows = true
-	defer out.Render()
-	out.AppendHeader(table.Row{"BROKER DETAILS"})
+func (d *describeBrokerOptions) printDetails(broker *kafka.BrokerMetadata) {
+	out := util.GetNewTabWriter(os.Stdout)
+	defer out.Flush()
+	fmt.Fprintln(out, "BROKER DETAILS")
 
 	connected, _ := broker.Details.Broker.Connected()
 
-	out.AppendRow(table.Row{"Id", broker.Details.Id})
-	out.AppendRow(table.Row{"Host", broker.Details.Host})
-	out.AppendRow(table.Row{"Address", broker.Details.Address})
-	out.AppendRow(table.Row{"Connected", connected})
-	out.AppendRow(table.Row{"Rack", broker.Details.Broker.Rack()})
-	out.AppendRow(table.Row{"IsController", broker.Details.IsController})
+	fmt.Fprintf(out, "ID\t%d\n", broker.Details.Id)
+	fmt.Fprintf(out, "Host\t%s\n", broker.Details.Host)
+	fmt.Fprintf(out, "Address\t%s\n", broker.Details.Address)
+	fmt.Fprintf(out, "Connected\t%v\n", connected)
+	fmt.Fprintf(out, "Rack\t%s\n", broker.Details.Broker.Rack())
+	fmt.Fprintf(out, "IsController\t%v\n", broker.Details.IsController)
+
 }
 
 func (d *describeBrokerOptions) printLogSize(broker *kafka.BrokerMetadata) {
-	out := table.NewWriter()
-	out.SetOutputMirror(os.Stdout)
-	out.SetStyle(table.StyleRounded)
-	out.Style().Options.SeparateRows = true
-
-	defer out.Render()
+	out := util.GetNewTabWriter(os.Stdout)
+	defer out.Flush()
+	fmt.Printf("sadadsa\n")
 	for _, log := range broker.Logs {
-		out.AppendHeader(table.Row{"TOPIC", "PERMANENT", "TEMPORARY"})
+		fmt.Fprintln(out, "TOPIC\tPERMANENT\tTEMPORARY")
 
 		totalPermanent := uint64(0)
 		totalTemporary := uint64(0)
 		// l.AddItem(logFile.Path)
 		sorted := log.SortByPermanentSize()
 		for _, tLogs := range sorted {
-			row := table.Row{tLogs.Topic,
-				humanize.Bytes(tLogs.Permanent),
-				humanize.Bytes(tLogs.Temporary),
-			}
-
 			totalPermanent += tLogs.Permanent
 			totalTemporary += tLogs.Temporary
 
-			out.AppendRow(row)
+			fmt.Fprintf(out, "%s\t%s\t%s\n", tLogs.Topic, humanize.Bytes(tLogs.Permanent), humanize.Bytes(tLogs.Temporary))
 		}
 
-		out.AppendRow(nil)
+		fmt.Fprintf(out, "\nTOTAL\t%s\t%s\n", humanize.Bytes(totalPermanent), humanize.Bytes(totalTemporary))
 
-		row := table.Row{"Total",
-			humanize.Bytes(totalPermanent),
-			humanize.Bytes(totalTemporary),
-		}
-
-		out.AppendRow(row)
 	}
 }

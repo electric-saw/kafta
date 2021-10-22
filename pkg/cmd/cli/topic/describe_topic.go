@@ -7,12 +7,12 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
+	"github.com/electric-saw/kafta/pkg/cmd/util"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
-	"github.com/Shopify/sarama"
 	"github.com/spf13/cobra"
-	"k8s.io/cli-runtime/pkg/printers"
 )
 
 type describeTopicOptions struct {
@@ -51,7 +51,7 @@ func (o *describeTopicOptions) complete(cmd *cobra.Command) error {
 }
 
 func (o *describeTopicOptions) run() {
-	out := printers.GetNewTabWriter(os.Stdout)
+	out := util.GetNewTabWriter(os.Stdout)
 	defer out.Flush()
 
 	conn := kafka.MakeConnection(o.config)

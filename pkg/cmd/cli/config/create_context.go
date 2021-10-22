@@ -7,16 +7,15 @@ import (
 	"strings"
 	"time"
 
+	cliflag "github.com/electric-saw/kafta/internal/pkg/flag"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 
 	"github.com/electric-saw/kafta/internal/pkg/ui"
 
+	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
-	"github.com/Shopify/sarama"
 	"github.com/spf13/cobra"
-
-	cliflag "k8s.io/component-base/cli/flag"
 )
 
 type createContextOptions struct {
