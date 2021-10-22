@@ -1,16 +1,14 @@
+project_name: kafta
+
+before:
+  hooks:
+    - make build
+
 builds:
   - main: ./cmd/kafta
     id: "kafta"
     binary: kafta
     goos:
       - linux
-
-before:
-  hooks:
-    - make build
-
-release:
-  github:
-    owner: lucasviecelli
-    name: https://github.com/electric-saw/kafta
-  name_template: "{{.ProjectName}}-v{{.Version}}"
+    targets:
+      - linux_amd64
