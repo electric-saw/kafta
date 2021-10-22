@@ -1,0 +1,18 @@
+project_name: kafta
+
+before:
+  hooks:
+    - make build
+
+builds:
+  - main: ./cmd/kafta
+    id: "kafta"
+    binary: kafta
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    targets:
+      - linux_amd64
