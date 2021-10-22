@@ -12,4 +12,5 @@ before:
 release:
   github:
     owner: lucasviecelli
+    name: https://github.com/electric-saw/kafta
   name_template: "{{.ProjectName}}-v{{.Version}}"
