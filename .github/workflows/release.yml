@@ -29,8 +29,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload assets
-        uses: actions/upload-artifact@v2
-        with:
-          name: kafta
-          path: dist/*
+      # - name: Upload assets
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: kafta
+      #     path: dist/*
