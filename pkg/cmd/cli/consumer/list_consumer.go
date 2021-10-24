@@ -1,13 +1,15 @@
 package consumer
 
 import (
+	"fmt"
+	"io"
 	"os"
 	"sort"
 
 	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
-	"github.com/jedib0t/go-pretty/table"
+	"github.com/electric-saw/kafta/pkg/cmd/util"
 	"github.com/spf13/cobra"
 )
 
@@ -30,16 +32,13 @@ func NewCmdListConsumer(config *configuration.Configuration) *cobra.Command {
 }
 
 func (o *listConsumerOptions) run() {
-	out := table.NewWriter()
-	out.SetOutputMirror(os.Stdout)
-	out.SetStyle(table.StyleRounded)
-	out.Style().Options.SeparateRows = true
+	out := util.GetNewTabWriter(os.Stdout)
 
 	conn := kafka.MakeConnection(o.config)
 	defer conn.Close()
 	consumers := kafka.ListConsumerGroupDescriptions(conn)
 
-	out.AppendHeader(table.Row{"NAME", "TYPE", "STATE"})
+	fmt.Fprintln(out, "NAME\tTYPE\tSTATE")
 
 	keys := make([]string, 0, len(consumers))
 	for k := range consumers {
@@ -52,10 +51,10 @@ func (o *listConsumerOptions) run() {
 		o.printContext(name, consumerType, out)
 	}
 
-	out.Render()
+	out.Flush()
 
 }
 
-func (o *listConsumerOptions) printContext(name string, consumerType *sarama.GroupDescription, w table.Writer) {
-	w.AppendRow(table.Row{name, consumerType.ProtocolType, consumerType.State})
+func (o *listConsumerOptions) printContext(name string, consumerType *sarama.GroupDescription, w io.Writer) {
+	fmt.Fprintf(w, "%s\t%s\t%s\n", name, consumerType.ProtocolType, consumerType.State)
 }

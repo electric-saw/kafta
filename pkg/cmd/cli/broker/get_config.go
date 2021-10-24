@@ -1,13 +1,15 @@
 package broker
 
 import (
+	"fmt"
+	"io"
 	"os"
 	"strconv"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
+	"github.com/electric-saw/kafta/pkg/cmd/util"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
-	"github.com/jedib0t/go-pretty/table"
 	"github.com/jedib0t/go-pretty/text"
 	"github.com/spf13/cobra"
 )
@@ -58,24 +60,21 @@ func (o *clusterConfig) defaultValue(cmd *cobra.Command) error {
 }
 
 func (o *clusterConfig) run(cmd *cobra.Command) {
-	out := table.NewWriter()
-	out.SetOutputMirror(os.Stdout)
-	out.SetStyle(table.StyleRounded)
-	out.Style().Options.SeparateRows = true
+	out := util.GetNewTabWriter(os.Stdout)
 
 	conn := kafka.MakeConnection(o.config)
 	defer conn.Close()
 
 	configs := kafka.DescribeBrokerConfig(conn, o.brokerId)
-	out.AppendHeader(table.Row{"NAME", "VALUE", "DEFAULT"})
+	fmt.Fprintf(out, "NAME\tVALUE\tDEFAULT")
 
 	for _, config := range configs {
 		o.printContext(config.Name, text.WrapHard(config.Value, 100), config.Default, out)
 	}
 
-	out.Render()
+	out.Flush()
 }
 
-func (o *clusterConfig) printContext(name string, value string, isDefault bool, w table.Writer) {
-	w.AppendRow(table.Row{name, value, isDefault})
+func (o *clusterConfig) printContext(name string, value string, isDefault bool, w io.Writer) {
+	fmt.Fprintf(w, "%s\t%s\t%v\n", name, value, isDefault)
 }

@@ -2,13 +2,12 @@ package config
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"sort"
-	"strings"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
-	"github.com/jedib0t/go-pretty/table"
 	"github.com/spf13/cobra"
 )
 
@@ -49,12 +48,9 @@ func (o *GetContextsOptions) Complete(cmd *cobra.Command, args []string) {
 }
 
 func (o *GetContextsOptions) RunGetContexts() {
-	out := table.NewWriter()
-	out.SetOutputMirror(os.Stdout)
-	out.SetStyle(table.StyleRounded)
-	out.Style().Options.SeparateRows = true
+	out := util.GetNewTabWriter(os.Stdout)
 	config := o.config.KaftaData
-	defer out.Render()
+	defer out.Flush()
 
 	toPrint := []string{}
 	if len(o.contextNames) == 0 {
@@ -72,7 +68,7 @@ func (o *GetContextsOptions) RunGetContexts() {
 		}
 	}
 
-	out.AppendHeader(table.Row{"CURRENT", "NAME", "CLUSTER", "SCHEMA REGISTRY", "KSQL"})
+	fmt.Fprintln(out, "CURRENT\tNAME\tCLUSTER\tSCHEMA REGISTRY\tKSQL")
 
 	sort.Strings(toPrint)
 	for _, name := range toPrint {
@@ -82,10 +78,10 @@ func (o *GetContextsOptions) RunGetContexts() {
 
 }
 
-func printContext(name string, context *configuration.Context, w table.Writer, current bool) {
+func printContext(name string, context *configuration.Context, w io.Writer, current bool) {
 	prefix := " "
 	if current {
 		prefix = "*"
 	}
-	w.AppendRow(table.Row{prefix, name, strings.Join(context.BootstrapServers, "\n"), context.SchemaRegistry, context.Ksql})
+	fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n", prefix, name, context.BootstrapServers[0], context.SchemaRegistry, context.Ksql)
 }
