@@ -10,7 +10,6 @@ import (
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
-	"github.com/jedib0t/go-pretty/text"
 	"github.com/spf13/cobra"
 )
 
@@ -69,7 +68,7 @@ func (o *clusterConfig) run(cmd *cobra.Command) {
 	fmt.Fprintf(out, "NAME\tVALUE\tDEFAULT")
 
 	for _, config := range configs {
-		o.printContext(config.Name, text.WrapHard(config.Value, 100), config.Default, out)
+		o.printContext(config.Name, cmdutil.Wrap(config.Value, 100), config.Default, out)
 	}
 
 	out.Flush()
