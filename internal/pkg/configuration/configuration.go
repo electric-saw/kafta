@@ -2,6 +2,7 @@ package configuration
 
 import (
 	"errors"
+	"log"
 	"os"
 	"path"
 
@@ -29,10 +30,18 @@ func homeDir() string {
 }
 
 func InitializeConfiguration(appName string) *Configuration {
+	configName := path.Join(homeDir(), DefaultFolderName, DefaultFileName)
+
 	config := &Configuration{
 		DebugMode:       false,
 		AppName:         appName,
-		KaftaconfigFile: path.Join(homeDir(), DefaultFolderName, DefaultFileName),
+		KaftaconfigFile: configName,
+	}
+
+	_, err := os.OpenFile(configName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	return config
