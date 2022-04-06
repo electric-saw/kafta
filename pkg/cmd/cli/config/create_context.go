@@ -19,20 +19,22 @@ import (
 )
 
 type createContextOptions struct {
-	config           *configuration.Configuration
-	name             string
-	currContext      bool
-	schemaRegistry   cliflag.StringFlag
-	ksql             cliflag.StringFlag
-	bootstrapServers cliflag.StringFlag
-	version          cliflag.StringFlag
-	user             cliflag.StringFlag
-	password         cliflag.StringFlag
-	useSASL          cliflag.StringFlag
-	algorithm        cliflag.StringFlag
-	useTLS           bool
-	parsedVersion    string
-	quiet            bool
+	config               *configuration.Configuration
+	name                 string
+	currContext          bool
+	schemaRegistry       cliflag.StringFlag
+	schemaRegistrySecret cliflag.StringFlag
+	schemaRegistryKey    cliflag.StringFlag
+	ksql                 cliflag.StringFlag
+	bootstrapServers     cliflag.StringFlag
+	version              cliflag.StringFlag
+	user                 cliflag.StringFlag
+	password             cliflag.StringFlag
+	useSASL              cliflag.StringFlag
+	algorithm            cliflag.StringFlag
+	useTLS               bool
+	parsedVersion        string
+	quiet                bool
 }
 
 var (
@@ -69,6 +71,8 @@ func NewCmdConfigSetContext(config *configuration.Configuration) *cobra.Command 
 
 	cmd.Flags().BoolVar(&options.currContext, "current", options.currContext, "Modify the current context")
 	cmd.Flags().Var(&options.schemaRegistry, "schema-registry", "schema-registry for the context")
+	cmd.Flags().Var(&options.schemaRegistrySecret, "schema-registry-secret", "schema-registry secret")
+	cmd.Flags().Var(&options.schemaRegistryKey, "schema-registry-key", "schema-registry key")
 	cmd.Flags().Var(&options.ksql, "ksql", "ksql for the context")
 	cmd.Flags().Var(&options.bootstrapServers, "server", "server for the cluster entry in Kaftaconfig")
 	cmd.Flags().Var(&options.version, "version", "kafka vesion for the cluster entry in Kaftaconfig")
@@ -125,6 +129,14 @@ func (o *createContextOptions) modifyContext(context configuration.Context) *con
 
 	if o.schemaRegistry.Provided() {
 		modifiedContext.SchemaRegistry = o.schemaRegistry.Value()
+	}
+
+	if o.schemaRegistrySecret.Provided() {
+		modifiedContext.SchemaRegistryAuth.Secret = o.schemaRegistrySecret.Value()
+	}
+
+	if o.schemaRegistryKey.Provided() {
+		modifiedContext.SchemaRegistryAuth.Key = o.schemaRegistryKey.Value()
 	}
 
 	if o.bootstrapServers.Provided() {
@@ -186,9 +198,9 @@ func (o *createContextOptions) validate() error {
 		return errors.New("failed to connect on ksql")
 	}
 
-	if o.schemaRegistry.Provided() && !testHost(o.schemaRegistry.String()) {
-		return errors.New("failed to connect on schema-registry")
-	}
+	// if o.schemaRegistry.Provided() && !testHost(o.schemaRegistry.String()) {
+	// 	return errors.New("failed to connect on schema-registry")
+	// }
 
 	if o.useSASL.Provided() && o.quiet {
 		if !o.user.Provided() {
@@ -283,19 +295,27 @@ func (o *createContextOptions) promptNeeded(context *configuration.Context) erro
 		}
 	}
 
-	// TODO: implement communication with service API
-	// if !o.schemaRegistry.Provided() {
-	// 	schemaRegistry, err := ui.GetText("Schema registry", false)
-	// 	cmdutil.CheckErr(err)
-	// 	err = o.schemaRegistry.Set(schemaRegistry)
-	// 	cmdutil.CheckErr(err)
-	// }
-	// if !o.ksql.Provided() {
-	// 	ksql, err := ui.GetText("KSQL", false)
-	// 	cmdutil.CheckErr(err)
-	// 	err = o.ksql.Set(ksql)
-	// 	cmdutil.CheckErr(err)
-	// }
+	if !o.schemaRegistry.Provided() {
+		schemaRegistry, err := ui.GetText("Schema registry", false)
+		cmdutil.CheckErr(err)
+		err = o.schemaRegistry.Set(schemaRegistry)
+		cmdutil.CheckErr(err)
+
+		if o.schemaRegistry.Provided() && len(context.SchemaRegistryAuth.Secret) == 0 {
+			secret, err := ui.GetText("SchemaRegistry Secret", false)
+			cmdutil.CheckErr(err)
+			err = o.schemaRegistrySecret.Set(secret)
+			cmdutil.CheckErr(err)
+		}
+
+		if o.schemaRegistry.Provided() && len(context.SchemaRegistryAuth.Key) == 0 {
+			key, err := ui.GetPassword("SchemaRegistry Key", false)
+			cmdutil.CheckErr(err)
+			err = o.schemaRegistryKey.Set(key)
+			cmdutil.CheckErr(err)
+		}
+
+	}
 
 	return nil
 }
