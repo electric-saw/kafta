@@ -3,9 +3,9 @@ package kafka
 import (
 	"crypto/tls"
 
+	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
-	"github.com/Shopify/sarama"
 )
 
 type KafkaConnection struct {
@@ -71,8 +71,8 @@ func (k *KafkaConnection) Close() {
 func (k *KafkaConnection) initAuth(clientConfig *sarama.Config) {
 	if k.Context.UseSASL {
 		clientConfig.Net.SASL.Enable = true
-		clientConfig.Net.SASL.User = k.Context.SASL.Username     //"API_KEY"
-		clientConfig.Net.SASL.Password = k.Context.SASL.Password //"SECRET_KEY"
+		clientConfig.Net.SASL.User = k.Context.SASL.Username
+		clientConfig.Net.SASL.Password = k.Context.SASL.Password
 		switch k.Context.SASL.Algorithm {
 		case "sha256":
 			clientConfig.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient { return &XDGSCRAMClient{HashGeneratorFcn: SHA256} }
@@ -88,7 +88,7 @@ func (k *KafkaConnection) initAuth(clientConfig *sarama.Config) {
 		if k.Context.TLS {
 			clientConfig.Net.TLS.Enable = true
 			tlsConfig := &tls.Config{
-				InsecureSkipVerify: true,
+				InsecureSkipVerify: true, // lgtm [go/disabled-certificate-check]
 				ClientAuth:         0,
 			}
 

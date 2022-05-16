@@ -18,12 +18,12 @@ Kafta is a modern non-JVM command line for managing Kafka Clusters written in go
 
 # Overview
 
-Kafkta providing a simple interface to manage topics, brokers, consumer-groups and many things like that. Interfaces similar to kubectl & go tools. 
+Kafkta providing a simple interface to manage topics, brokers, consumer-groups and many things like that. Interfaces similar to kubectl & go tools.
 It is built using [sarama](https://github.com/Shopify/sarama).
 
 Kafta provides:
 * Easy commands CLIs: `kafta topic list`, `kafta cluster describe`, etc.
-* Fully manage topics, consumers, kafka clusters 
+* Fully manage topics, consumers, kafka clusters
 * yaml configuration file with all clusters that can be used. You set the current one and can easily switch to another
 * Is a binary, not need install JVM or something like that
 * Auth use sasl
@@ -32,12 +32,12 @@ Kafta provides:
 
 # Concepts
 
-Kafta is built on a structure of commands, arguments & flags. Kafta will always be interacting on one cluster at a time, 
-the reason for this is not having to pass which cluster is in each command, as it is with most kafka CLIs. 
+Kafta is built on a structure of commands, arguments & flags. Kafta will always be interacting on one cluster at a time,
+the reason for this is not having to pass which cluster is in each command, as it is with most kafka CLIs.
 
-Kafta was created by developers for developers. We feel the pain of maintaining a kafka cluster using the bash's provided by apache-kafka, 
-it's confusing and the experience is miserable. To facilitate the adoption of the kafka, the kafta began to be born. The focus of this 
-project is to be simple to use, it is bad to need to install java, pass the kafka cluster address in every command, mess with xml's. 
+Kafta was created by developers for developers. We feel the pain of maintaining a kafka cluster using the bash's provided by apache-kafka,
+it's confusing and the experience is miserable. To facilitate the adoption of the kafka, the kafta began to be born. The focus of this
+project is to be simple to use, it is bad to need to install java, pass the kafka cluster address in every command, mess with xml's.
 Kafta is a golang project that is easy to install, easy to configure and the main thing is simple to use.
 
 To see all options exists relate to same command, run:
@@ -63,13 +63,13 @@ of the library. This command will install the `kafta` executable
 along with the library and its dependencies:
 - go < 1.18: `go get -u github.com/electric-saw/kafta`
 - go >= 1.18: `go install  github.com/electric-saw/kafta/cmd/kafta@latest`
-    
+
 
 # Configuration
 
 Kafta will create a config file in ~/.kafta/config. This yaml is used to support kafka multi-clusters and avoid passing all addresses every time.
 
-To set up a new cluster, create a new config via kafta, you'll need to provide some information, don't worry, it's all in terminal, 
+To set up a new cluster, create a new config via kafta, you'll need to provide some information, don't worry, it's all in terminal,
 you don't need to edit any XML \o/
 
 Follow the example:
@@ -140,7 +140,7 @@ $ kafta topic create my-topic --rf 3 --partitions 10
 Topic created
 ```
 
-There are default values ​​for partition and replication factor, which is why it can only be used without specifying RF or partition. 
+There are default values ​​for partition and replication factor, which is why it can only be used without specifying RF or partition.
 The topic will be created with RF=3 and partition=10. Example:
 
 ```
@@ -172,7 +172,7 @@ ID         ISR        LEADER   REPLICAS   OFFLINE REPLICAS
 List topics:
 
 ```
-$ kafta topic list 
+$ kafta topic list
 
 ╭─────────┬────────────┬────╮
 │ NAME    │ PARTITIONS │ RF │
