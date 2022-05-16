@@ -62,20 +62,25 @@ func LoadKaftaconfigOrDefault(configPath string) (*KaftaConfig, bool) {
 		},
 	}
 
-	rawYaml, err := ioutil.ReadFile(configPath)
-	if err != nil {
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return config, true
+	} else {
+
+		rawYaml, err := ioutil.ReadFile(configPath)
+		if err != nil {
+			return config, true
+		}
+
+		err = yaml.Unmarshal(rawYaml, &config)
+
+		util.CheckErr(err)
 	}
-
-	err = yaml.Unmarshal(rawYaml, &config)
-
-	util.CheckErr(err)
 
 	return config, false
 }
 
 func (k *KaftaConfig) Write() {
-	err := os.MkdirAll(path.Dir(k.path), 0700)
+	err := os.MkdirAll(path.Dir(k.path), 0760)
 	util.CheckErr(err)
 
 	out, err := os.Create(k.path)

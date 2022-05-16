@@ -100,4 +100,5 @@ func (d *describeBrokerOptions) printLogSize(broker *kafka.BrokerMetadata) {
 		fmt.Fprintf(out, "\nTOTAL\t%s\t%s\n", humanize.Bytes(totalPermanent), humanize.Bytes(totalTemporary))
 
 	}
+
 }

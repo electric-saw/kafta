@@ -30,7 +30,6 @@ func NewKaftaCommand(name string) *cobra.Command {
 	}
 
 	config.BindFlags(root)
-	config.EnsureKaftaconfig()
 
 	root.AddCommand(version.NewCmdVersion(config))
 	root.AddCommand(topic.NewCmdTopic(config))

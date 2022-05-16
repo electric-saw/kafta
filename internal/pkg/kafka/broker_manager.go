@@ -10,7 +10,7 @@ import (
 
 func getBrokerByIdOrAddr(conn *KafkaConnection, idOrAddr string) (*Broker, error) {
 	brokers := GetBrokers(conn)
-	if id, err := strconv.Atoi(idOrAddr); err == nil {
+	if id, err := strconv.ParseInt(idOrAddr, 10, 64); err == nil {
 		for _, broker := range brokers {
 			if broker.Id == int32(id) {
 				return broker, nil

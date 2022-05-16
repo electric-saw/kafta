@@ -101,7 +101,7 @@ func (o *describeConsumerOptions) printTopic(group *sarama.GroupDescription, w i
 }
 
 func (o *describeConsumerOptions) printContextHeadersPartition(out io.Writer) error {
-	columnNames := []string{"MEMBER ID", "MEMBER HOST", "TOPICS"}
+	columnNames := []string{"MEMBER ID", "MEMBER HOST", "TOPIC", "PARTITIONS"}
 	_, err := fmt.Fprintf(out, "\n\n%s\n", strings.Join(columnNames, "\t"))
 	return err
 }
@@ -109,8 +109,10 @@ func (o *describeConsumerOptions) printContextHeadersPartition(out io.Writer) er
 func (o *describeConsumerOptions) printContextPartition(member *sarama.GroupMemberDescription, w io.Writer) error {
 	memberAssignment, err := member.GetMemberAssignment()
 	cmdutil.CheckErr(err)
-	memberMetadata, err := member.GetMemberMetadata()
-	// cmdutil.CheckErr(err)
-	_, err = fmt.Fprintf(w, "%s\t%v\t%s\t%v\n", member.ClientId, member.ClientHost, strings.Join(memberMetadata.Topics, ","), memberAssignment.Topics)
+	memberMetadata, _ := member.GetMemberMetadata()
+	for _, topic := range memberMetadata.Topics {
+
+		_, err = fmt.Fprintf(w, "%s\t%v\t%s\t%v\n", member.ClientId, member.ClientHost, topic, memberAssignment.Topics[topic])
+	}
 	return err
 }

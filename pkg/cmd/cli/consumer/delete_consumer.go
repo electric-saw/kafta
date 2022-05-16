@@ -1,10 +1,10 @@
 package consumer
 
 import (
+	"github.com/Songmu/prompter"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
-	"github.com/Songmu/prompter"
 	"github.com/spf13/cobra"
 )
 

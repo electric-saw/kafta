@@ -1,8 +1,8 @@
 package kafka
 
 import (
-	"github.com/electric-saw/kafta/pkg/cmd/util"
 	"github.com/Shopify/sarama"
+	"github.com/electric-saw/kafta/pkg/cmd/util"
 )
 
 func DescribeBrokerConfig(conn *KafkaConnection, brokerId string) (configs []sarama.ConfigEntry) {

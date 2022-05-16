@@ -27,10 +27,27 @@ func GetTopicProp(conn *KafkaConnection, topic, key string) (configs []sarama.Co
 
 }
 
-func SetProp(conn *KafkaConnection, topic, key, value string) {
-	err := conn.Admin.AlterConfig(sarama.BrokerResource, topic, map[string]*string{
-		key: &value,
-	}, true)
+func SetProp(conn *KafkaConnection, topic, key, value string) error {
+	configs, err := conn.Admin.DescribeConfig(sarama.ConfigResource{
+		Type: sarama.TopicResource,
+		Name: topic,
+	})
+	if err != nil {
+		return err
+	}
 
-	util.CheckErr(err)
+	newConfigs := map[string]*string{}
+
+	for _, config := range configs {
+		if !config.Default && config.Source != sarama.SourceStaticBroker {
+			val := config.Value
+			newConfigs[config.Name] = &val
+		}
+	}
+
+	newConfigs[key] = &value
+
+	err = conn.Admin.AlterConfig(sarama.TopicResource, topic, newConfigs, false)
+
+	return err
 }

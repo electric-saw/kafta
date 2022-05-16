@@ -2,7 +2,6 @@ package configuration
 
 import (
 	"errors"
-	"log"
 	"os"
 	"path"
 
@@ -38,11 +37,7 @@ func InitializeConfiguration(appName string) *Configuration {
 		KaftaconfigFile: configName,
 	}
 
-	_, err := os.OpenFile(configName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-
-	if err != nil {
-		log.Fatal(err)
-	}
+	config.EnsureKaftaconfig()
 
 	return config
 }
@@ -56,7 +51,7 @@ func (c *Configuration) BindFlags(cmd *cobra.Command) {
 func (c *Configuration) EnsureKaftaconfig() {
 	config, isNew := LoadKaftaconfigOrDefault(c.KaftaconfigFile)
 	if isNew {
-		c.KaftaData.Write()
+		config.Write()
 	}
 	c.KaftaData = config
 }

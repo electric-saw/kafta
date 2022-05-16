@@ -51,7 +51,7 @@ all: build
 
 
 .PHONY: install
-install: 
+install:
 	cd ./cmd/kafta && go install .
 
 .PHONY: build
