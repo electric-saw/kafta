@@ -29,11 +29,15 @@ func homeDir() string {
 }
 
 func InitializeConfiguration(appName string) *Configuration {
+	configName := path.Join(homeDir(), DefaultFolderName, DefaultFileName)
+
 	config := &Configuration{
 		DebugMode:       false,
 		AppName:         appName,
-		KaftaconfigFile: path.Join(homeDir(), DefaultFolderName, DefaultFileName),
+		KaftaconfigFile: configName,
 	}
+
+	config.EnsureKaftaconfig()
 
 	return config
 }
@@ -47,7 +51,7 @@ func (c *Configuration) BindFlags(cmd *cobra.Command) {
 func (c *Configuration) EnsureKaftaconfig() {
 	config, isNew := LoadKaftaconfigOrDefault(c.KaftaconfigFile)
 	if isNew {
-		c.KaftaData.Write()
+		config.Write()
 	}
 	c.KaftaData = config
 }

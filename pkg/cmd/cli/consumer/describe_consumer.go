@@ -6,11 +6,11 @@ import (
 	"os"
 	"sort"
 	"strings"
-	"text/tabwriter"
 
 	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
+	"github.com/electric-saw/kafta/pkg/cmd/util"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
 	"github.com/spf13/cobra"
 )
@@ -51,7 +51,7 @@ func (o *describeConsumerOptions) complete(cmd *cobra.Command) error {
 }
 
 func (o *describeConsumerOptions) run() {
-	out := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '|', tabwriter.TabIndent)
+	out := util.GetNewTabWriter(os.Stdout)
 	defer out.Flush()
 
 	conn := kafka.MakeConnection(o.config)

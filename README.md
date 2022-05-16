@@ -1,3 +1,5 @@
+![kafta logo](img/kafta.png)
+
 Kafta is a modern non-JVM command line for managing Kafka Clusters written in golang.Usability was inspired by kubectl, the interface is simple and supports managing several clusters at the same time in a simple way.
 
 # Table of Contents

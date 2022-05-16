@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/electric-saw/kafta/pkg/cmd/util"
 	"github.com/Shopify/sarama"
+	"github.com/electric-saw/kafta/pkg/cmd/util"
 	"gopkg.in/yaml.v3"
 )
 
@@ -27,7 +27,11 @@ type ConnectionConfig struct {
 }
 
 type Context struct {
-	SchemaRegistry   string   `yaml:"schema-registry"`
+	SchemaRegistry     string `yaml:"schema-registry"`
+	SchemaRegistryAuth struct {
+		Key    string
+		Secret string
+	}
 	Ksql             string   `yaml:"ksql"`
 	BootstrapServers []string `yaml:"bootstrap-servers"`
 	KafkaVersion     string   `yaml:"kafka-version"`
@@ -49,7 +53,8 @@ func MakeContext() *Context {
 
 func LoadKaftaconfigOrDefault(configPath string) (*KaftaConfig, bool) {
 	config := &KaftaConfig{
-		path: configPath,
+		path:     configPath,
+		Contexts: make(map[string]*Context),
 		Connection: ConnectionConfig{
 			DialTimeout:  15 * time.Second,
 			ReadTimeout:  30 * time.Second,
@@ -57,20 +62,25 @@ func LoadKaftaconfigOrDefault(configPath string) (*KaftaConfig, bool) {
 		},
 	}
 
-	rawYaml, err := ioutil.ReadFile(configPath)
-	if err != nil {
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return config, true
+	} else {
+
+		rawYaml, err := ioutil.ReadFile(configPath)
+		if err != nil {
+			return config, true
+		}
+
+		err = yaml.Unmarshal(rawYaml, &config)
+
+		util.CheckErr(err)
 	}
-
-	err = yaml.Unmarshal(rawYaml, &config)
-
-	util.CheckErr(err)
 
 	return config, false
 }
 
 func (k *KaftaConfig) Write() {
-	err := os.MkdirAll(path.Dir(k.path), 0700)
+	err := os.MkdirAll(path.Dir(k.path), 0760)
 	util.CheckErr(err)
 
 	out, err := os.Create(k.path)
