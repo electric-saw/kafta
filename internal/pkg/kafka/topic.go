@@ -22,7 +22,7 @@ func DescribeTopics(conn *KafkaConnection, topics []string) []*sarama.TopicMetad
 	return response
 }
 
-func CreateTopic(conn *KafkaConnection, topic string, numPartitions int32, replicationFactor int16) error {
+func CreateTopic(conn *KafkaConnection, topic string, numPartitions int32, replicationFactor int16, configs map[string]*string) error {
 	if topic == "" {
 		fmt.Println("Topic name is required")
 		os.Exit(0)
@@ -31,6 +31,7 @@ func CreateTopic(conn *KafkaConnection, topic string, numPartitions int32, repli
 	if err := conn.Admin.CreateTopic(topic, &sarama.TopicDetail{
 		NumPartitions:     numPartitions,
 		ReplicationFactor: replicationFactor,
+		ConfigEntries:     configs,
 	}, false); err == nil {
 		fmt.Println("Topic created")
 		return err

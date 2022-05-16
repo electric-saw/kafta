@@ -26,10 +26,12 @@ func NewKaftaCommand(name string) *cobra.Command {
 		PersistentPostRun: func(cmd *cobra.Command, args []string) {
 			config.UpdateConfig()
 		},
+		PreRun: func(cmd *cobra.Command, args []string) {
+			config.EnsureKaftaconfig()
+		},
 	}
 
 	config.BindFlags(root)
-	config.EnsureKaftaconfig()
 
 	root.AddCommand(version.NewCmdVersion(config))
 	root.AddCommand(topic.NewCmdTopic(config))

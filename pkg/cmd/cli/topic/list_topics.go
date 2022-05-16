@@ -5,9 +5,9 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
-	"github.com/Shopify/sarama"
 	"github.com/jedib0t/go-pretty/table"
 	"github.com/spf13/cobra"
 )

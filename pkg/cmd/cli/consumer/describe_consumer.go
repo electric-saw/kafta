@@ -6,13 +6,13 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"text/tabwriter"
 
+	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
-	"github.com/Shopify/sarama"
 	"github.com/spf13/cobra"
-	"k8s.io/cli-runtime/pkg/printers"
 )
 
 type describeConsumerOptions struct {
@@ -51,7 +51,7 @@ func (o *describeConsumerOptions) complete(cmd *cobra.Command) error {
 }
 
 func (o *describeConsumerOptions) run() {
-	out := printers.GetNewTabWriter(os.Stdout)
+	out := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '|', tabwriter.TabIndent)
 	defer out.Flush()
 
 	conn := kafka.MakeConnection(o.config)
@@ -101,7 +101,7 @@ func (o *describeConsumerOptions) printTopic(group *sarama.GroupDescription, w i
 }
 
 func (o *describeConsumerOptions) printContextHeadersPartition(out io.Writer) error {
-	columnNames := []string{"MEMBER ID", "MEMBER HOST", "TOPICS"}
+	columnNames := []string{"MEMBER ID", "MEMBER HOST", "TOPIC", "PARTITIONS"}
 	_, err := fmt.Fprintf(out, "\n\n%s\n", strings.Join(columnNames, "\t"))
 	return err
 }
@@ -109,8 +109,10 @@ func (o *describeConsumerOptions) printContextHeadersPartition(out io.Writer) er
 func (o *describeConsumerOptions) printContextPartition(member *sarama.GroupMemberDescription, w io.Writer) error {
 	memberAssignment, err := member.GetMemberAssignment()
 	cmdutil.CheckErr(err)
-	memberMetadata, err := member.GetMemberMetadata()
-	// cmdutil.CheckErr(err)
-	_, err = fmt.Fprintf(w, "%s\t%v\t%s\t%v\n", member.ClientId, member.ClientHost, strings.Join(memberMetadata.Topics, ","), memberAssignment.Topics)
+	memberMetadata, _ := member.GetMemberMetadata()
+	for _, topic := range memberMetadata.Topics {
+
+		_, err = fmt.Fprintf(w, "%s\t%v\t%s\t%v\n", member.ClientId, member.ClientHost, topic, memberAssignment.Topics[topic])
+	}
 	return err
 }

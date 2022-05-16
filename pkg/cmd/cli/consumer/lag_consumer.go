@@ -5,12 +5,12 @@ import (
 	"io"
 	"os"
 	"sort"
+	"text/tabwriter"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
 	"github.com/spf13/cobra"
-	"k8s.io/cli-runtime/pkg/printers"
 )
 
 type lagConsumerOptions struct {
@@ -23,7 +23,7 @@ func NewCmdLagConsumer(config *configuration.Configuration) *cobra.Command {
 	options := &lagConsumerOptions{config: config, verbose: false}
 	cmd := &cobra.Command{
 		Use:   "lag NAME",
-		Short: "Lag a consumer",
+		Short: "list consumer lag",
 		ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 			return ValidConsumers(config, len(args) > 0)
 		},
@@ -41,22 +41,22 @@ func NewCmdLagConsumer(config *configuration.Configuration) *cobra.Command {
 
 func (l *lagConsumerOptions) complete(cmd *cobra.Command) error {
 	args := cmd.Flags().Args()
-	if len(args) == 0 {
-		return cmdutil.HelpError(cmd, "Consumer not informed")
-	}
-	if len(args) > 1 {
-		return cmdutil.HelpError(cmd, "Only 1 consumer")
-	}
 	l.groups = args
 	return nil
 }
 
 func (l *lagConsumerOptions) run() {
-	out := printers.GetNewTabWriter(os.Stdout)
+	out := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', tabwriter.TabIndent)
 	defer out.Flush()
 
 	conn := kafka.MakeConnection(l.config)
 	defer conn.Close()
+
+	if len(l.groups) == 0 {
+		for group := range kafka.ListConsumerGroups(conn) {
+			l.groups = append(l.groups, group)
+		}
+	}
 
 	consumers := kafka.ConsumerLag(conn, l.groups)
 

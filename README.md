@@ -1,16 +1,17 @@
 Kafta is a modern non-JVM command line for managing Kafka Clusters written in golang.Usability was inspired by kubectl, the interface is simple and supports managing several clusters at the same time in a simple way.
 
 # Table of Contents
+- [Table of Contents](#table-of-contents)
 - [Overview](#overview)
 - [Concepts](#concepts)
 - [Installing](#installing)
 - [Configuration](#configuration)
 - [Commands](#commands)
-  * [Topic](#topic)
-  * [Consumer Group](#consumergroup)
-  * [Cluster](#cluster)
-  * [Broker](#broker)
-- [Next features](#nextfeatures)
+  - [Topic](#topic)
+  - [Consumer Group](#consumer-group)
+  - [Cluster](#cluster)
+  - [Broker](#broker)
+- [Next features](#next-features)
 
 
 # Overview
@@ -58,8 +59,9 @@ Available Commands:
 Using Kafta is easy. First, use `go get` to install the latest version
 of the library. This command will install the `kafta` executable
 along with the library and its dependencies:
-
-    go get -u github.com/electric-saw/kafta
+- go < 1.18: `go get -u github.com/electric-saw/kafta`
+- go >= 1.18: `go install  github.com/electric-saw/kafta/cmd/kafta@latest`
+    
 
 # Configuration
 

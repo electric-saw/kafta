@@ -4,10 +4,10 @@ import (
 	"os"
 	"sort"
 
+	"github.com/dustin/go-humanize"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
-	"github.com/dustin/go-humanize"
 	"github.com/jedib0t/go-pretty/table"
 	"github.com/spf13/cobra"
 )
@@ -116,4 +116,6 @@ func (d *describeBrokerOptions) printLogSize(broker *kafka.BrokerMetadata) {
 
 		out.AppendRow(row)
 	}
+
+	out.Render()
 }

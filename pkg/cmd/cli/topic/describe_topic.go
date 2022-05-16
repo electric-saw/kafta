@@ -6,13 +6,13 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"text/tabwriter"
 
+	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
-	"github.com/Shopify/sarama"
 	"github.com/spf13/cobra"
-	"k8s.io/cli-runtime/pkg/printers"
 )
 
 type describeTopicOptions struct {
@@ -51,7 +51,7 @@ func (o *describeTopicOptions) complete(cmd *cobra.Command) error {
 }
 
 func (o *describeTopicOptions) run() {
-	out := printers.GetNewTabWriter(os.Stdout)
+	out := tabwriter.NewWriter(os.Stdout, 0, 0, 1, '|', tabwriter.TabIndent)
 	defer out.Flush()
 
 	conn := kafka.MakeConnection(o.config)
