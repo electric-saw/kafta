@@ -2,6 +2,7 @@ package schema
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"sort"
 
@@ -28,7 +29,10 @@ func NewCmdSubjectList(config *configuration.Configuration) *cobra.Command {
 }
 
 func (o *subjectList) run() {
-	subjects := schema.NewSubjectList(o.config)
+	subjects, err := schema.NewSubjectList(o.config)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	out := util.GetNewTabWriter(os.Stdout)
 	fmt.Fprint(out, "Name\n")

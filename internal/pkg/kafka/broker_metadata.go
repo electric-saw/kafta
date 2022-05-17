@@ -23,12 +23,12 @@ type LogFile struct {
 	Entries aggregatedTopicSize
 }
 
-func newLogFile(path string) *LogFile {
-	return &LogFile{
-		Path:    path,
-		Entries: make(aggregatedTopicSize),
-	}
-}
+// func newLogFile(path string) *LogFile {
+// 	return &LogFile{
+// 		Path:    path,
+// 		Entries: make(aggregatedTopicSize),
+// 	}
+// }
 
 func (l *LogFile) set(topic string, size int64, isTemp bool) {
 	if _, ok := l.Entries[topic]; !ok {

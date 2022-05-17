@@ -245,6 +245,7 @@ func (o *createContextOptions) checkConnection(context *configuration.Context) e
 	return nil
 }
 
+//gocyclo:ignore
 func (o *createContextOptions) promptNeeded(context *configuration.Context) error {
 	if o.quiet {
 		return nil
