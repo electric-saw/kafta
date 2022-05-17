@@ -12,6 +12,7 @@ func NewCmdSchema(config *configuration.Configuration) *cobra.Command {
 	}
 
 	cmd.AddCommand(NewCmdSubjectList(config))
+	cmd.AddCommand(NewCmdSubjectVersion(config))
 
 	return cmd
 }
