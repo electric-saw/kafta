@@ -29,7 +29,7 @@ func NewSubjectList(config *configuration.Configuration) ([]string, error) {
 	return data, nil
 }
 
-func NewSubjecVersion(config *configuration.Configuration, subsubjectName string) string {
+func NewSubjecVersion(config *configuration.Configuration, subsubjectName string) (string, error) {
 	params := fmt.Sprintf("subjects/%v/versions", subsubjectName)
 
 	resp := BuildGetRequestSchemaRegistry(config, params)
@@ -37,12 +37,12 @@ func NewSubjecVersion(config *configuration.Configuration, subsubjectName string
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
-	return string(body)
+	return string(body), err
 }

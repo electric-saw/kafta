@@ -40,7 +40,10 @@ func (o *subjectVersion) complete(cmd *cobra.Command) error {
 }
 
 func (o *subjectVersion) run() error {
-	versions := schema.NewSubjecVersion(o.config, o.subjectName)
+	versions, err := schema.NewSubjecVersion(o.config, o.subjectName)
+	if err != nil {
+		return err
+	}
 
 	t := table.NewWriter()
 	t.SetStyle(table.StyleDefault)
