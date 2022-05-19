@@ -13,6 +13,8 @@ Kafta is a modern non-JVM command line for managing Kafka Clusters written in go
   - [Consumer Group](#consumer-group)
   - [Cluster](#cluster)
   - [Broker](#broker)
+  - [Producer](#producer)
+  - [Consumer](#consumer)
 - [Next features](#next-features)
 
 
@@ -290,11 +292,33 @@ Get broker config, run:
 ╰────────────────────────────────────────────────────────────────────────────────────╯
 ```
 
+## Producer
+Produce data for topic, run:
+```
+kafta console producer topic.test
+> message test
+```
+You can produce a message with key, using the ":" between the key and message: 
+```
+kafta console producer topic.test
+> key1:message test
+```
+## Consumer
+Consume data from topic, you can optionally enter the consumer group and the flag `--verbose` for debug the consumer:
+```
+kafta console consumer topic.test  [group=group.test] [--verbose] 
+
+2022/05/17 19:48:47 Initializing Consumer with group [group.test]...
+2022/05/17 19:48:50 Consumer running, waiting for events...
+2022/05/17 19:48:57 Partition: 0 Key: 1 Message: teste event
+2022/05/17 19:49:05 Partition: 0 Key: w Message: {"json":"test"}
+2022/05/17 19:50:05 Partition: 0 Key: 1 Message: event 2
+```
 # Next features
 
 * Full support and management for schema-registry
 * Full support and management for KSQL
-* Tail data of topics
-* Producer data of topics
+* Tail data of topics (WIP)
+* Producer data of topics (WIP)
 * Change configs for topics (WIP)
 * Dump/Restore data of topics

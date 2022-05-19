@@ -7,6 +7,7 @@ import (
 	"github.com/electric-saw/kafta/pkg/cmd/cli/completion"
 	configCmd "github.com/electric-saw/kafta/pkg/cmd/cli/config"
 	"github.com/electric-saw/kafta/pkg/cmd/cli/consumer"
+	"github.com/electric-saw/kafta/pkg/cmd/cli/console"
 	"github.com/electric-saw/kafta/pkg/cmd/cli/schema"
 	"github.com/electric-saw/kafta/pkg/cmd/cli/topic"
 	"github.com/electric-saw/kafta/pkg/cmd/cli/version"
@@ -39,6 +40,7 @@ func NewKaftaCommand(name string) *cobra.Command {
 	root.AddCommand(consumer.NewCmdConsumer(config))
 	root.AddCommand(cluster.NewCmdCluster(config))
 	root.AddCommand(schema.NewCmdSchema(config))
+	root.AddCommand(console.NewCmdConsole(config))
 
 	return root
 }
