@@ -30,18 +30,18 @@ type LogFile struct {
 // 	}
 // }
 
-func (l *LogFile) set(topic string, size int64, isTemp bool) {
-	if _, ok := l.Entries[topic]; !ok {
-		l.Entries[topic] = &LogEntry{
-			Topic: topic,
-		}
-	}
-	if isTemp {
-		l.Entries[topic].Temporary += uint64(size)
-	} else {
-		l.Entries[topic].Permanent += uint64(size)
-	}
-}
+// func (l *LogFile) set(topic string, size int64, isTemp bool) {
+// 	if _, ok := l.Entries[topic]; !ok {
+// 		l.Entries[topic] = &LogEntry{
+// 			Topic: topic,
+// 		}
+// 	}
+// 	if isTemp {
+// 		l.Entries[topic].Temporary += uint64(size)
+// 	} else {
+// 		l.Entries[topic].Permanent += uint64(size)
+// 	}
+// }
 
 func (l *LogFile) SortByPermanentSize() []*LogEntry {
 	result := l.toSlice()

@@ -1,23 +1,20 @@
 package consumer
 
 import (
-	
 	"strings"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
 	"github.com/spf13/cobra"
-	
 )
 
 type consumerOptions struct {
-	config *configuration.Configuration
+	config  *configuration.Configuration
 	topic   string
-	group string
+	group   string
 	verbose bool
 }
-
 
 func NewCmdConsumeMessage(config *configuration.Configuration) *cobra.Command {
 	options := &consumerOptions{config: config}
@@ -36,17 +33,16 @@ func NewCmdConsumeMessage(config *configuration.Configuration) *cobra.Command {
 	return cmd
 }
 
-
 func (o *consumerOptions) complete(cmd *cobra.Command) error {
 	args := cmd.Flags().Args()
 	if len(args) > 2 {
 		return cmdutil.HelpErrorf(cmd, "Unexpected args: %v", args)
 	}
-	
-	if len(args) > 1{
+
+	if len(args) > 1 {
 		o.topic = args[0]
 		o.group = strings.Split(args[1], "=")[1]
-	}else if len(args) == 1{
+	} else if len(args) == 1 {
 		o.topic = args[0]
 		o.group = "kafta-cli"
 	}
