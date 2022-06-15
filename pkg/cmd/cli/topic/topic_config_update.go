@@ -16,7 +16,7 @@ type updateTopicOptions struct {
 	props  map[string]string
 }
 
-func NewCmdUpdateTopic(config *configuration.Configuration) *cobra.Command {
+func NewCmdConfigUpdateTopic(config *configuration.Configuration) *cobra.Command {
 	options := &updateTopicOptions{config: config}
 	cmd := &cobra.Command{
 		Use:   "update NAME CONFIG=VALUE [CONFIG=VALUE&CONFIG2=VALUE2 ...]",
