@@ -2,14 +2,12 @@ package consumer
 
 import (
 	"fmt"
-	"io"
-	"os"
-	"sort"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
-	"github.com/electric-saw/kafta/pkg/cmd/util"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
+	"github.com/jedib0t/go-pretty/v6/table"
+	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/spf13/cobra"
 )
 
@@ -46,9 +44,6 @@ func (l *lagConsumerOptions) complete(cmd *cobra.Command) error {
 }
 
 func (l *lagConsumerOptions) run() {
-	out := util.GetNewTabWriter(os.Stdout)
-	defer out.Flush()
-
 	conn := kafka.MakeConnection(l.config)
 	defer conn.Close()
 
@@ -61,55 +56,51 @@ func (l *lagConsumerOptions) run() {
 	consumers := kafka.ConsumerLag(conn, l.groups)
 
 	if !l.verbose {
-		l.printTotalLag(out, consumers)
+		l.printTotalLag(consumers)
 	} else {
-		l.printLagByPartition(out, consumers)
+		l.printLagByPartition(consumers)
 	}
 }
 
-func (l *lagConsumerOptions) printTotalLag(out io.Writer, consumers map[string]*kafka.ConsumerGroupOffset) {
-	fmt.Fprint(out, "CONSUMER\tTOPIC\tTOTAL LAG\n")
+func (l *lagConsumerOptions) printTotalLag(consumers map[string]*kafka.ConsumerGroupOffset) {
+	rows := []table.Row{}
 
 	for name, consumer := range consumers {
 		for topicName, topic := range consumer.Topics {
-
-			fmt.Fprintf(out, "%s\t%s\t%d\n", name, topicName, topic.GetLagTopicLag())
+			rows = append(rows, table.Row{name, topicName, topic.GetLagTopicLag()})
 		}
 	}
+
+	cmdutil.PrintTable(table.Row{"consumer", "topic", "total lag"}, rows)
 }
 
-func (l *lagConsumerOptions) printLagByPartition(out io.Writer, consumers map[string]*kafka.ConsumerGroupOffset) {
-	fmt.Fprint(out, "CONSUMER\n")
+func (l *lagConsumerOptions) printLagByPartition(consumers map[string]*kafka.ConsumerGroupOffset) {
+	rowConfigAutoMerge := table.RowConfig{AutoMerge: true}
+	tab := table.NewWriter()
+	tab.AppendHeader(table.Row{"consumer", "topic", "partition", "consumer offset", "partition offset", "lag"}, rowConfigAutoMerge)
+
 	for _, consumer := range consumers {
-		fmt.Fprintf(out, "%s\n", consumer.Id)
 		if len(consumer.Topics) == 0 {
-			fmt.Fprintf(out, "...\tis empty")
+			fmt.Printf("...\tis empty")
 		} else {
 			for topicName, topic := range consumer.Topics {
-
-				fmt.Fprint(out, "|   TOPIC\tTOTAL LAG\n")
-				fmt.Fprintf(out, "| - %s\t%d\n", topicName, topic.GetLagTopicLag())
-				fmt.Fprint(out, "|   |  PARTITION\tCONSUMER OFFSET\tPARTITION OFFSET\tLAG\n")
-
-				keys := make(int32s, 0, len(topic.Partitions))
-				for id := range topic.Partitions {
-					keys = append(keys, id)
-				}
-				sort.Sort(keys)
-
 				for id, partition := range topic.Partitions {
-					fmt.Fprintf(out, "|   | - %d\t%d\t%d\t%d\n", id, partition.Current, partition.Max, topic.GetLagPartition(id))
-
+					tab.AppendRow(table.Row{consumer.Id, topicName, id, partition.Current, partition.Max, topic.GetLagPartition(id)})
 				}
-
 			}
 		}
 	}
 
+	tab.SetColumnConfigs([]table.ColumnConfig{
+		{Number: 0, AutoMerge: true},
+		{Number: 1, AutoMerge: true},
+		{Number: 2, AutoMerge: true},
+		{Number: 3, Align: text.AlignCenter, AlignFooter: text.AlignCenter, AlignHeader: text.AlignCenter},
+		{Number: 4, Align: text.AlignCenter, AlignFooter: text.AlignCenter, AlignHeader: text.AlignCenter},
+		{Number: 5, Align: text.AlignCenter, AlignFooter: text.AlignCenter, AlignHeader: text.AlignCenter},
+		{Number: 6, Align: text.AlignCenter, AlignFooter: text.AlignCenter, AlignHeader: text.AlignCenter},
+	})
+
+	tab.SetStyle(table.StyleDefault)
+	fmt.Println(tab.Render())
 }
-
-type int32s []int32
-
-func (a int32s) Len() int           { return len(a) }
-func (a int32s) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a int32s) Less(i, j int) bool { return a[i] < a[j] }

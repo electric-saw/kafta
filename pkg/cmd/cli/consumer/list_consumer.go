@@ -1,15 +1,12 @@
 package consumer
 
 import (
-	"fmt"
-	"io"
-	"os"
 	"sort"
 
-	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
@@ -32,13 +29,10 @@ func NewCmdListConsumer(config *configuration.Configuration) *cobra.Command {
 }
 
 func (o *listConsumerOptions) run() {
-	out := util.GetNewTabWriter(os.Stdout)
-
 	conn := kafka.MakeConnection(o.config)
 	defer conn.Close()
 	consumers := kafka.ListConsumerGroupDescriptions(conn)
-
-	fmt.Fprintln(out, "NAME\tTYPE\tSTATE")
+	rows := []table.Row{}
 
 	keys := make([]string, 0, len(consumers))
 	for k := range consumers {
@@ -48,13 +42,8 @@ func (o *listConsumerOptions) run() {
 
 	for _, name := range keys {
 		consumerType := consumers[name]
-		o.printContext(name, consumerType, out)
+		rows = append(rows, table.Row{name, consumerType.ProtocolType, consumerType.State})
 	}
 
-	out.Flush()
-
-}
-
-func (o *listConsumerOptions) printContext(name string, consumerType *sarama.GroupDescription, w io.Writer) {
-	fmt.Fprintf(w, "%s\t%s\t%s\n", name, consumerType.ProtocolType, consumerType.State)
+	util.PrintTable(table.Row{"name", "type", "state"}, rows)
 }

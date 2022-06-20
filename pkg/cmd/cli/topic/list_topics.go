@@ -1,16 +1,13 @@
 package topic
 
 import (
-	"fmt"
-	"io"
-	"os"
 	"sort"
 	"strings"
 
-	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
@@ -34,13 +31,10 @@ func NewCmdListTopic(config *configuration.Configuration) *cobra.Command {
 }
 
 func (o *listTopicOptions) run() {
-	out := util.GetNewTabWriter(os.Stdout)
-
 	conn := kafka.MakeConnection(o.config)
 	defer conn.Close()
 	topics := kafka.ListAllTopics(conn)
-
-	fmt.Fprint(out, "Name\tPartitions\tReplication Factor\n")
+	rows := []table.Row{}
 
 	keys := make([]string, 0, len(topics))
 	for k := range topics {
@@ -53,13 +47,8 @@ func (o *listTopicOptions) run() {
 			continue
 		}
 
-		topic := topics[name]
-		o.printContext(name, topic, out)
+		rows = append(rows, table.Row{name, topics[name].NumPartitions, topics[name].ReplicationFactor})
 	}
 
-	out.Flush()
-}
-
-func (o *listTopicOptions) printContext(name string, topic sarama.TopicDetail, w io.Writer) {
-	fmt.Fprintf(w, "%s\t%d\t%d\n", name, topic.NumPartitions, topic.ReplicationFactor)
+	util.PrintTable(table.Row{"name", "partitions", "replication factor"}, rows)
 }

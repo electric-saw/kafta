@@ -1,15 +1,14 @@
 package broker
 
 import (
-	"fmt"
-	"io"
-	"os"
 	"strconv"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
+	"github.com/jedib0t/go-pretty/v6/table"
+	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/spf13/cobra"
 )
 
@@ -59,21 +58,17 @@ func (o *clusterConfig) defaultValue(cmd *cobra.Command) error {
 }
 
 func (o *clusterConfig) run(cmd *cobra.Command) {
-	out := util.GetNewTabWriter(os.Stdout)
-
 	conn := kafka.MakeConnection(o.config)
 	defer conn.Close()
 
 	configs := kafka.DescribeBrokerConfig(conn, o.brokerId)
-	fmt.Fprintf(out, "NAME\tVALUE\tDEFAULT")
+
+	header := table.Row{"name", "value", "default"}
+	rows := []table.Row{}
 
 	for _, config := range configs {
-		o.printContext(config.Name, cmdutil.Wrap(config.Value, 100), config.Default, out)
+		rows = append(rows, table.Row{config.Name, text.WrapText(config.Value, 100), config.Default})
 	}
 
-	out.Flush()
-}
-
-func (o *clusterConfig) printContext(name string, value string, isDefault bool, w io.Writer) {
-	fmt.Fprintf(w, "%s\t%s\t%v\n", name, value, isDefault)
+	util.PrintTable(header, rows)
 }
