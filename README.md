@@ -15,6 +15,7 @@ Kafta is a modern non-JVM command line for managing Kafka Clusters written in go
   - [Broker](#broker)
   - [Producer](#producer)
   - [Consumer](#consumer)
+  - [Subjects List](#subjects-list)
 - [Next features](#next-features)
 
 
