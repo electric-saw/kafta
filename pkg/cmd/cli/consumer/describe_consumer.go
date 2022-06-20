@@ -2,16 +2,13 @@ package consumer
 
 import (
 	"fmt"
-	"io"
-	"os"
 	"sort"
-	"strings"
 
 	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
-	"github.com/electric-saw/kafta/pkg/cmd/util"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
@@ -51,28 +48,25 @@ func (o *describeConsumerOptions) complete(cmd *cobra.Command) error {
 }
 
 func (o *describeConsumerOptions) run() {
-	out := util.GetNewTabWriter(os.Stdout)
-	defer out.Flush()
-
 	conn := kafka.MakeConnection(o.config)
 	defer conn.Close()
 	consumer := kafka.DescribeConsumerGroups(conn, o.groups)[0]
 
-	o.printBasicInfo(consumer, out)
-	o.printMembers(consumer.Members, out)
+	o.printBasicInfo(consumer)
+	o.printMembers(consumer.Members)
 }
 
-func (o *describeConsumerOptions) printBasicInfo(group *sarama.GroupDescription, out io.Writer) {
-	err := o.printTopicHeaders(out)
-	cmdutil.CheckErr(err)
-	err = o.printTopic(group, out)
-	cmdutil.CheckErr(err)
+func (o *describeConsumerOptions) printBasicInfo(group *sarama.GroupDescription) {
+	header := table.Row{"id", "protocol", "protocol type", "state", "member count"}
+	rows := []table.Row{}
+	rows = append(rows, table.Row{group.GroupId, group.Protocol, group.ProtocolType, group.State, len(group.Members)})
+	cmdutil.PrintTable(header, rows)
 }
 
-func (o *describeConsumerOptions) printMembers(members map[string]*sarama.GroupMemberDescription, out io.Writer) {
-
-	err := o.printContextHeadersPartition(out)
-	cmdutil.CheckErr(err)
+func (o *describeConsumerOptions) printMembers(members map[string]*sarama.GroupMemberDescription) {
+	tab := table.NewWriter()
+	tab.SetStyle(table.StyleDefault)
+	tab.AppendHeader(table.Row{"member id", "member host", "topic", "partitions"})
 
 	var keys []string
 
@@ -83,36 +77,20 @@ func (o *describeConsumerOptions) printMembers(members map[string]*sarama.GroupM
 	sort.Strings(keys)
 
 	for _, id := range keys {
-		err = o.printContextPartition(members[id], out)
+		err := o.printContextPartition(members[id], tab)
 		cmdutil.CheckErr(err)
 	}
 
+	tab.SetStyle(table.StyleDefault)
+	fmt.Println(tab.Render())
 }
 
-func (o *describeConsumerOptions) printTopicHeaders(out io.Writer) error {
-	columnNames := []string{"ID", "PROTOCOL", "PROTOCOL TYPE", "STATE", "MEMBER COUNT"}
-	_, err := fmt.Fprintf(out, "%s\n", strings.Join(columnNames, "\t"))
-	return err
-}
-
-func (o *describeConsumerOptions) printTopic(group *sarama.GroupDescription, w io.Writer) error {
-	_, err := fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%d\n", group.GroupId, group.Protocol, group.ProtocolType, group.State, len(group.Members))
-	return err
-}
-
-func (o *describeConsumerOptions) printContextHeadersPartition(out io.Writer) error {
-	columnNames := []string{"MEMBER ID", "MEMBER HOST", "TOPIC", "PARTITIONS"}
-	_, err := fmt.Fprintf(out, "\n\n%s\n", strings.Join(columnNames, "\t"))
-	return err
-}
-
-func (o *describeConsumerOptions) printContextPartition(member *sarama.GroupMemberDescription, w io.Writer) error {
+func (o *describeConsumerOptions) printContextPartition(member *sarama.GroupMemberDescription, tab table.Writer) error {
 	memberAssignment, err := member.GetMemberAssignment()
 	cmdutil.CheckErr(err)
 	memberMetadata, _ := member.GetMemberMetadata()
 	for _, topic := range memberMetadata.Topics {
-
-		_, err = fmt.Fprintf(w, "%s\t%v\t%s\t%v\n", member.ClientId, member.ClientHost, topic, memberAssignment.Topics[topic])
+		tab.AppendRow(table.Row{member.ClientId, member.ClientHost, topic, memberAssignment.Topics[topic]})
 	}
 	return err
 }

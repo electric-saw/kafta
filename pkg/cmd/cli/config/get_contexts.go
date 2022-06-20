@@ -2,12 +2,12 @@ package config
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"sort"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
@@ -68,20 +68,13 @@ func (o *GetContextsOptions) RunGetContexts() {
 		}
 	}
 
-	fmt.Fprintln(out, "CURRENT\tNAME\tCLUSTER\tSCHEMA REGISTRY\tKSQL")
+	header := table.Row{"name", "cluster", "schema registry", "ksql", "current"}
+	rows := []table.Row{}
 
 	sort.Strings(toPrint)
 	for _, name := range toPrint {
-		printContext(name, config.Contexts[name], out, config.CurrentContext == name)
-
+		rows = append(rows, table.Row{name, config.Contexts[name].BootstrapServers[0], config.Contexts[name].SchemaRegistry, config.Contexts[name].Ksql, config.CurrentContext == name})
 	}
 
-}
-
-func printContext(name string, context *configuration.Context, w io.Writer, current bool) {
-	prefix := " "
-	if current {
-		prefix = "*"
-	}
-	fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\n", prefix, name, context.BootstrapServers[0], context.SchemaRegistry, context.Ksql)
+	util.PrintTable(header, rows)
 }

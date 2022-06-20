@@ -1,13 +1,10 @@
 package cluster
 
 import (
-	"fmt"
-	"io"
-	"os"
-
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
@@ -28,25 +25,16 @@ func NewCmdDescribeCluster(config *configuration.Configuration) *cobra.Command {
 }
 
 func (o *describeClusters) run() {
-	out := util.GetNewTabWriter(os.Stdout)
-
 	conn := kafka.MakeConnection(o.config)
 	defer conn.Close()
-
 	brokers := kafka.GetBrokers(conn)
-	fmt.Fprintln(out, "ID\tADDR\tCONTROLLER")
+
+	header := table.Row{"id", "address", "rack", "controller"}
+	rows := []table.Row{}
 
 	for _, broker := range brokers {
-		o.printContext(broker.ID(), broker.Address, broker.IsController, out)
+		rows = append(rows, table.Row{broker.ID(), broker.Address, broker.Broker.Rack(), broker.IsController})
 	}
 
-	out.Flush()
-}
-
-func (o *describeClusters) printContext(id int32, addr string, isController bool, w io.Writer) {
-	controllerFlag := ""
-	if isController {
-		controllerFlag = "*"
-	}
-	fmt.Fprintf(w, "%d\t%s\t%s\n", id, addr, controllerFlag)
+	util.PrintTable(header, rows)
 }
