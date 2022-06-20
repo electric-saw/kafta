@@ -281,7 +281,7 @@ Produce data for topic, run:
 kafta console producer topic.test
 > message test
 ```
-You can produce a message with key, using the ":" between the key and message: 
+You can produce a message with key, using the ":" between the key and message:
 ```
 kafta console producer topic.test
 > key1:message test
@@ -289,7 +289,7 @@ kafta console producer topic.test
 ## Consumer
 Consume data from topic, you can optionally enter the consumer group and the flag `--verbose` for debug the consumer:
 ```
-kafta console consumer topic.test  [group=group.test] [--verbose] 
+kafta console consumer topic.test  [group=group.test] [--verbose]
 
 2022/05/17 19:48:47 Initializing Consumer with group [group.test]...
 2022/05/17 19:48:50 Consumer running, waiting for events...

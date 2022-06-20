@@ -2,8 +2,8 @@ package console
 
 import (
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
-	producer "github.com/electric-saw/kafta/pkg/cmd/cli/producer"
 	consumer "github.com/electric-saw/kafta/pkg/cmd/cli/consumer"
+	producer "github.com/electric-saw/kafta/pkg/cmd/cli/producer"
 	"github.com/spf13/cobra"
 )
 

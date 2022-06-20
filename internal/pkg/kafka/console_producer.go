@@ -19,13 +19,13 @@ func ProduceMessage(conn *KafkaConnection, topic string) error {
 	producer, err := sarama.NewAsyncProducer(conn.Config.GetContext().BootstrapServers, conn.Client.Config())
 	util.CheckErr(err)
 	defer producer.AsyncClose()
-	
+
 	sigterm := make(chan os.Signal, 1)
 	signal.Notify(sigterm, syscall.SIGINT, syscall.SIGTERM)
 	defer signal.Stop(sigterm)
-	
+
 	for {
-	
+
 		consoleReader := bufio.NewReader(os.Stdin)
 		fmt.Print(">")
 		input, err := consoleReader.ReadString('\n')
@@ -37,24 +37,23 @@ func ProduceMessage(conn *KafkaConnection, topic string) error {
 		}
 
 		inputList := strings.Split(input, ":")
-		
-		if len(inputList) > 0{
+
+		if len(inputList) > 0 {
 			key = &inputList[0]
-			messageInput = fmt.Sprint(strings.Join(inputList[1:],":"))
-		}else{
+			messageInput = fmt.Sprint(strings.Join(inputList[1:], ":"))
+		} else {
 			key = nil
 			messageInput = input
 		}
-		
+
 		message := &sarama.ProducerMessage{Topic: topic, Key: sarama.StringEncoder(*key), Value: sarama.StringEncoder(messageInput)}
 		select {
 		case producer.Input() <- message:
-		case <- sigterm:
-			    log.Println("terminating: via signal")
-				producer.AsyncClose()
-				os.Exit(0)
+		case <-sigterm:
+			log.Println("terminating: via signal")
+			producer.AsyncClose()
+			break
 		}
 	}
-	os.Exit(0)
-    return nil
+	return nil
 }
