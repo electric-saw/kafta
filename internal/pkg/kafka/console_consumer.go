@@ -51,14 +51,10 @@ func ConsumeMessage(conn *KafkaConnection, topic string, group string, verbose b
 	<-consumer.ready
 	log.Println("Consumer running, waiting for events...")
 
-	sigusr1 := make(chan os.Signal, 1)
-	signal.Notify(sigusr1, syscall.SIGUSR1)
-
 	sigterm := make(chan os.Signal, 1)
 	signal.Notify(sigterm, syscall.SIGINT, syscall.SIGTERM)
 
 	defer signal.Stop(sigterm)
-	defer signal.Stop(sigusr1)
 
 	for keepRunning {
 		select {

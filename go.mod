@@ -5,7 +5,6 @@ go 1.18
 require (
 	github.com/Shopify/sarama v1.33.0
 	github.com/Songmu/prompter v0.5.0
-	github.com/dustin/go-humanize v1.0.0
 	github.com/jedib0t/go-pretty/v6 v6.3.1
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de
 	github.com/manifoldco/promptui v0.9.0
