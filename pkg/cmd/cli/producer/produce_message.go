@@ -7,12 +7,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-
 type producerOptions struct {
 	config *configuration.Configuration
-	topic   string
+	topic  string
 }
-
 
 func NewCmdProduceMessage(config *configuration.Configuration) *cobra.Command {
 	options := &producerOptions{config: config}
@@ -27,10 +25,9 @@ func NewCmdProduceMessage(config *configuration.Configuration) *cobra.Command {
 			cmdutil.CheckErr(options.run())
 		},
 	}
-	
+
 	return cmd
 }
-
 
 func (o *producerOptions) complete(cmd *cobra.Command) error {
 	args := cmd.Flags().Args()

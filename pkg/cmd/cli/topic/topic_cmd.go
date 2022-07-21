@@ -16,7 +16,8 @@ func NewCmdTopic(config *configuration.Configuration) *cobra.Command {
 	cmd.AddCommand(NewCmdDeleteTopic(config))
 	cmd.AddCommand(NewCmdListTopic(config))
 	cmd.AddCommand(NewCmdDescribeTopic(config))
-	cmd.AddCommand(NewCmdUpdateTopic(config))
+	cmd.AddCommand(NewCmdConfigUpdateTopic(config))
+	cmd.AddCommand(NewCmdConfigResetTopic(config))
 
 	return cmd
 }

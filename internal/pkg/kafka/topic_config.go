@@ -27,14 +27,8 @@ func GetTopicProp(conn *KafkaConnection, topic, key string) (configs []sarama.Co
 
 }
 
-func SetProp(conn *KafkaConnection, topic, key, value string) error {
-	configs, err := conn.Admin.DescribeConfig(sarama.ConfigResource{
-		Type: sarama.TopicResource,
-		Name: topic,
-	})
-	if err != nil {
-		return err
-	}
+func SetProp(conn *KafkaConnection, topic string, props map[string]string) error {
+	configs := DescribeTopicConfig(conn, topic)
 
 	newConfigs := map[string]*string{}
 
@@ -45,9 +39,32 @@ func SetProp(conn *KafkaConnection, topic, key, value string) error {
 		}
 	}
 
-	newConfigs[key] = &value
+	for key, val := range props {
+		newConfigs[key] = &val
+	}
 
-	err = conn.Admin.AlterConfig(sarama.TopicResource, topic, newConfigs, false)
+	err := conn.Admin.AlterConfig(sarama.TopicResource, topic, newConfigs, false)
+
+	return err
+}
+
+func ResetProp(conn *KafkaConnection, topic string, props []string) error {
+	configs := DescribeTopicConfig(conn, topic)
+
+	newConfigs := map[string]*string{}
+
+	for _, config := range configs {
+		if !config.Default && config.Source != sarama.SourceStaticBroker {
+			val := config.Value
+			newConfigs[config.Name] = &val
+		}
+	}
+
+	for _, key := range props {
+		delete(newConfigs, key)
+	}
+
+	err := conn.Admin.AlterConfig(sarama.TopicResource, topic, newConfigs, false)
 
 	return err
 }

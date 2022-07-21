@@ -2,10 +2,10 @@ package schema
 
 import (
 	"log"
-	"os"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/schema"
+	"github.com/electric-saw/kafta/pkg/cmd/util"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
@@ -32,16 +32,12 @@ func (o *subjectList) run() {
 		log.Fatal(err)
 	}
 
-	t := table.NewWriter()
-	t.SetStyle(table.StyleDefault)
-
-	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table.Row{"Name"})
+	header := table.Row{"name"}
+	rows := []table.Row{}
 
 	for _, name := range subjects {
-		t.AppendRow(table.Row{name})
+		rows = append(rows, table.Row{name})
 	}
 
-	t.AppendSeparator()
-	t.Render()
+	util.PrintTable(header, rows)
 }

@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"os"
-
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/schema"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
@@ -45,16 +43,9 @@ func (o *subjectVersion) run() error {
 		return err
 	}
 
-	t := table.NewWriter()
-	t.SetStyle(table.StyleDefault)
+	rows := []table.Row{}
+	rows = append(rows, table.Row{versions})
 
-	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table.Row{"Versions"})
-
-	t.AppendRow(table.Row{versions})
-
-	t.AppendSeparator()
-	t.Render()
-
+	cmdutil.PrintTable(table.Row{"versions"}, rows)
 	return nil
 }

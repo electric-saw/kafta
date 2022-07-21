@@ -16,12 +16,12 @@ type Consumer struct {
 	ready chan bool
 }
 
-func ConsumeMessage(conn *KafkaConnection, topic string, group string, verbose bool) error{
+func ConsumeMessage(conn *KafkaConnection, topic string, group string, verbose bool) error {
 	conn.Client.Config().ClientID = group
-		
+
 	keepRunning := true
 	log.Printf("Initializing Consumer with group [%s]...", group)
-	if (verbose) {
+	if verbose {
 		sarama.Logger = log.New(os.Stdout, "[kafta] ", log.LstdFlags)
 	}
 	consumer := Consumer{
@@ -30,9 +30,9 @@ func ConsumeMessage(conn *KafkaConnection, topic string, group string, verbose b
 
 	ctx, cancel := context.WithCancel(context.Background())
 	client, err := sarama.NewConsumerGroup(conn.Context.BootstrapServers, group, conn.Client.Config())
-	
+
 	util.CheckErr(err)
-	
+
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
@@ -68,7 +68,7 @@ func ConsumeMessage(conn *KafkaConnection, topic string, group string, verbose b
 		case <-sigterm:
 			log.Println("terminating: via signal")
 			keepRunning = false
-			os.Exit(0)
+			break
 		}
 	}
 	cancel()
@@ -76,7 +76,7 @@ func ConsumeMessage(conn *KafkaConnection, topic string, group string, verbose b
 	if err = client.Close(); err != nil {
 		log.Panicf("Error closing client: %v", err)
 	}
-	return nil	
+	return nil
 }
 
 func (consumer *Consumer) Setup(sarama.ConsumerGroupSession) error {
@@ -90,7 +90,7 @@ func (consumer *Consumer) Cleanup(sarama.ConsumerGroupSession) error {
 
 func (consumer *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for message := range claim.Messages() {
-		if(len(message.Value) == 0){
+		if len(message.Value) == 0 {
 			message.Value = message.Key
 			message.Key = nil
 		}
