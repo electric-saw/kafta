@@ -82,7 +82,6 @@ func (d *describeBrokerOptions) printDetails(broker *kafka.BrokerMetadata) {
 func (d *describeBrokerOptions) printLogSize(broker *kafka.BrokerMetadata) {
 	out := util.GetNewTabWriter(os.Stdout)
 	defer out.Flush()
-	fmt.Printf("sadadsa\n")
 	for _, log := range broker.Logs {
 		fmt.Fprintln(out, "TOPIC\tPERMANENT\tTEMPORARY")
 
