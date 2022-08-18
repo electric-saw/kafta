@@ -21,7 +21,7 @@ Kafta is a modern non-JVM command line for managing Kafka Clusters written in go
 
 # Overview
 
-Kafkta providing a simple interface to manage topics, brokers, consumer-groups and many things like that. Interfaces similar to kubectl & go tools.
+Kafta providing a simple interface to manage topics, brokers, consumer-groups and many things like that. Interfaces similar to kubectl & go tools.
 It is built using [sarama](https://github.com/Shopify/sarama).
 
 Kafta provides:
