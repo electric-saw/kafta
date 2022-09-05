@@ -3,7 +3,7 @@ package schema
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 )
@@ -14,7 +14,7 @@ func NewSubjectList(config *configuration.Configuration) ([]string, error) {
 	resp := BuildGetRequestSchemaRegistry(config, "subjects")
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func NewSubjecVersion(config *configuration.Configuration, subsubjectName string
 	resp := BuildGetRequestSchemaRegistry(config, params)
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
 	}

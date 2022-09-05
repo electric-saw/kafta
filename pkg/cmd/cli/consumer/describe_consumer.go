@@ -88,7 +88,15 @@ func (o *describeConsumerOptions) printMembers(members map[string]*sarama.GroupM
 func (o *describeConsumerOptions) printContextPartition(member *sarama.GroupMemberDescription, tab table.Writer) error {
 	memberAssignment, err := member.GetMemberAssignment()
 	cmdutil.CheckErr(err)
-	memberMetadata, _ := member.GetMemberMetadata()
+	memberMetadata, err := member.GetMemberMetadata()
+	if err != nil {
+		return err
+	}
+
+	if memberMetadata == nil {
+		return nil
+	}
+
 	for _, topic := range memberMetadata.Topics {
 		tab.AppendRow(table.Row{member.ClientId, member.ClientHost, topic, memberAssignment.Topics[topic]})
 	}

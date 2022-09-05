@@ -2,7 +2,6 @@ package configuration
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -66,7 +65,7 @@ func LoadKaftaconfigOrDefault(configPath string) (*KaftaConfig, bool) {
 		return config, true
 	} else {
 
-		rawYaml, err := ioutil.ReadFile(configPath)
+		rawYaml, err := os.ReadFile(configPath)
 		if err != nil {
 			return config, true
 		}
