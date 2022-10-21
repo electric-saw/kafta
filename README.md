@@ -1,6 +1,6 @@
 ![kafta logo](img/kafta.png)
 
-Kafta is a modern non-JVM command line for managing Kafka Clusters written in golang.Usability was inspired by kubectl, the interface is simple and supports managing several clusters at the same time in a simple way.
+Kafta is a modern non-JVM command line for managing Kafka Clusters written in golang. Usability was inspired by kubectl, the interface is simple and supports managing several clusters at the same time in a simple way.
 
 # Table of Contents
 - [Table of Contents](#table-of-contents)
@@ -21,7 +21,7 @@ Kafta is a modern non-JVM command line for managing Kafka Clusters written in go
 
 # Overview
 
-Kafta providing a simple interface to manage topics, brokers, consumer-groups and many things like that. Interfaces similar to kubectl & go tools.
+Kafta provides a simple interface to manage topics, brokers, consumer-groups and many things like that. Interfaces are similar to kubectl & go tools.
 It is built using [sarama](https://github.com/Shopify/sarama).
 
 Kafta provides:
@@ -40,7 +40,7 @@ the reason for this is not having to pass which cluster is in each command, as i
 
 Kafta was created by developers for developers. We feel the pain of maintaining a kafka cluster using the bash's provided by apache-kafka,
 it's confusing and the experience is miserable. To facilitate the adoption of the kafka, the kafta began to be born. The focus of this
-project is to be simple to use, it is bad to need to install java, pass the kafka cluster address in every command, mess with xml's.
+project is to be simple to use, it is bad to need to install java, pass the kafka cluster address in every command & mess with xml's.
 Kafta is a golang project that is easy to install, easy to configure and the main thing is simple to use.
 
 To see all options exists relate to same command, run:
