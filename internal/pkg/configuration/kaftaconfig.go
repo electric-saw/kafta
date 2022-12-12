@@ -35,8 +35,13 @@ type Context struct {
 	BootstrapServers []string `yaml:"bootstrap-servers"`
 	KafkaVersion     string   `yaml:"kafka-version"`
 	UseSASL          bool
-	TLS              bool
-	SASL             struct {
+	UseTLS           bool
+	TLS              struct {
+		ClientCertFile string
+		ClientKeyFile  string
+		CaCertFile     string
+	}
+	SASL struct {
 		Algorithm string
 		Username  string
 		Password  string

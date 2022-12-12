@@ -4,8 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"os"
 	"strings"
 	"time"
+
+	b64 "encoding/base64"
 
 	cliflag "github.com/electric-saw/kafta/internal/pkg/flag"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
@@ -32,7 +35,10 @@ type createContextOptions struct {
 	password             cliflag.StringFlag
 	useSASL              cliflag.StringFlag
 	algorithm            cliflag.StringFlag
-	useTLS               bool
+	useTLS               cliflag.StringFlag
+	clientCertFile       cliflag.StringFlag
+	clientKeyFile        cliflag.StringFlag
+	caCertFile           cliflag.StringFlag
 	parsedVersion        string
 	quiet                bool
 }
@@ -80,7 +86,10 @@ func NewCmdConfigSetContext(config *configuration.Configuration) *cobra.Command 
 	cmd.Flags().VarP(&options.algorithm, "algorithm", "a", "algorithm for SASL")
 	cmd.Flags().VarP(&options.user, "username", "u", "Username")
 	cmd.Flags().VarP(&options.password, "password", "p", "Password")
-	cmd.Flags().BoolVar(&options.useTLS, "tls", true, "Use TLS")
+	cmd.Flags().Var(&options.useTLS, "tls", "Use TLS")
+	cmd.Flags().VarP(&options.clientCertFile, "clientCertFile", "c", "ClientCertFile")
+	cmd.Flags().VarP(&options.clientKeyFile, "clientKeyFile", "k", "ClientKeyFile")
+	cmd.Flags().VarP(&options.caCertFile, "caCertFile", "f", "CaCertFile")
 
 	return cmd
 }
@@ -105,7 +114,11 @@ func (o *createContextOptions) run() (string, bool, error) {
 	}
 	cmdutil.CheckErr(o.promptNeeded(startingInstance))
 
-	context := o.modifyContext(*startingInstance)
+	context, err := o.modifyContext(*startingInstance)
+	if err != nil {
+		cmdutil.CheckErr(err)
+		return "", false, fmt.Errorf("could not extract TLS configuration")
+	}
 
 	fmt.Printf("\n\n%v\n\n", context)
 
@@ -120,7 +133,8 @@ func (o *createContextOptions) run() (string, bool, error) {
 	return name, exists, nil
 }
 
-func (o *createContextOptions) modifyContext(context configuration.Context) *configuration.Context {
+//gocyclo:ignore
+func (o *createContextOptions) modifyContext(context configuration.Context) (*configuration.Context, error) {
 	modifiedContext := context
 
 	if o.ksql.Provided() {
@@ -165,9 +179,45 @@ func (o *createContextOptions) modifyContext(context configuration.Context) *con
 		modifiedContext.SASL.Password = o.password.Value()
 	}
 
-	modifiedContext.TLS = o.useTLS
+	if o.useTLS.Provided() {
+		modifiedContext.UseTLS = true
+	}
 
-	return &modifiedContext
+	if o.clientCertFile.Provided() {
+		contentAsB64, err := extractContentToBase64(o.clientCertFile.Value())
+		if err != nil {
+			return nil, err
+		}
+		modifiedContext.TLS.ClientCertFile = contentAsB64
+	}
+
+	if o.clientKeyFile.Provided() {
+		contentAsB64, err := extractContentToBase64(o.clientKeyFile.Value())
+		if err != nil {
+			return nil, err
+		}
+		modifiedContext.TLS.ClientKeyFile = contentAsB64
+	}
+
+	if o.caCertFile.Provided() {
+		contentAsB64, err := extractContentToBase64(o.caCertFile.Value())
+		if err != nil {
+			return nil, err
+		}
+		modifiedContext.TLS.CaCertFile = contentAsB64
+	}
+
+	return &modifiedContext, nil
+}
+
+func extractContentToBase64(filepath string) (string, error) {
+	content, err := os.ReadFile(filepath)
+	if err != nil {
+		return "", err
+	}
+
+	enc := b64.URLEncoding.EncodeToString(content)
+	return enc, nil
 }
 
 func (o *createContextOptions) complete(cmd *cobra.Command) error {
@@ -209,6 +259,16 @@ func (o *createContextOptions) validate() error {
 
 		if !o.password.Provided() {
 			return errors.New("user flag is required if SASL is provided")
+		}
+	}
+
+	if o.useTLS.Provided() && o.quiet {
+		if !o.clientCertFile.Provided() {
+			return errors.New("clientCertFile is required if TLS is provided")
+		}
+
+		if !o.clientKeyFile.Provided() {
+			return errors.New("clientKeyFile is required if TLS is provided")
 		}
 	}
 
@@ -293,6 +353,37 @@ func (o *createContextOptions) promptNeeded(context *configuration.Context) erro
 				cmdutil.CheckErr(err)
 			}
 
+		}
+	}
+
+	if !o.useTLS.Provided() {
+		tls, err := ui.GetConfirmation("Use TLS", false)
+		cmdutil.CheckErr(err)
+
+		if tls {
+			err := o.useTLS.Set("true")
+			cmdutil.CheckErr(err)
+
+			if !o.clientCertFile.Provided() && len(context.TLS.ClientCertFile) == 0 {
+				clientCertFile, err := ui.GetText("TLS ClientCertFile", true)
+				cmdutil.CheckErr(err)
+				err = o.clientCertFile.Set(clientCertFile)
+				cmdutil.CheckErr(err)
+			}
+
+			if !o.clientKeyFile.Provided() && len(context.TLS.ClientKeyFile) == 0 {
+				clientKeyFile, err := ui.GetText("TLS ClientKeyFile", true)
+				cmdutil.CheckErr(err)
+				err = o.clientKeyFile.Set(clientKeyFile)
+				cmdutil.CheckErr(err)
+			}
+
+			if !o.caCertFile.Provided() && len(context.TLS.CaCertFile) == 0 {
+				caCertFile, err := ui.GetText("CaCertFile", true)
+				cmdutil.CheckErr(err)
+				err = o.caCertFile.Set(caCertFile)
+				cmdutil.CheckErr(err)
+			}
 		}
 	}
 

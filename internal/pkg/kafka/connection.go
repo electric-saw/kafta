@@ -2,7 +2,10 @@ package kafka
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"fmt"
+
+	b64 "encoding/base64"
 
 	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
@@ -35,6 +38,28 @@ func MakeConnectionContext(config *configuration.Configuration, context *configu
 	return conn, err
 }
 
+func NewTLSConfig(clientCertBlock, clientKeyBlock, caCertBlock []byte) (*tls.Config, error) {
+	tlsConfig := tls.Config{
+		InsecureSkipVerify: true, // lgtm [go/disabled-certificate-check]
+	}
+
+	// Load client cert
+	cert, err := tls.X509KeyPair(clientCertBlock, clientKeyBlock)
+	if err != nil {
+		return &tlsConfig, err
+	}
+	tlsConfig.Certificates = []tls.Certificate{cert}
+
+	// Load CA cert
+	if caCertBlock != nil {
+		caCertPool := x509.NewCertPool()
+		caCertPool.AppendCertsFromPEM(caCertBlock)
+		tlsConfig.RootCAs = caCertPool
+	}
+
+	return &tlsConfig, err
+}
+
 func (k *KafkaConnection) Connect() error {
 	clientConfig := sarama.NewConfig()
 
@@ -42,7 +67,10 @@ func (k *KafkaConnection) Connect() error {
 	clientConfig.Net.ReadTimeout = k.Config.ConnectionConfig().ReadTimeout
 	clientConfig.Net.WriteTimeout = k.Config.ConnectionConfig().WriteTimeout
 
-	k.initAuth(clientConfig)
+	err := k.initAuth(clientConfig)
+	if err != nil {
+		return err
+	}
 
 	clientConfig.Version = k.Context.GetVersion()
 	client, err := sarama.NewClient(
@@ -70,7 +98,7 @@ func (k *KafkaConnection) Close() {
 	util.CheckErr(k.Client.Close())
 }
 
-func (k *KafkaConnection) initAuth(clientConfig *sarama.Config) {
+func (k *KafkaConnection) initAuth(clientConfig *sarama.Config) error {
 	if k.Context.UseSASL {
 		clientConfig.Net.SASL.Enable = true
 		clientConfig.Net.SASL.User = k.Context.SASL.Username
@@ -86,17 +114,27 @@ func (k *KafkaConnection) initAuth(clientConfig *sarama.Config) {
 			clientConfig.Net.SASL.Mechanism = sarama.SASLTypePlaintext
 		}
 		clientConfig.Net.SASL.Handshake = true
-
-		if k.Context.TLS {
-			clientConfig.Net.TLS.Enable = true
-			tlsConfig := &tls.Config{
-				InsecureSkipVerify: true, // lgtm [go/disabled-certificate-check]
-				ClientAuth:         0,
-			}
-
-			clientConfig.Net.TLS.Config = tlsConfig
-		}
 	}
+
+	if k.Context.UseTLS {
+		clientCert, _ := b64.URLEncoding.DecodeString(k.Context.TLS.ClientCertFile)
+		clientKey, _ := b64.URLEncoding.DecodeString(k.Context.TLS.ClientKeyFile)
+
+		var ca []byte
+		if len(k.Context.TLS.CaCertFile) > 0 {
+			ca, _ = b64.URLEncoding.DecodeString(k.Context.TLS.CaCertFile)
+		}
+
+		tlsConfig, err := NewTLSConfig(clientCert, clientKey, ca)
+		if err != nil {
+			return err
+		}
+
+		clientConfig.Net.TLS.Enable = true
+		clientConfig.Net.TLS.Config = tlsConfig
+	}
+
+	return nil
 }
 
 func (k *KafkaConnection) connectSr() error {
