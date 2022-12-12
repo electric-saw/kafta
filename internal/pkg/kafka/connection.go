@@ -3,19 +3,22 @@ package kafka
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"fmt"
 
 	b64 "encoding/base64"
 
 	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
+	"github.com/riferrei/srclient"
 )
 
 type KafkaConnection struct {
-	Client  sarama.Client
-	Admin   sarama.ClusterAdmin
-	Config  *configuration.Configuration
-	Context *configuration.Context
+	Client               sarama.Client
+	Admin                sarama.ClusterAdmin
+	Config               *configuration.Configuration
+	Context              *configuration.Context
+	SchemaRegistryClient *srclient.SchemaRegistryClient
 }
 
 func MakeConnection(config *configuration.Configuration) *KafkaConnection {
@@ -32,7 +35,6 @@ func MakeConnectionContext(config *configuration.Configuration, context *configu
 	}
 
 	err := conn.Connect()
-
 	return conn, err
 }
 
@@ -89,7 +91,7 @@ func (k *KafkaConnection) Connect() error {
 	k.Client = client
 	k.Admin = admin
 
-	return nil
+	return k.connectSr()
 }
 
 func (k *KafkaConnection) Close() {
@@ -130,6 +132,20 @@ func (k *KafkaConnection) initAuth(clientConfig *sarama.Config) error {
 
 		clientConfig.Net.TLS.Enable = true
 		clientConfig.Net.TLS.Config = tlsConfig
+	}
+
+	return nil
+}
+
+func (k *KafkaConnection) connectSr() error {
+	if k.SchemaRegistryClient == nil && k.Context.SchemaRegistry != "" {
+		srClient := srclient.CreateSchemaRegistryClient(k.Context.SchemaRegistry)
+		srClient.SetCredentials(k.Context.SchemaRegistryAuth.Key, k.Context.SchemaRegistryAuth.Secret)
+		_, err := srClient.GetGlobalCompatibilityLevel()
+		if err != nil {
+			return fmt.Errorf("error connecting to schema registry: %w", err)
+		}
+		k.SchemaRegistryClient = srClient
 	}
 
 	return nil

@@ -3,8 +3,8 @@ package config
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net"
+	"os"
 	"strings"
 	"time"
 
@@ -133,6 +133,7 @@ func (o *createContextOptions) run() (string, bool, error) {
 	return name, exists, nil
 }
 
+//gocyclo:ignore
 func (o *createContextOptions) modifyContext(context configuration.Context) (*configuration.Context, error) {
 	modifiedContext := context
 
@@ -210,7 +211,7 @@ func (o *createContextOptions) modifyContext(context configuration.Context) (*co
 }
 
 func extractContentToBase64(filepath string) (string, error) {
-	content, err := ioutil.ReadFile(filepath)
+	content, err := os.ReadFile(filepath)
 	if err != nil {
 		return "", err
 	}
