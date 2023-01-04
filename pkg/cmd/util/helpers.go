@@ -59,3 +59,15 @@ func HelpError(cmd *cobra.Command, args ...interface{}) error {
 	msg := fmt.Sprint(args...)
 	return fmt.Errorf("%s", msg)
 }
+
+// mapToMapPointer split string=string to a map[string]string
+func StringToMapPointer(s string) map[string]*string {
+	m := make(map[string]*string)
+	for _, v := range strings.Split(s, ",") {
+		kv := strings.Split(v, "=")
+		if len(kv) == 2 {
+			m[kv[0]] = &kv[1]
+		}
+	}
+	return m
+}

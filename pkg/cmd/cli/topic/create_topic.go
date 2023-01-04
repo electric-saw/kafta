@@ -1,8 +1,6 @@
 package topic
 
 import (
-	"strings"
-
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
@@ -50,17 +48,5 @@ func (o *createTopicOptions) complete(cmd *cobra.Command) error {
 func (o *createTopicOptions) run() error {
 	conn := kafka.MakeConnection(o.config)
 	defer conn.Close()
-	return kafka.CreateTopic(conn, o.name, o.partitions, o.rf, stringToMapPointer(o.topicConfigs))
-}
-
-// mapToMapPointer split string=string to a map[string]string
-func stringToMapPointer(s string) map[string]*string {
-	m := make(map[string]*string)
-	for _, v := range strings.Split(s, ",") {
-		kv := strings.Split(v, "=")
-		if len(kv) == 2 {
-			m[kv[0]] = &kv[1]
-		}
-	}
-	return m
+	return kafka.CreateTopic(conn, o.name, o.partitions, o.rf, cmdutil.StringToMapPointer(o.topicConfigs))
 }
