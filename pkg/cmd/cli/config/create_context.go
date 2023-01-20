@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -164,7 +165,12 @@ func (o *createContextOptions) modifyContext(context configuration.Context) (*co
 	}
 
 	if o.useSASL.Provided() {
-		modifiedContext.UseSASL = true
+		outputUseSASL, err := strconv.ParseBool(o.useSASL.Value())
+		if err != nil {
+			return nil, err
+		}
+
+		modifiedContext.UseSASL = outputUseSASL
 	}
 
 	if o.algorithm.Provided() {
@@ -180,7 +186,12 @@ func (o *createContextOptions) modifyContext(context configuration.Context) (*co
 	}
 
 	if o.useTLS.Provided() {
-		modifiedContext.UseTLS = true
+		outputUseTLS, err := strconv.ParseBool(o.useTLS.Value())
+		if err != nil {
+			return nil, err
+		}
+
+		modifiedContext.UseTLS = outputUseTLS
 	}
 
 	if o.clientCertFile.Provided() {
