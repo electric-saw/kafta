@@ -3,9 +3,8 @@ package kafka
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/base64"
 	"fmt"
-
-	b64 "encoding/base64"
 
 	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
@@ -38,17 +37,26 @@ func MakeConnectionContext(config *configuration.Configuration, context *configu
 	return conn, err
 }
 
-func NewTLSConfig(clientCertBlock, clientKeyBlock, caCertBlock []byte) (*tls.Config, error) {
+func (k *KafkaConnection) newTLSConfig() (*tls.Config, error) {
 	tlsConfig := tls.Config{
 		InsecureSkipVerify: true, // lgtm [go/disabled-certificate-check]
 	}
 
-	// Load client cert
-	cert, err := tls.X509KeyPair(clientCertBlock, clientKeyBlock)
-	if err != nil {
-		return &tlsConfig, err
+	var caCertBlock []byte
+	if len(k.Context.TLS.CaCertFile) > 0 {
+		caCertBlock, _ = base64.URLEncoding.DecodeString(k.Context.TLS.CaCertFile)
 	}
-	tlsConfig.Certificates = []tls.Certificate{cert}
+
+	// Load client cert
+	if len(k.Context.TLS.ClientCertFile) > 0 || len(k.Context.TLS.ClientKeyFile) > 0 {
+		clientCert, _ := base64.URLEncoding.DecodeString(k.Context.TLS.ClientCertFile)
+		clientKey, _ := base64.URLEncoding.DecodeString(k.Context.TLS.ClientKeyFile)
+		cert, err := tls.X509KeyPair(clientCert, clientKey)
+		if err != nil {
+			return &tlsConfig, err
+		}
+		tlsConfig.Certificates = []tls.Certificate{cert}
+	}
 
 	// Load CA cert
 	if caCertBlock != nil {
@@ -57,7 +65,7 @@ func NewTLSConfig(clientCertBlock, clientKeyBlock, caCertBlock []byte) (*tls.Con
 		tlsConfig.RootCAs = caCertPool
 	}
 
-	return &tlsConfig, err
+	return &tlsConfig, nil
 }
 
 func (k *KafkaConnection) Connect() error {
@@ -117,15 +125,8 @@ func (k *KafkaConnection) initAuth(clientConfig *sarama.Config) error {
 	}
 
 	if k.Context.UseTLS {
-		clientCert, _ := b64.URLEncoding.DecodeString(k.Context.TLS.ClientCertFile)
-		clientKey, _ := b64.URLEncoding.DecodeString(k.Context.TLS.ClientKeyFile)
 
-		var ca []byte
-		if len(k.Context.TLS.CaCertFile) > 0 {
-			ca, _ = b64.URLEncoding.DecodeString(k.Context.TLS.CaCertFile)
-		}
-
-		tlsConfig, err := NewTLSConfig(clientCert, clientKey, ca)
+		tlsConfig, err := k.newTLSConfig()
 		if err != nil {
 			return err
 		}
