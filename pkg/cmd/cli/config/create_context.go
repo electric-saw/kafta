@@ -121,7 +121,7 @@ func (o *createContextOptions) run() (string, bool, error) {
 		return "", false, fmt.Errorf("could not extract TLS configuration")
 	}
 
-	fmt.Printf("\n\n%v\n\n", context)
+	fmt.Printf("\nChecking connection to %s, please wait...\n", context.BootstrapServers)
 
 	err = o.checkConnection(context)
 	if err != nil {

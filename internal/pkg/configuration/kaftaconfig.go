@@ -51,7 +51,7 @@ type Context struct {
 func MakeContext() *Context {
 	return &Context{
 		UseSASL:      false,
-		KafkaVersion: sarama.V2_6_0_0.String(),
+		KafkaVersion: sarama.V3_3_0_0.String(),
 	}
 }
 
@@ -107,7 +107,7 @@ func (c *Context) GetVersion() sarama.KafkaVersion {
 	if len(c.KafkaVersion) == 0 {
 		msg := "No version found, please input with 'kafta config set-context NAME --version XXXXXX"
 		fmt.Printf("WARN %s\n", msg)
-		c.KafkaVersion = "2.5.0"
+		c.KafkaVersion = "3.3.0"
 	}
 	version, err := sarama.ParseKafkaVersion(c.KafkaVersion)
 	util.CheckErr(err)
