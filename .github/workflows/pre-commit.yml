@@ -1,0 +1,30 @@
+name: pre-commit
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v3
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.19
+      id: go
+    - name: Install go dependencies
+      run: |
+        go install golang.org/x/tools/cmd/goimports@latest
+        go install github.com/securego/gosec/v2/cmd/gosec@latest
+        go install github.com/fzipp/gocyclo/cmd/gocyclo@latest
+        go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+        go install -v github.com/go-critic/go-critic/cmd/gocritic@latest
+
+    - name: Run pre-commit
+      uses: pre-commit/action@v3.0.0
