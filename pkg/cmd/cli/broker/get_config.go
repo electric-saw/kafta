@@ -6,7 +6,6 @@ import (
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
-	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/jedib0t/go-pretty/v6/text"
 	"github.com/spf13/cobra"
@@ -23,7 +22,7 @@ func NewCmdClusterGetConfig(config *configuration.Configuration) *cobra.Command 
 		Use:   "get-configs BROKER_ID (not required)",
 		Short: "Show broker configs, by default is used coodinator",
 		Run: func(cmd *cobra.Command, args []string) {
-			cmdutil.CheckErr(options.defaultValue(cmd))
+			util.CheckErr(options.defaultValue(cmd))
 			options.run(cmd)
 		},
 	}
@@ -48,7 +47,7 @@ func (o *clusterConfig) defaultValue(cmd *cobra.Command) error {
 		}
 
 		if o.brokerId == "" {
-			return cmdutil.HelpError(cmd, "Impossible find BrokerId coordinator")
+			return util.HelpError(cmd, "Impossible find BrokerId coordinator")
 		}
 	} else {
 		o.brokerId = args[0]

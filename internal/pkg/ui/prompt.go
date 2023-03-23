@@ -1,9 +1,8 @@
 package ui
 
 import (
-	"fmt"
-
 	"github.com/manifoldco/promptui"
+	"github.com/pterm/pterm"
 )
 
 func GetTextOrDef(question string, def string) string {
@@ -21,45 +20,46 @@ func GetTextOrDef(question string, def string) string {
 }
 
 func GetText(question string, required bool) (string, error) {
-	prompt := promptui.Prompt{
-		Label: question,
-		Validate: func(result string) error {
-			if len(result) == 0 && required {
-				return fmt.Errorf("Value is required!")
-			}
-			return nil
-		},
-	}
+	for {
+		output, err := pterm.DefaultInteractiveTextInput.
+			WithMultiLine(false).
+			Show(question)
 
-	return prompt.Run()
+		if err != nil {
+			return "", err
+		}
+
+		if len(output) == 0 && required {
+			println("Value is required!")
+			continue
+		}
+
+		return output, nil
+	}
 }
 
 func GetPassword(question string, required bool) (string, error) {
-	prompt := promptui.Prompt{
-		Label: question,
-		Mask:  '*',
-		Validate: func(result string) error {
-			if len(result) == 0 && required {
-				return fmt.Errorf("Value is required!")
-			}
-			return nil
-		},
-	}
-	return prompt.Run()
+	for {
+		output, err := pterm.DefaultInteractiveTextInput.
+			WithHide().
+			Show(question)
 
+		if err != nil {
+			return "", err
+		}
+
+		if len(output) == 0 && required {
+			println("Value is required!")
+			continue
+		}
+
+		return output, nil
+	}
 }
 
 func GetConfirmation(question string, def bool) (bool, error) {
-	prompt := promptui.Prompt{
-		Label:     question,
-		IsConfirm: true,
-	}
-
-	result, err := prompt.Run()
-	if err != nil {
-		return def, nil
-	}
-
-	return result == "y", err
+	return pterm.DefaultInteractiveConfirm.
+		WithDefaultValue(def).
+		Show(question)
 
 }

@@ -65,7 +65,7 @@ func (o *RenameContextOptions) Complete(cmd *cobra.Command, args []string) error
 }
 func (o *RenameContextOptions) Validate() error {
 	if len(o.newName) == 0 {
-		return errors.New("You must specify a new non-empty context name")
+		return errors.New("you must specify a new non-empty context name")
 	}
 	return nil
 }

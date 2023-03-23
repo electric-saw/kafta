@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -221,8 +222,8 @@ func (o *createContextOptions) modifyContext(context configuration.Context) (*co
 	return &modifiedContext, nil
 }
 
-func extractContentToBase64(filepath string) (string, error) {
-	content, err := os.ReadFile(filepath)
+func extractContentToBase64(path string) (string, error) {
+	content, err := os.ReadFile(filepath.Clean(path))
 	if err != nil {
 		return "", err
 	}
@@ -323,6 +324,7 @@ func (o *createContextOptions) promptNeeded(context *configuration.Context) erro
 	}
 
 	if !o.bootstrapServers.Provided() && len(context.BootstrapServers) == 0 {
+
 		servers, err := ui.GetText("Bootstrap servers", true)
 		cmdutil.CheckErr(err)
 		err = o.bootstrapServers.Set(servers)
@@ -368,32 +370,37 @@ func (o *createContextOptions) promptNeeded(context *configuration.Context) erro
 	}
 
 	if !o.useTLS.Provided() {
-		tls, err := ui.GetConfirmation("Use TLS", false)
+		tls, err := ui.GetConfirmation("Use TLS", true)
 		cmdutil.CheckErr(err)
 
 		if tls {
 			err := o.useTLS.Set("true")
 			cmdutil.CheckErr(err)
 
-			if !o.clientCertFile.Provided() && len(context.TLS.ClientCertFile) == 0 {
-				clientCertFile, err := ui.GetText("TLS ClientCertFile", true)
-				cmdutil.CheckErr(err)
-				err = o.clientCertFile.Set(clientCertFile)
-				cmdutil.CheckErr(err)
-			}
+			useTlsCert, err := ui.GetConfirmation("Use TLS Cert files", false)
+			cmdutil.CheckErr(err)
 
-			if !o.clientKeyFile.Provided() && len(context.TLS.ClientKeyFile) == 0 {
-				clientKeyFile, err := ui.GetText("TLS ClientKeyFile", true)
-				cmdutil.CheckErr(err)
-				err = o.clientKeyFile.Set(clientKeyFile)
-				cmdutil.CheckErr(err)
-			}
+			if useTlsCert {
+				if !o.clientCertFile.Provided() && len(context.TLS.ClientCertFile) == 0 {
+					clientCertFile, err := ui.GetText("TLS ClientCertFile", false)
+					cmdutil.CheckErr(err)
+					err = o.clientCertFile.Set(clientCertFile)
+					cmdutil.CheckErr(err)
+				}
 
-			if !o.caCertFile.Provided() && len(context.TLS.CaCertFile) == 0 {
-				caCertFile, err := ui.GetText("CaCertFile", true)
-				cmdutil.CheckErr(err)
-				err = o.caCertFile.Set(caCertFile)
-				cmdutil.CheckErr(err)
+				if !o.clientKeyFile.Provided() && len(context.TLS.ClientKeyFile) == 0 {
+					clientKeyFile, err := ui.GetText("TLS ClientKeyFile", false)
+					cmdutil.CheckErr(err)
+					err = o.clientKeyFile.Set(clientKeyFile)
+					cmdutil.CheckErr(err)
+				}
+
+				if !o.caCertFile.Provided() && len(context.TLS.CaCertFile) == 0 {
+					caCertFile, err := ui.GetText("CaCertFile", false)
+					cmdutil.CheckErr(err)
+					err = o.caCertFile.Set(caCertFile)
+					cmdutil.CheckErr(err)
+				}
 			}
 		}
 	}

@@ -24,6 +24,7 @@ func ProduceMessage(conn *KafkaConnection, topic string) error {
 	signal.Notify(sigterm, syscall.SIGINT, syscall.SIGTERM)
 	defer signal.Stop(sigterm)
 
+producerLoop:
 	for {
 
 		consoleReader := bufio.NewReader(os.Stdin)
@@ -33,7 +34,7 @@ func ProduceMessage(conn *KafkaConnection, topic string) error {
 
 		if input == "\\quit\n" {
 			producer.AsyncClose()
-			break
+			break producerLoop
 		}
 
 		inputList := strings.Split(input, ":")
@@ -52,7 +53,7 @@ func ProduceMessage(conn *KafkaConnection, topic string) error {
 		case <-sigterm:
 			log.Println("terminating: via signal")
 			producer.AsyncClose()
-			break
+			break producerLoop
 		}
 	}
 	return nil
