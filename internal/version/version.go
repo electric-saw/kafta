@@ -1,7 +1,6 @@
 package version
 
 import (
-	"flag"
 	"runtime"
 )
 
@@ -36,8 +35,5 @@ func Get() BuildInfo {
 		GoVersion: runtime.Version(),
 	}
 
-	if flag.Lookup("test.v") != nil {
-		v.GoVersion = ""
-	}
 	return v
 }

@@ -70,29 +70,45 @@ func LoadKaftaconfigOrDefault(configPath string) (*KaftaConfig, bool) {
 		return config, true
 	} else {
 
-		rawYaml, err := os.ReadFile(configPath)
+		rawYaml, err := os.ReadFile(filepath.Clean(configPath))
 		if err != nil {
 			return config, true
 		}
 
 		err = yaml.Unmarshal(rawYaml, &config)
-
-		util.CheckErr(err)
+		if err != nil {
+			fmt.Println(err)
+			fmt.Printf("Error parsing config file, please check the format of %s and try again", configPath)
+			os.Exit(1)
+		}
 	}
 
 	return config, false
 }
 
-func (k *KaftaConfig) Write() {
-	err := os.MkdirAll(path.Dir(k.path), 0760)
-	util.CheckErr(err)
+func (k *KaftaConfig) Write() error {
+	err := os.MkdirAll(path.Dir(k.path), 0750)
+	if err != nil {
+		return err
+	}
 
-	out, err := os.Create(k.path)
-	util.CheckErr(err)
-	defer out.Close()
+	file, err := os.Create(k.path)
+	if err != nil {
+		return err
+	}
 
-	err = yaml.NewEncoder(out).Encode(k)
-	util.CheckErr(err)
+	defer func() {
+		if err := file.Close(); err != nil {
+			fmt.Printf("Error closing file: %s", err)
+		}
+	}()
+
+	err = yaml.NewEncoder(file).Encode(k)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (k *KaftaConfig) ConfigPath() string {

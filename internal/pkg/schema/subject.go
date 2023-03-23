@@ -6,13 +6,14 @@ import (
 	"io"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
+	"github.com/electric-saw/kafta/pkg/cmd/util"
 )
 
 type subjects []string
 
 func NewSubjectList(config *configuration.Configuration) ([]string, error) {
 	resp := BuildGetRequestSchemaRegistry(config, "subjects")
-	defer resp.Body.Close()
+	defer util.CheckErr(resp.Body.Close())
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -33,7 +34,7 @@ func NewSubjecVersion(config *configuration.Configuration, subsubjectName string
 	params := fmt.Sprintf("subjects/%v/versions", subsubjectName)
 
 	resp := BuildGetRequestSchemaRegistry(config, params)
-	defer resp.Body.Close()
+	defer util.CheckErr(resp.Body.Close())
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

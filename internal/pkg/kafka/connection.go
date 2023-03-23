@@ -38,13 +38,20 @@ func MakeConnectionContext(config *configuration.Configuration, context *configu
 }
 
 func (k *KafkaConnection) newTLSConfig() (*tls.Config, error) {
+	// #nosec
 	tlsConfig := tls.Config{
 		InsecureSkipVerify: true, // lgtm [go/disabled-certificate-check]
 	}
 
-	var caCertBlock []byte
+	// Load CA cert
 	if len(k.Context.TLS.CaCertFile) > 0 {
-		caCertBlock, _ = base64.URLEncoding.DecodeString(k.Context.TLS.CaCertFile)
+		caCertBlock, _ := base64.URLEncoding.DecodeString(k.Context.TLS.CaCertFile)
+
+		if caCertBlock != nil {
+			caCertPool := x509.NewCertPool()
+			caCertPool.AppendCertsFromPEM(caCertBlock)
+			tlsConfig.RootCAs = caCertPool
+		}
 	}
 
 	// Load client cert
@@ -56,13 +63,6 @@ func (k *KafkaConnection) newTLSConfig() (*tls.Config, error) {
 			return &tlsConfig, err
 		}
 		tlsConfig.Certificates = []tls.Certificate{cert}
-	}
-
-	// Load CA cert
-	if caCertBlock != nil {
-		caCertPool := x509.NewCertPool()
-		caCertPool.AppendCertsFromPEM(caCertBlock)
-		tlsConfig.RootCAs = caCertPool
 	}
 
 	return &tlsConfig, nil

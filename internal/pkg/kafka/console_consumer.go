@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
@@ -67,8 +68,9 @@ func ConsumeMessage(conn *KafkaConnection, topic string, group string, verbose b
 		case <-sigterm:
 			log.Println("terminating: via signal")
 			keepRunning = false
-			break
 		}
+
+		time.Sleep(100 * time.Millisecond)
 	}
 	cancel()
 	wg.Wait()

@@ -39,7 +39,8 @@ func SetProp(conn *KafkaConnection, topic string, props map[string]string) error
 		}
 	}
 
-	for key, val := range props {
+	for key := range props {
+		val := props[key]
 		newConfigs[key] = &val
 	}
 

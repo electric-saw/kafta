@@ -51,13 +51,15 @@ func (c *Configuration) BindFlags(cmd *cobra.Command) {
 func (c *Configuration) EnsureKaftaconfig() {
 	config, isNew := LoadKaftaconfigOrDefault(c.KaftaconfigFile)
 	if isNew {
-		config.Write()
+		err := config.Write()
+		util.CheckErr(err)
 	}
 	c.KaftaData = config
 }
 
 func (c *Configuration) UpdateConfig() {
-	c.KaftaData.Write()
+	err := c.KaftaData.Write()
+	util.CheckErr(err)
 }
 
 func (c *Configuration) GetContext() *Context {
@@ -66,7 +68,7 @@ func (c *Configuration) GetContext() *Context {
 	}
 
 	if len(c.ActiveContext) == 0 || c.KaftaData.Contexts[c.ActiveContext] == nil {
-		util.CheckErr(errors.New("No context found"))
+		util.CheckErr(errors.New("no context found"))
 	}
 	return c.KaftaData.Contexts[c.ActiveContext]
 }

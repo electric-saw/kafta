@@ -29,14 +29,15 @@ func MakeConsumerGroupOffset(groupId string) *ConsumerGroupOffset {
 func (c *ConsumerGroupOffset) AddTopic(name string) *TopicAssignment {
 	if member, ok := c.Topics[name]; ok {
 		return member
-	} else {
-		member := &TopicAssignment{
-			Partitions: make(map[int32]PartitionOffsets),
-		}
-
-		c.Topics[name] = member
-		return member
 	}
+
+	member := &TopicAssignment{
+		Partitions: make(map[int32]PartitionOffsets),
+	}
+
+	c.Topics[name] = member
+	return member
+
 }
 
 func (m *TopicAssignment) AddOffset(partition int32, consumerOffset int64, partitionOffset int64) *PartitionOffsets {
