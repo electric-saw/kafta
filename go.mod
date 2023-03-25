@@ -2,7 +2,7 @@ module github.com/electric-saw/kafta
 
 go 1.19
 
-replace github.com/pterm/pterm => github.com/snakeice/pterm v0.0.0-20230323205047-8225b8e90fd3
+replace github.com/pterm/pterm => github.com/snakeice/pterm v0.0.0-20230324002149-f811aa7ee6f0
 
 require (
 	github.com/Shopify/sarama v1.38.1

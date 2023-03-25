@@ -41,7 +41,7 @@ func GetText(question string, required bool) (string, error) {
 func GetPassword(question string, required bool) (string, error) {
 	for {
 		output, err := pterm.DefaultInteractiveTextInput.
-			WithHide().
+			WithMask("*").
 			Show(question)
 
 		if err != nil {
