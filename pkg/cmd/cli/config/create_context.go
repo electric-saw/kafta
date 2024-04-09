@@ -17,7 +17,7 @@ import (
 
 	"github.com/electric-saw/kafta/internal/pkg/ui"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
 	"github.com/spf13/cobra"

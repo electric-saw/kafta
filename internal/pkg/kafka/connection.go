@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
 	"github.com/riferrei/srclient"
@@ -115,9 +115,11 @@ func (k *KafkaConnection) initAuth(clientConfig *sarama.Config) error {
 		case "sha256":
 			clientConfig.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient { return &XDGSCRAMClient{HashGeneratorFcn: SHA256} }
 			clientConfig.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA256
+			clientConfig.Net.TLS.Enable = true
 		case "sha512":
 			clientConfig.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient { return &XDGSCRAMClient{HashGeneratorFcn: SHA512} }
 			clientConfig.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA512
+			clientConfig.Net.TLS.Enable = true
 		default:
 			clientConfig.Net.SASL.Mechanism = sarama.SASLTypePlaintext
 		}
