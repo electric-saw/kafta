@@ -5,9 +5,9 @@ import (
 )
 
 type BrokerMetadata struct {
-	Details        *Broker
-	ConsumerGroups []string
-	Logs           []*LogFile
+	Details   *Broker
+	Consumers []string
+	Logs      []*LogFile
 }
 
 type aggregatedTopicSize map[string]*LogEntry
@@ -23,25 +23,25 @@ type LogFile struct {
 	Entries aggregatedTopicSize
 }
 
-// func newLogFile(path string) *LogFile {
-// 	return &LogFile{
-// 		Path:    path,
-// 		Entries: make(aggregatedTopicSize),
-// 	}
-// }
+func newLogFile(path string) *LogFile {
+	return &LogFile{
+		Path:    path,
+		Entries: aggregatedTopicSize{},
+	}
+}
 
-// func (l *LogFile) set(topic string, size int64, isTemp bool) {
-// 	if _, ok := l.Entries[topic]; !ok {
-// 		l.Entries[topic] = &LogEntry{
-// 			Topic: topic,
-// 		}
-// 	}
-// 	if isTemp {
-// 		l.Entries[topic].Temporary += uint64(size)
-// 	} else {
-// 		l.Entries[topic].Permanent += uint64(size)
-// 	}
-// }
+func (l *LogFile) set(topic string, size int64, isTemp bool) {
+	if _, ok := l.Entries[topic]; !ok {
+		l.Entries[topic] = &LogEntry{
+			Topic: topic,
+		}
+	}
+	if isTemp {
+		l.Entries[topic].Temporary += uint64(size)
+	} else {
+		l.Entries[topic].Permanent += uint64(size)
+	}
+}
 
 func (l *LogFile) SortByPermanentSize() []*LogEntry {
 	result := l.toSlice()

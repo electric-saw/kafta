@@ -1,7 +1,7 @@
 package acl
 
 import (
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/spf13/cobra"
 )

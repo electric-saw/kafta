@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
 	"github.com/riferrei/srclient"
@@ -38,9 +38,8 @@ func MakeConnectionContext(config *configuration.Configuration, context *configu
 }
 
 func (k *KafkaConnection) newTLSConfig() (*tls.Config, error) {
-	// #nosec
 	tlsConfig := tls.Config{
-		InsecureSkipVerify: true, // lgtm [go/disabled-certificate-check]
+		InsecureSkipVerify: true, // #nosec
 	}
 
 	// Load CA cert
@@ -113,9 +112,11 @@ func (k *KafkaConnection) initAuth(clientConfig *sarama.Config) error {
 		clientConfig.Net.SASL.Password = k.Context.SASL.Password
 		switch k.Context.SASL.Algorithm {
 		case "sha256":
+		case "SCRAM-SHA-256":
 			clientConfig.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient { return &XDGSCRAMClient{HashGeneratorFcn: SHA256} }
 			clientConfig.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA256
 		case "sha512":
+		case "SCRAM-SHA-512":
 			clientConfig.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient { return &XDGSCRAMClient{HashGeneratorFcn: SHA512} }
 			clientConfig.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA512
 		default:

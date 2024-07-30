@@ -3,20 +3,21 @@ package kafka
 import (
 	"fmt"
 	"sort"
-	"strconv"
 
 	"github.com/electric-saw/kafta/pkg/cmd/util"
 )
 
-func getBrokerByIdOrAddr(conn *KafkaConnection, idOrAddr string) (*Broker, error) {
+func getBrokerByIdOrAddr(conn *KafkaConnection, idOrAddr any) (*Broker, error) {
 	brokers := GetBrokers(conn)
-	if id, err := strconv.ParseInt(idOrAddr, 10, 64); err == nil {
+
+	switch idOrAddr.(type) {
+	case int:
 		for _, broker := range brokers {
-			if int64(broker.Id) == id {
+			if broker.Id == idOrAddr {
 				return broker, nil
 			}
 		}
-	} else {
+	case string:
 		for _, broker := range brokers {
 			if broker.Host == idOrAddr {
 				return broker, nil
@@ -43,7 +44,7 @@ func GetBrokers(conn *KafkaConnection) BrokersById {
 	return result
 }
 
-func DescribeBroker(conn *KafkaConnection, idOrAddr string) *BrokerMetadata {
+func DescribeBroker(conn *KafkaConnection, idOrAddr any) *BrokerMetadata {
 	metadata := &BrokerMetadata{
 		Logs:    make([]*LogFile, 0),
 		Details: &Broker{},
@@ -52,6 +53,22 @@ func DescribeBroker(conn *KafkaConnection, idOrAddr string) *BrokerMetadata {
 	util.CheckErr(err)
 
 	metadata.Details = broker
+
+	logDirs, err := conn.Admin.DescribeLogDirs([]int32{int32(broker.Id)})
+	util.CheckErr(err)
+
+	for _, logDir := range logDirs {
+
+		for _, dir := range logDir {
+			logFile := newLogFile(dir.Path)
+			for _, topic := range dir.Topics {
+				for _, partition := range topic.Partitions {
+					logFile.set(topic.Topic, partition.Size, partition.IsTemporary)
+				}
+			}
+			metadata.Logs = append(metadata.Logs, logFile)
+		}
+	}
 
 	err = broker.Open(conn.Client.Config())
 	util.CheckErr(err)

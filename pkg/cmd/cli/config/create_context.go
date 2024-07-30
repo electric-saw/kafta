@@ -6,7 +6,6 @@ import (
 	"net"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -15,9 +14,9 @@ import (
 	cliflag "github.com/electric-saw/kafta/internal/pkg/flag"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
 
-	"github.com/electric-saw/kafta/internal/pkg/ui"
+	"github.com/charmbracelet/huh"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
 	"github.com/spf13/cobra"
@@ -35,9 +34,9 @@ type createContextOptions struct {
 	version              cliflag.StringFlag
 	user                 cliflag.StringFlag
 	password             cliflag.StringFlag
-	useSASL              cliflag.StringFlag
+	useSASL              cliflag.BoolFlag
 	algorithm            cliflag.StringFlag
-	useTLS               cliflag.StringFlag
+	useTLS               cliflag.BoolFlag
 	clientCertFile       cliflag.StringFlag
 	clientKeyFile        cliflag.StringFlag
 	caCertFile           cliflag.StringFlag
@@ -166,12 +165,7 @@ func (o *createContextOptions) modifyContext(context configuration.Context) (*co
 	}
 
 	if o.useSASL.Provided() {
-		outputUseSASL, err := strconv.ParseBool(o.useSASL.Value())
-		if err != nil {
-			return nil, err
-		}
-
-		modifiedContext.UseSASL = outputUseSASL
+		modifiedContext.UseSASL = o.useSASL.Value()
 	}
 
 	if o.algorithm.Provided() {
@@ -187,12 +181,7 @@ func (o *createContextOptions) modifyContext(context configuration.Context) (*co
 	}
 
 	if o.useTLS.Provided() {
-		outputUseTLS, err := strconv.ParseBool(o.useTLS.Value())
-		if err != nil {
-			return nil, err
-		}
-
-		modifiedContext.UseTLS = outputUseTLS
+		modifiedContext.UseTLS = o.useTLS.Value()
 	}
 
 	if o.clientCertFile.Provided() {
@@ -323,109 +312,122 @@ func (o *createContextOptions) promptNeeded(context *configuration.Context) erro
 		return nil
 	}
 
-	if !o.bootstrapServers.Provided() && len(context.BootstrapServers) == 0 {
+	groupSetup := []huh.Field{}
 
-		servers, err := ui.GetText("Bootstrap servers", true)
-		cmdutil.CheckErr(err)
-		err = o.bootstrapServers.Set(servers)
-		cmdutil.CheckErr(err)
-	}
+	groupSetup = append(groupSetup, huh.NewText().
+		Title("Bootstrap servers").
+		Placeholder("b-1.kafka.example.com,b-2.kafka.example.com,b-3.kafka.example.com").
+		Accessor(o.bootstrapServers.HuhWraps()),
+	)
 
 	if !o.version.Provided() && len(context.KafkaVersion) == 0 {
-		version, err := ui.GetText("Kafka version", true)
-		cmdutil.CheckErr(err)
-		err = o.version.Set(version)
-		cmdutil.CheckErr(err)
+		groupSetup = append(groupSetup, huh.NewInput().
+			Title("Kafka version").
+			Placeholder("2.7.0").
+			Accessor(o.version.HuhWraps()),
+		)
 	}
 
-	if !o.useSASL.Provided() {
-		sasl, err := ui.GetConfirmation("Use SASL", false)
-		cmdutil.CheckErr(err)
-		if sasl {
-			err := o.useSASL.Set("true")
-			cmdutil.CheckErr(err)
+	authGroup := []huh.Field{}
 
-			if !o.algorithm.Provided() && len(context.SASL.Algorithm) == 0 {
-				algorithm, err := ui.GetText("SASL Algorithm", true)
-				cmdutil.CheckErr(err)
-				err = o.algorithm.Set(algorithm)
-				cmdutil.CheckErr(err)
-			}
+	groupSetup = append(groupSetup, huh.NewConfirm().
+		Title("Use SASL Auth").
+		Inline(true).
+		Affirmative("Yes").
+		Negative("No").
+		Accessor(o.useSASL.HuhWraps()),
+	)
 
-			if !o.user.Provided() && len(context.SASL.Username) == 0 {
-				user, err := ui.GetText("User", true)
-				cmdutil.CheckErr(err)
-				err = o.user.Set(user)
-				cmdutil.CheckErr(err)
-			}
+	authGroup = append(authGroup,
+		huh.NewSelect[string]().
+			Title("SASL Algorithm").
+			Options(huh.NewOptions(
+				"PLAIN",
+				"SCRAM-SHA-256",
+				"SCRAM-SHA-512",
+			)...).
+			Accessor(o.algorithm.HuhWraps()),
 
-			if !o.password.Provided() && len(context.SASL.Password) == 0 {
-				password, err := ui.GetPassword("Password", true)
-				cmdutil.CheckErr(err)
-				err = o.password.Set(password)
-				cmdutil.CheckErr(err)
-			}
-
-		}
-	}
+		huh.NewInput().
+			Title("User").
+			Accessor(o.user.HuhWraps()),
+		huh.NewInput().
+			Title("Password").
+			EchoMode(huh.EchoModePassword).
+			Accessor(o.password.HuhWraps()),
+	)
 
 	if !o.useTLS.Provided() {
-		tls, err := ui.GetConfirmation("Use TLS", true)
-		cmdutil.CheckErr(err)
-
-		if tls {
-			err := o.useTLS.Set("true")
-			cmdutil.CheckErr(err)
-
-			useTlsCert, err := ui.GetConfirmation("Use TLS Cert files", false)
-			cmdutil.CheckErr(err)
-
-			if useTlsCert {
-				if !o.clientCertFile.Provided() && len(context.TLS.ClientCertFile) == 0 {
-					clientCertFile, err := ui.GetText("TLS ClientCertFile", false)
-					cmdutil.CheckErr(err)
-					err = o.clientCertFile.Set(clientCertFile)
-					cmdutil.CheckErr(err)
-				}
-
-				if !o.clientKeyFile.Provided() && len(context.TLS.ClientKeyFile) == 0 {
-					clientKeyFile, err := ui.GetText("TLS ClientKeyFile", false)
-					cmdutil.CheckErr(err)
-					err = o.clientKeyFile.Set(clientKeyFile)
-					cmdutil.CheckErr(err)
-				}
-
-				if !o.caCertFile.Provided() && len(context.TLS.CaCertFile) == 0 {
-					caCertFile, err := ui.GetText("CaCertFile", false)
-					cmdutil.CheckErr(err)
-					err = o.caCertFile.Set(caCertFile)
-					cmdutil.CheckErr(err)
-				}
-			}
-		}
+		o.useTLS.Default(true)
 	}
 
-	if !o.schemaRegistry.Provided() {
-		schemaRegistry, err := ui.GetText("Schema registry", false)
-		cmdutil.CheckErr(err)
-		err = o.schemaRegistry.Set(schemaRegistry)
-		cmdutil.CheckErr(err)
+	tlsEnable := huh.NewConfirm().
+		Title("Use TLS").
+		Inline(true).
+		Affirmative("Yes").
+		Negative("No").
+		Accessor(o.useTLS.HuhWraps())
 
-		if o.schemaRegistry.Provided() && len(context.SchemaRegistryAuth.Secret) == 0 {
-			secret, err := ui.GetText("SchemaRegistry Secret", false)
-			cmdutil.CheckErr(err)
-			err = o.schemaRegistrySecret.Set(secret)
-			cmdutil.CheckErr(err)
-		}
+	tlsUseCertFiles := huh.NewConfirm().
+		Title("Use TLS Cert files").
+		Inline(true).
+		Affirmative("Yes").
+		Negative("No").
+		Key("useTLSFiles")
 
-		if o.schemaRegistry.Provided() && len(context.SchemaRegistryAuth.Key) == 0 {
-			key, err := ui.GetPassword("SchemaRegistry Key", false)
-			cmdutil.CheckErr(err)
-			err = o.schemaRegistryKey.Set(key)
-			cmdutil.CheckErr(err)
-		}
-
+	tlsSetup := []huh.Field{
+		huh.NewInput().
+			Title("TLS ClientCertFile").
+			Accessor(o.clientCertFile.HuhWraps()),
+		huh.NewInput().
+			Title("TLS ClientKeyFile").
+			Accessor(o.clientKeyFile.HuhWraps()),
+		huh.NewInput().
+			Title("CaCertFile").
+			Accessor(o.caCertFile.HuhWraps()),
 	}
 
-	return nil
+	groupSchemaRegistry := []huh.Field{}
+	groupSchemaRegistryAuth := []huh.Field{}
+
+	groupSchemaRegistry = append(groupSchemaRegistry, huh.NewConfirm().
+		Title("Use Schema Registry").
+		Inline(true).
+		Affirmative("Yes").
+		Negative("No").
+		Key("useSchemaRegistry"),
+	)
+
+	groupSchemaRegistryAuth = append(groupSchemaRegistryAuth,
+		huh.NewInput().
+			Title("Schema Registry URL").
+			Accessor(o.schemaRegistry.HuhWraps()),
+
+		huh.NewInput().
+			Title("Schema Registry User").
+			Accessor(o.schemaRegistryKey.HuhWraps()),
+		huh.NewInput().
+			Title("Schema Registry password").
+			EchoMode(huh.EchoModePassword).
+			Accessor(o.schemaRegistrySecret.HuhWraps()),
+	)
+
+	form := huh.NewForm(
+		huh.NewGroup(groupSetup...),
+		huh.NewGroup(authGroup...).WithHideFunc(func() bool {
+			return !o.useSASL.Value()
+		}),
+		huh.NewGroup(tlsEnable),
+		huh.NewGroup(tlsUseCertFiles).WithHideFunc(func() bool {
+			return !o.useTLS.Value()
+		}),
+		huh.NewGroup(tlsSetup...).WithHideFunc(func() bool {
+			return !o.useTLS.Value() || !tlsUseCertFiles.GetValue().(bool)
+		}),
+		huh.NewGroup(groupSchemaRegistry...),
+		huh.NewGroup(groupSchemaRegistryAuth...).WithHideFunc(func() bool {
+			return !groupSchemaRegistry[0].(*huh.Confirm).GetValue().(bool)
+		}),
+	)
+	return form.Run()
 }
