@@ -181,7 +181,7 @@ $ kafta topic list
 | topic2                  |          6 |                  3 |
 +-------------------------+------------+--------------------+
 ```
-List configs topic
+List configs of topics:
 
 ```
 $ kafka topic list-configs my-topic
