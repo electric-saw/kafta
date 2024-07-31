@@ -2,14 +2,15 @@ package topic
 
 import (
 	"fmt"
-	"os"
+	"sort"
 	"strings"
 
 	"github.com/Shopify/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
+	"github.com/electric-saw/kafta/pkg/cmd/util"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
-	"github.com/olekukonko/tablewriter"
+	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
 )
 
@@ -46,25 +47,24 @@ func (o *listConfigsOptions) run() error {
 		return fmt.Errorf("failed to describe config for topic %s: %w", o.topic, err)
 	}
 
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"Config Name", "Config Value", "Source"})
-	table.SetHeaderColor(tablewriter.Colors{tablewriter.Bold}, tablewriter.Colors{tablewriter.Bold}, tablewriter.Colors{tablewriter.Bold})
-	table.SetColumnColor(tablewriter.Colors{}, tablewriter.Colors{}, tablewriter.Colors{})
-
+	rows := []table.Row{}
 	for _, config := range configs {
 		value := strings.TrimSpace(config.Value)
 		if value == "" {
 			value = "N/A"
 		}
 
-		table.Append([]string{config.Name, value, config.Source.String()})
+		rows = append(rows, table.Row{config.Name, value, config.Source.String()})
 	}
 
-	table.SetAutoFormatHeaders(false)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetColWidth(30)
+	sort.Slice(rows, func(i, j int) bool {
+		return rows[i][0].(string) < rows[j][0].(string)
+	})
 
-	table.Render()
+	util.PrintTable(
+		table.Row{"Config Name", "Config Value", "Source"},
+		rows,
+	)
 
 	return nil
 }
