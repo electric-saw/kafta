@@ -181,7 +181,31 @@ $ kafta topic list
 | topic2                  |          6 |                  3 |
 +-------------------------+------------+--------------------+
 ```
+List configs topic
 
+```
+$ kafka topic list-configs my-topic
+
++-----------------------------------------+---------------------+--------------+
+|               Config Name               |    Config Value     |    Source    |
++-----------------------------------------+---------------------+--------------+
+| compression.type                        | producer            | Default      |
+| leader.replication.throttled.replicas   | N/A                 | Default      |
+| min.insync.replicas                     | 1                   | StaticBroker |
+| segment.jitter.ms                       | 0                   | Default      |
+| cleanup.policy                          | delete              | Default      |
+| flush.ms                                | 9223372036854775807 | Default      |
+| follower.replication.throttled.replicas | N/A                 | Default      |
+| segment.bytes                           | 1073741824          | Default      |
+| retention.ms                            | 172800000           | Topic        |
+| flush.messages                          | 9223372036854775807 | Default      |
+| delete.retention.ms                     | 86400000            | Default      |
+| segment.ms                              | 604800000           | Default      |
+| message.timestamp.difference.max.ms     | 9223372036854775807 | Default      |
+| segment.index.bytes                     | 10485760            | Default      |
++-----------------------------------------+---------------------+--------------+
+
+```
 ## Consumer Group
 
 List all consumers, run:
