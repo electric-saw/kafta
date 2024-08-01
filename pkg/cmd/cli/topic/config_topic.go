@@ -8,7 +8,6 @@ import (
 	"github.com/IBM/sarama"
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/kafka"
-	"github.com/electric-saw/kafta/pkg/cmd/util"
 	cmdutil "github.com/electric-saw/kafta/pkg/cmd/util"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/spf13/cobra"
@@ -61,7 +60,7 @@ func (o *listConfigsOptions) run() error {
 		return rows[i][0].(string) < rows[j][0].(string)
 	})
 
-	util.PrintTable(
+	cmdutil.PrintTable(
 		table.Row{"Config Name", "Config Value", "Source"},
 		rows,
 	)
