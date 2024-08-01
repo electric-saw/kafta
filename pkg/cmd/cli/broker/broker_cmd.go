@@ -19,6 +19,7 @@ func NewCmdBroker(config *configuration.Configuration) *cobra.Command {
 	// Update config
 	// Reset config?
 	cmd.AddCommand(NewCmdClusterGetConfig(config))
+	cmd.AddCommand(NewCmdClusterDescribe(config))
 
 	return cmd
 }

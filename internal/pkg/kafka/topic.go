@@ -6,7 +6,7 @@ import (
 
 	"github.com/electric-saw/kafta/pkg/cmd/util"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 )
 
 func ListAllTopics(conn *KafkaConnection) map[string]sarama.TopicDetail {

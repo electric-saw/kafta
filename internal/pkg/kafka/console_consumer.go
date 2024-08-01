@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
 )
 
@@ -33,7 +33,12 @@ func ConsumeMessage(conn *KafkaConnection, topic string, group string, verbose b
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
-	client, err := sarama.NewConsumerGroup(conn.Context.BootstrapServers, group, conn.Client.Config())
+
+	cgConfig := conn.Client.Config()
+
+	cgConfig.Consumer.Offsets.Initial = sarama.OffsetOldest
+
+	client, err := sarama.NewConsumerGroup(conn.Context.BootstrapServers, group, cgConfig)
 
 	util.CheckErr(err)
 
