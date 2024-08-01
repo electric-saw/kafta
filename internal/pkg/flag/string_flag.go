@@ -1,5 +1,7 @@
 package flag
 
+import "github.com/charmbracelet/huh"
+
 // StringFlag is a string flag compatible with flags and pflags that keeps track of whether it had a value supplied or not.
 type StringFlag struct {
 	// If Set has been invoked this value is true
@@ -37,4 +39,20 @@ func (f StringFlag) Provided() bool {
 
 func (f *StringFlag) Type() string {
 	return "string"
+}
+
+func (f *StringFlag) HuhWraps() huh.Accessor[string] {
+	return huhWrapperString{f: f}
+}
+
+type huhWrapperString struct {
+	f *StringFlag
+}
+
+func (h huhWrapperString) Get() string {
+	return h.f.Value()
+}
+
+func (h huhWrapperString) Set(value string) {
+	_ = h.f.Set(value)
 }
