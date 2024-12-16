@@ -29,7 +29,7 @@ func NewCmdResetOffset(config *configuration.Configuration) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "reset-offset GROUP TOPIC PARTITION [--offset OFFSET | --timestamp TIMESTAMP] [--quiet]",
 		Short: "Reset the offset for a consumer group",
-		Long: `Reset the offset for a specific group, topic, and partition. 
+		Long: `Reset the offset for a specific group, topic, and partition.
 You can reset to a specific offset or the offset corresponding to a timestamp.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			cmdutil.CheckErr(options.complete(cmd, args))
@@ -59,15 +59,16 @@ func (o *resetOffsetOptions) complete(cmd *cobra.Command, args []string) error {
 	}
 	o.partition = int32(partition)
 
-	if o.offset != -1 {
+	switch {
+	case o.offset != -1:
 		o.useOffset = true
-	} else if o.timestamp != -1 {
+	case o.timestamp != -1:
 		o.useOffset = false
 		_, err := time.Parse(time.RFC3339, time.Unix(0, o.timestamp*int64(time.Millisecond)).Format(time.RFC3339))
 		if err != nil {
-			return cmdutil.HelpErrorf(cmd, "Invalid timestamp format: %s. Use RFC3339 format (e.g., '2024-12-01T15:04:05Z').", o.timestamp)
+			return cmdutil.HelpErrorf(cmd, "Invalid timestamp format: %d. Use RFC3339 format (e.g., '2024-12-01T15:04:05Z').", o.timestamp)
 		}
-	} else {
+	default:
 		return cmdutil.HelpErrorf(cmd, "You must specify either --offset or --timestamp.")
 	}
 
@@ -100,6 +101,9 @@ func (o *resetOffsetOptions) run() error {
 	}
 
 	err = kafka.ResetConsumerGroupOffset(conn, o.group, o.topic, o.partition, targetOffset)
+	if err != nil {
+		return err
+	}
 
 	fmt.Printf("Successfully reset offset for group '%s', topic '%s', partition %d to offset %d.\n",
 		o.group, o.topic, o.partition, targetOffset)
