@@ -14,8 +14,8 @@ type aggregatedTopicSize map[string]*LogEntry
 
 type LogEntry struct {
 	Topic     string
-	Permanent uint64
-	Temporary uint64
+	Permanent int64
+	Temporary int64
 }
 
 type LogFile struct {
@@ -37,9 +37,9 @@ func (l *LogFile) set(topic string, size int64, isTemp bool) {
 		}
 	}
 	if isTemp {
-		l.Entries[topic].Temporary += uint64(size)
+		l.Entries[topic].Temporary += size
 	} else {
-		l.Entries[topic].Permanent += uint64(size)
+		l.Entries[topic].Permanent += size
 	}
 }
 
