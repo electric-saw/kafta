@@ -19,6 +19,7 @@ func NewCmdConsumer(config *configuration.Configuration) *cobra.Command {
 	cmd.AddCommand(NewCmdDescribeConsumer(config))
 	cmd.AddCommand(NewCmdLagConsumer(config))
 	cmd.AddCommand(NewCmdDeleteConsumer(config))
+	cmd.AddCommand(NewCmdResetOffset(config))
 
 	return cmd
 }
