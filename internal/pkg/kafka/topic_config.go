@@ -38,27 +38,30 @@ func SetProp(conn *KafkaConnection, topic string, props map[string]string) error
 	newPartitionCount := int32(-1)
 
 	if numPartitions, ok := props["num.partitions"]; ok {
-		partitionCount64, err := strconv.ParseInt(numPartitions, 10, 32)
+		partionRequest, err := strconv.Atoi(numPartitions)
 		if err != nil {
 			return err
 		}
-		partitionCount := int32(partitionCount64)
 
 		val, err := conn.Admin.DescribeTopics([]string{topic})
 		if err != nil {
 			return err
 		}
-		currentPartitions := int32(len(val[0].Partitions))
+		currentPartitions := len(val[0].Partitions)
 
-		if int32(partitionCount) > currentPartitions {
-			newPartitionCount = int32(partitionCount)
+		if (partionRequest) > currentPartitions {
+			newPartitionCount64, err := strconv.ParseInt(numPartitions, 10, 32)
+			if err != nil {
+				return err
+			}
+			newPartitionCount = int32(newPartitionCount64)
 
-			err := increasePartitions(conn, topic, newPartitionCount)
+			err = increasePartitions(conn, topic, newPartitionCount)
 			if err != nil {
 				return err
 			}
 		} else {
-			return fmt.Errorf("new partition count must be greater than current partitions, current: %d, new: %d", currentPartitions, partitionCount)
+			return fmt.Errorf("new partition count must be greater than current partitions, current: %d, new: %d", currentPartitions, partionRequest)
 		}
 	}
 
