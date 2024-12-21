@@ -36,7 +36,7 @@ func SetProp(conn *KafkaConnection, topic string, props map[string]string) error
 	newConfigs := map[string]*string{}
 
 	if numPartitions, ok := props["num.partitions"]; ok {
-		partionRequest, err := strconv.Atoi(numPartitions)
+		partitionsRequest, err := strconv.Atoi(numPartitions)
 		if err != nil {
 			return err
 		}
@@ -47,7 +47,7 @@ func SetProp(conn *KafkaConnection, topic string, props map[string]string) error
 		}
 		currentPartitions := len(val[0].Partitions)
 
-		if partionRequest > currentPartitions {
+		if partitionsRequest > currentPartitions {
 			newPartitionCount64, err := strconv.ParseInt(numPartitions, 10, 32)
 			if err != nil {
 				return err
@@ -59,7 +59,7 @@ func SetProp(conn *KafkaConnection, topic string, props map[string]string) error
 				return err
 			}
 		} else {
-			return fmt.Errorf("new partition count must be greater than current partitions, current: %d, new: %d", currentPartitions, partionRequest)
+			return fmt.Errorf("new partition count must be greater than current partitions, current: %d, new: %d", currentPartitions, partitionsRequest)
 		}
 	}
 
