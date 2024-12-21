@@ -42,6 +42,9 @@ func SetProp(conn *KafkaConnection, topic string, props map[string]string) error
 		if err != nil {
 			return err
 		}
+		if partitionCount > int(^uint32(0)>>1) {
+			return fmt.Errorf("partition count exceeds int32 limit")
+		}
 		val, err := conn.Admin.DescribeTopics([]string{topic})
 		if err != nil {
 			return err
