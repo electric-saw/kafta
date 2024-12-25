@@ -40,9 +40,6 @@ func SetProp(conn *KafkaConnection, topic string, props map[string]string) error
 	}
 
 	for key := range props {
-		if key == "num.partitions" {
-			continue
-		}
 		val := props[key]
 		newConfigs[key] = &val
 	}
