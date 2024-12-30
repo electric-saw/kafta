@@ -21,7 +21,7 @@ type resizeTopicOptions struct {
 func NewCmdConfigResizeTopic(config *configuration.Configuration) *cobra.Command {
 	options := &resizeTopicOptions{config: config}
 	cmd := &cobra.Command{
-		Use:   "resize NAME num.partitions=VALUE [--quiet]",
+		Use:   "resize NAME PARTITIONS [--quiet]",
 		Short: "resize topics",
 		Run: func(cmd *cobra.Command, args []string) {
 			cmdutil.CheckErr(options.complete(cmd))
@@ -34,7 +34,7 @@ func NewCmdConfigResizeTopic(config *configuration.Configuration) *cobra.Command
 
 func (o *resizeTopicOptions) complete(cmd *cobra.Command) error {
 	args := cmd.Flags().Args()
-	if len(args) != 2 || !strings.HasPrefix(args[1], "num.partitions=") {
+	if len(args) != 2 || !strings.HasPrefix(args[1], "partitions=") {
 		return cmdutil.HelpErrorf(cmd, "Unexpected args: %v", args)
 	}
 

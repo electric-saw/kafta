@@ -15,13 +15,13 @@ func UpdatePartitions(conn *KafkaConnection, topic string, props map[string]stri
 	}
 	currentPartitions := len(val[0].Partitions)
 
-	partitionsRequest, err := strconv.Atoi(props["num.partitions"])
+	partitionsRequest, err := strconv.Atoi(props["partitions"])
 	if err != nil {
 		return err
 	}
 
 	if partitionsRequest > currentPartitions {
-		newPartitionCount64, err := strconv.ParseInt(props["num.partitions"], 10, 32)
+		newPartitionCount64, err := strconv.ParseInt(props["partitions"], 10, 32)
 		if err != nil {
 			return err
 		}
