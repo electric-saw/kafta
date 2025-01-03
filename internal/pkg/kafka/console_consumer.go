@@ -41,23 +41,30 @@ func ConsumeMessage(conn *KafkaConnection, topic string, group string, verbose b
 	client, err := sarama.NewConsumerGroup(conn.Context.BootstrapServers, group, cgConfig)
 
 	util.CheckErr(err)
+	return err
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
 	go func() {
 		defer wg.Done()
+		defer close(consumer.ready)
+		defer cancel()
 		for {
 			err := client.Consume(ctx, []string{topic}, &consumer)
 			util.CheckErr(err)
-			if ctx.Err() != nil {
+			if ctx.Err() != nil || err != nil {
 				break
 			}
-			consumer.ready = make(chan bool)
+			
 		}
 	}()
 
-	<-consumer.ready
+	select {
+	case <-consumer.ready:
+	case <-ctx.Done():
+		return nil
+	}
 	log.Println("Consumer running, waiting for events...")
 
 	sigterm := make(chan os.Signal, 1)
