@@ -1,14 +1,8 @@
 package kafka
 
 import (
-	"crypto/sha256"
-	"crypto/sha512"
-
 	"github.com/xdg/scram"
 )
-
-var SHA256 scram.HashGeneratorFcn = sha256.New
-var SHA512 scram.HashGeneratorFcn = sha512.New
 
 type XDGSCRAMClient struct {
 	*scram.Client
@@ -16,7 +10,8 @@ type XDGSCRAMClient struct {
 	scram.HashGeneratorFcn
 }
 
-func (x *XDGSCRAMClient) Begin(userName, password, authzID string) (err error) {
+func (x *XDGSCRAMClient) Begin(userName, password, authzID string) error {
+	var err error
 	x.Client, err = x.NewClient(userName, password, authzID)
 	if err != nil {
 		return err
@@ -25,9 +20,9 @@ func (x *XDGSCRAMClient) Begin(userName, password, authzID string) (err error) {
 	return nil
 }
 
-func (x *XDGSCRAMClient) Step(challenge string) (response string, err error) {
-	response, err = x.ClientConversation.Step(challenge)
-	return
+func (x *XDGSCRAMClient) Step(challenge string) (string, error) {
+	response, err := x.ClientConversation.Step(challenge)
+	return response, err
 }
 
 func (x *XDGSCRAMClient) Done() bool {

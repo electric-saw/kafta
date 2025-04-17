@@ -29,7 +29,7 @@ func NewCmdListAcl(config *configuration.Configuration) *cobra.Command {
 }
 
 func (o *listAclOptions) run() {
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 	acls := kafka.ListAllAcls(conn)
 
@@ -42,7 +42,15 @@ func (o *listAclOptions) run() {
 func (o *listAclOptions) printResourceInfo(resourceAcl sarama.ResourceAcls) {
 	header := table.Row{"resource type", "resource name", "resource pattern", "acl count"}
 	rows := []table.Row{}
-	rows = append(rows, table.Row{resourceAcl.Resource.ResourceType.String(), resourceAcl.Resource.ResourceName, resourceAcl.Resource.ResourcePatternType.String(), len(resourceAcl.Acls)})
+	rows = append(
+		rows,
+		table.Row{
+			resourceAcl.ResourceType.String(),
+			resourceAcl.ResourceName,
+			resourceAcl.ResourcePatternType.String(),
+			len(resourceAcl.Acls),
+		},
+	)
 	cmdutil.PrintTable(header, rows)
 }
 
@@ -52,7 +60,9 @@ func (o *listAclOptions) printAcls(acls []*sarama.Acl) {
 	tab.AppendHeader(table.Row{"principal", "host", "operation", "permission type"})
 
 	for _, acl := range acls {
-		tab.AppendRow(table.Row{acl.Principal, acl.Host, acl.Operation.String(), acl.PermissionType.String()})
+		tab.AppendRow(
+			table.Row{acl.Principal, acl.Host, acl.Operation.String(), acl.PermissionType.String()},
+		)
 	}
 
 	tab.SetStyle(table.StyleDefault)

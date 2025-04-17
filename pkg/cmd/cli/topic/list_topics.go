@@ -31,7 +31,7 @@ func NewCmdListTopic(config *configuration.Configuration) *cobra.Command {
 }
 
 func (o *listTopicOptions) run() {
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 	topics := kafka.ListAllTopics(conn)
 	rows := []table.Row{}
@@ -47,7 +47,10 @@ func (o *listTopicOptions) run() {
 			continue
 		}
 
-		rows = append(rows, table.Row{name, topics[name].NumPartitions, topics[name].ReplicationFactor})
+		rows = append(
+			rows,
+			table.Row{name, topics[name].NumPartitions, topics[name].ReplicationFactor},
+		)
 	}
 
 	util.PrintTable(table.Row{"name", "partitions", "replication factor"}, rows)

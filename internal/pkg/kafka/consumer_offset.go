@@ -37,10 +37,13 @@ func (c *ConsumerGroupOffset) AddTopic(name string) *TopicAssignment {
 
 	c.Topics[name] = member
 	return member
-
 }
 
-func (m *TopicAssignment) AddOffset(partition int32, consumerOffset int64, partitionOffset int64) *PartitionOffsets {
+func (m *TopicAssignment) AddOffset(
+	partition int32,
+	consumerOffset int64,
+	partitionOffset int64,
+) *PartitionOffsets {
 	result := PartitionOffsets{
 		Current: consumerOffset,
 		Max:     partitionOffset,

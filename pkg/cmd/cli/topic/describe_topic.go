@@ -31,7 +31,6 @@ func NewCmdDescribeTopic(config *configuration.Configuration) *cobra.Command {
 	}
 
 	return cmd
-
 }
 
 func (o *describeTopicOptions) complete(cmd *cobra.Command) error {
@@ -47,7 +46,7 @@ func (o *describeTopicOptions) complete(cmd *cobra.Command) error {
 }
 
 func (o *describeTopicOptions) run() {
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 	topic := kafka.DescribeTopics(conn, o.topics)[0]
 
@@ -68,7 +67,16 @@ func (o *describeTopicOptions) run() {
 
 	for _, id := range keys {
 		partition := sortedPartitions[id]
-		rows = append(rows, table.Row{partition.ID, partition.Isr, partition.Leader, partition.Replicas, partition.OfflineReplicas})
+		rows = append(
+			rows,
+			table.Row{
+				partition.ID,
+				partition.Isr,
+				partition.Leader,
+				partition.Replicas,
+				partition.OfflineReplicas,
+			},
+		)
 	}
 
 	cmdutil.PrintTable(header, rows)

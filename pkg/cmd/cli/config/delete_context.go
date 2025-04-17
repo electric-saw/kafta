@@ -42,11 +42,17 @@ func runDeleteContext(config *configuration.Configuration, cmd *cobra.Command) e
 	name := args[0]
 	_, ok := config.KaftaData.Contexts[name]
 	if !ok {
-		return fmt.Errorf("cannot delete context %s, not in %s", name, config.KaftaData.ConfigPath())
+		return fmt.Errorf(
+			"cannot delete context %s, not in %s",
+			name,
+			config.KaftaData.ConfigPath(),
+		)
 	}
 
 	if config.KaftaData.CurrentContext == name {
-		fmt.Printf("warning: this removed your active context, use \"kata config use-context\" to select a different one\n")
+		fmt.Printf(
+			"warning: this removed your active context, use \"kata config use-context\" to select a different one\n",
+		)
 		config.KaftaData.CurrentContext = ""
 	}
 

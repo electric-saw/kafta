@@ -22,11 +22,11 @@ func (f *BoolFlag) Default(value bool) {
 	f.value = value
 }
 
-func (f BoolFlag) Value() bool {
+func (f *BoolFlag) Value() bool {
 	return f.value
 }
 
-func (f BoolFlag) String() string {
+func (f *BoolFlag) String() string {
 	return strconv.FormatBool(f.value)
 }
 
@@ -35,14 +35,12 @@ func (f *BoolFlag) Set(value string) error {
 		f.value = bValue
 		f.provided = true
 		return nil
-
 	} else {
 		return err
 	}
-
 }
 
-func (f BoolFlag) Provided() bool {
+func (f *BoolFlag) Provided() bool {
 	return f.provided
 }
 
@@ -51,18 +49,18 @@ func (f *BoolFlag) Type() string {
 }
 
 func (f *BoolFlag) HuhWraps() huh.Accessor[bool] {
-	return huhWrapperBool{f: f}
+	return &huhWrapperBool{f: f}
 }
 
 type huhWrapperBool struct {
 	f *BoolFlag
 }
 
-func (h huhWrapperBool) Get() bool {
+func (h *huhWrapperBool) Get() bool {
 	return h.f.Value()
 }
 
-func (h huhWrapperBool) Set(value bool) {
+func (h *huhWrapperBool) Set(value bool) {
 	h.f.provided = true
 	h.f.value = value
 }

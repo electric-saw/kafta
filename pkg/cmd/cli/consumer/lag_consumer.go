@@ -26,7 +26,7 @@ func NewCmdLagConsumer(config *configuration.Configuration) *cobra.Command {
 			return ValidConsumers(config, len(args) > 0)
 		},
 		Run: func(cmd *cobra.Command, args []string) {
-			cmdutil.CheckErr(options.complete(cmd))
+			options.complete(cmd)
 			options.run()
 		},
 	}
@@ -34,17 +34,15 @@ func NewCmdLagConsumer(config *configuration.Configuration) *cobra.Command {
 	cmd.Flags().BoolVar(&options.verbose, "verbose", false, "Show lag by partition")
 
 	return cmd
-
 }
 
-func (l *lagConsumerOptions) complete(cmd *cobra.Command) error {
+func (l *lagConsumerOptions) complete(cmd *cobra.Command) {
 	args := cmd.Flags().Args()
 	l.groups = args
-	return nil
 }
 
 func (l *lagConsumerOptions) run() {
-	conn := kafka.MakeConnection(l.config)
+	conn := kafka.EstablishKafkaConnection(l.config)
 	defer conn.Close()
 
 	if len(l.groups) == 0 {
@@ -77,7 +75,10 @@ func (l *lagConsumerOptions) printTotalLag(consumers map[string]*kafka.ConsumerG
 func (l *lagConsumerOptions) printLagByPartition(consumers map[string]*kafka.ConsumerGroupOffset) {
 	rowConfigAutoMerge := table.RowConfig{AutoMerge: true}
 	tab := table.NewWriter()
-	tab.AppendHeader(table.Row{"consumer", "topic", "partition", "consumer offset", "partition offset", "lag"}, rowConfigAutoMerge)
+	tab.AppendHeader(
+		table.Row{"consumer", "topic", "partition", "consumer offset", "partition offset", "lag"},
+		rowConfigAutoMerge,
+	)
 
 	for _, consumer := range consumers {
 		if len(consumer.Topics) == 0 {
@@ -95,10 +96,30 @@ func (l *lagConsumerOptions) printLagByPartition(consumers map[string]*kafka.Con
 		{Number: 0, AutoMerge: true},
 		{Number: 1, AutoMerge: true},
 		{Number: 2, AutoMerge: true},
-		{Number: 3, Align: text.AlignCenter, AlignFooter: text.AlignCenter, AlignHeader: text.AlignCenter},
-		{Number: 4, Align: text.AlignCenter, AlignFooter: text.AlignCenter, AlignHeader: text.AlignCenter},
-		{Number: 5, Align: text.AlignCenter, AlignFooter: text.AlignCenter, AlignHeader: text.AlignCenter},
-		{Number: 6, Align: text.AlignCenter, AlignFooter: text.AlignCenter, AlignHeader: text.AlignCenter},
+		{
+			Number:      3,
+			Align:       text.AlignCenter,
+			AlignFooter: text.AlignCenter,
+			AlignHeader: text.AlignCenter,
+		},
+		{
+			Number:      4,
+			Align:       text.AlignCenter,
+			AlignFooter: text.AlignCenter,
+			AlignHeader: text.AlignCenter,
+		},
+		{
+			Number:      5,
+			Align:       text.AlignCenter,
+			AlignFooter: text.AlignCenter,
+			AlignHeader: text.AlignCenter,
+		},
+		{
+			Number:      6,
+			Align:       text.AlignCenter,
+			AlignFooter: text.AlignCenter,
+			AlignHeader: text.AlignCenter,
+		},
 	})
 
 	tab.SetStyle(table.StyleDefault)

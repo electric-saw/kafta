@@ -28,6 +28,7 @@ type AclOptions struct {
 	acl_permission_type sarama.AclPermissionType
 }
 
+//nolint:exhaustive,gochecknoglobals // Ignoring unknown resource types
 var ResourceTypeMapping = map[sarama.AclResourceType][]string{
 	sarama.AclResourceAny:             {"Any"},
 	sarama.AclResourceTopic:           {"Topic"},
@@ -37,6 +38,7 @@ var ResourceTypeMapping = map[sarama.AclResourceType][]string{
 	sarama.AclResourceDelegationToken: {"DelegationToken"},
 }
 
+//nolint:exhaustive,gochecknoglobals // Ignoring unknown resource types
 var OperationMapping = map[sarama.AclOperation][]string{
 	sarama.AclOperationAll:             {"All"},
 	sarama.AclOperationRead:            {"Read"},
@@ -51,7 +53,9 @@ var OperationMapping = map[sarama.AclOperation][]string{
 	sarama.AclOperationIdempotentWrite: {"IdempotentWrite"},
 }
 
+//nolint:exhaustive,gochecknoglobals // Ignoring unknown resource types
 var PermissionMapping = map[sarama.AclPermissionType][]string{
 	sarama.AclPermissionDeny:  {"Deny"},
 	sarama.AclPermissionAllow: {"Allow"},
+	sarama.AclPermissionAny:   {"Any"},
 }

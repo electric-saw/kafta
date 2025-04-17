@@ -25,7 +25,7 @@ func NewCmdDescribeCluster(config *configuration.Configuration) *cobra.Command {
 }
 
 func (o *describeClusters) run() {
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 	brokers := kafka.GetBrokers(conn)
 
@@ -33,7 +33,10 @@ func (o *describeClusters) run() {
 	rows := []table.Row{}
 
 	for _, broker := range brokers {
-		rows = append(rows, table.Row{broker.ID(), broker.Address, broker.Broker.Rack(), broker.IsController})
+		rows = append(
+			rows,
+			table.Row{broker.ID(), broker.Address, broker.Rack(), broker.IsController},
+		)
 	}
 
 	util.PrintTable(header, rows)

@@ -24,14 +24,17 @@ func NewCmdTopic(config *configuration.Configuration) *cobra.Command {
 	return cmd
 }
 
-func ValidTopics(config *configuration.Configuration, hasArgs bool) ([]string, cobra.ShellCompDirective) {
+func ValidTopics(
+	config *configuration.Configuration,
+	hasArgs bool,
+) ([]string, cobra.ShellCompDirective) {
 	var topicsList []string
 
 	if hasArgs {
 		return topicsList, cobra.ShellCompDirectiveNoFileComp
 	}
 
-	conn := kafka.MakeConnection(config)
+	conn := kafka.EstablishKafkaConnection(config)
 	topics := kafka.ListAllTopics(conn)
 	for name := range topics {
 		topicsList = append(topicsList, name)

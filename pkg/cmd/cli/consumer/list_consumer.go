@@ -25,11 +25,10 @@ func NewCmdListConsumer(config *configuration.Configuration) *cobra.Command {
 	}
 
 	return cmd
-
 }
 
 func (o *listConsumerOptions) run() {
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 	consumers := kafka.ListConsumerGroupDescriptions(conn)
 	rows := []table.Row{}

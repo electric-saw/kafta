@@ -36,7 +36,8 @@ You can reset to a specific offset or the offset corresponding to a timestamp.`,
 	}
 
 	cmd.Flags().Int64Var(&options.offset, "offset", -1, "Target offset to reset to")
-	cmd.Flags().Int64Var(&options.timestamp, "timestamp", -1, "Timestamp to calculate the offset (e.g., '2024-12-01T15:04:05Z')")
+	cmd.Flags().
+		Int64Var(&options.timestamp, "timestamp", -1, "Timestamp to calculate the offset (e.g., '2024-12-01T15:04:05Z')")
 	cmd.Flags().BoolVarP(&options.quiet, "quiet", "q", false, "Quiet mode")
 	cmd.Flags().Int32Var(&options.partition, "partition", -1, "Partition to reset the offset for")
 
@@ -69,13 +70,18 @@ func (o *resetOffsetOptions) complete(cmd *cobra.Command, args []string) error {
 
 func (o *resetOffsetOptions) run() error {
 	if !o.quiet {
-		message := fmt.Sprintf("Do you really want to reset the offset for group '%s', topic '%s', partition %d?", o.group, o.topic, o.partition)
+		message := fmt.Sprintf(
+			"Do you really want to reset the offset for group '%s', topic '%s', partition %d?",
+			o.group,
+			o.topic,
+			o.partition,
+		)
 		if !prompter.YN(message, false) {
 			return nil
 		}
 	}
 
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 
 	var targetOffset int64
@@ -86,13 +92,13 @@ func (o *resetOffsetOptions) run() error {
 	} else {
 		targetOffset, err = kafka.GetOffsetForTimestamp(conn, o.topic, o.partition, o.timestamp)
 		if err != nil {
-			return fmt.Errorf("failed to get offset for timestamp %d: %v", o.timestamp, err)
+			return fmt.Errorf("failed to get offset for timestamp %d: %w", o.timestamp, err)
 		}
 	}
 
 	err = kafka.ResetConsumerGroupOffset(conn, o.group, o.topic, o.partition, targetOffset)
 	if err != nil {
-		return fmt.Errorf("failed to reset offset for group '%s': %v", o.group, err)
+		return fmt.Errorf("failed to reset offset for group '%s': %w", o.group, err)
 	}
 
 	fmt.Printf("Successfully reset offset for group '%s', topic '%s', partition %d to offset %d.\n",

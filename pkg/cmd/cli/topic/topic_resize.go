@@ -56,7 +56,7 @@ func (o *resizeTopicOptions) run() error {
 			return nil
 		}
 	}
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 
 	err := kafka.UpdatePartitions(conn, o.name, o.props)

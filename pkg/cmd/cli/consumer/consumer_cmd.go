@@ -24,9 +24,12 @@ func NewCmdConsumer(config *configuration.Configuration) *cobra.Command {
 	return cmd
 }
 
-func ValidConsumers(config *configuration.Configuration, hasArgs bool) ([]string, cobra.ShellCompDirective) {
+func ValidConsumers(
+	config *configuration.Configuration,
+	hasArgs bool,
+) ([]string, cobra.ShellCompDirective) {
 	var consumersList []string
-	conn := kafka.MakeConnection(config)
+	conn := kafka.EstablishKafkaConnection(config)
 	consumers := kafka.ListConsumerGroups(conn)
 	for name := range consumers {
 		consumersList = append(consumersList, name)

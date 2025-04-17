@@ -1,6 +1,8 @@
 package kafka
 
 import (
+	"crypto/sha256"
+	"crypto/sha512"
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/base64"
@@ -10,6 +12,7 @@ import (
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
 	"github.com/riferrei/srclient"
+	"github.com/sirupsen/logrus"
 )
 
 type KafkaConnection struct {
@@ -20,14 +23,17 @@ type KafkaConnection struct {
 	SchemaRegistryClient *srclient.SchemaRegistryClient
 }
 
-func MakeConnection(config *configuration.Configuration) *KafkaConnection {
-	conn, err := MakeConnectionContext(config, config.GetContext())
+func EstablishKafkaConnection(config *configuration.Configuration) *KafkaConnection {
+	conn, err := ConnectionContext(config, config.GetContext())
 	util.CheckErr(err)
 
 	return conn
 }
 
-func MakeConnectionContext(config *configuration.Configuration, context *configuration.Context) (*KafkaConnection, error) {
+func ConnectionContext(
+	config *configuration.Configuration,
+	context *configuration.Context,
+) (*KafkaConnection, error) {
 	conn := &KafkaConnection{
 		Config:  config,
 		Context: context,
@@ -44,7 +50,10 @@ func (k *KafkaConnection) newTLSConfig() (*tls.Config, error) {
 
 	// Load CA cert
 	if len(k.Context.TLS.CaCertFile) > 0 {
-		caCertBlock, _ := base64.URLEncoding.DecodeString(k.Context.TLS.CaCertFile)
+		caCertBlock, err := base64.URLEncoding.DecodeString(k.Context.TLS.CaCertFile)
+		if err != nil {
+			return &tlsConfig, err
+		}
 
 		if caCertBlock != nil {
 			caCertPool := x509.NewCertPool()
@@ -55,8 +64,16 @@ func (k *KafkaConnection) newTLSConfig() (*tls.Config, error) {
 
 	// Load client cert
 	if len(k.Context.TLS.ClientCertFile) > 0 || len(k.Context.TLS.ClientKeyFile) > 0 {
-		clientCert, _ := base64.URLEncoding.DecodeString(k.Context.TLS.ClientCertFile)
-		clientKey, _ := base64.URLEncoding.DecodeString(k.Context.TLS.ClientKeyFile)
+		clientCert, err := base64.URLEncoding.DecodeString(k.Context.TLS.ClientCertFile)
+		if err != nil {
+			return &tlsConfig, err
+		}
+
+		clientKey, err := base64.URLEncoding.DecodeString(k.Context.TLS.ClientKeyFile)
+		if err != nil {
+			return &tlsConfig, err
+		}
+
 		cert, err := tls.X509KeyPair(clientCert, clientKey)
 		if err != nil {
 			return &tlsConfig, err
@@ -69,6 +86,9 @@ func (k *KafkaConnection) newTLSConfig() (*tls.Config, error) {
 
 func (k *KafkaConnection) Connect() error {
 	clientConfig := sarama.NewConfig()
+
+	sarama.Logger = logrus.New()
+	sarama.DebugLogger = logrus.New()
 
 	clientConfig.Net.DialTimeout = k.Config.ConnectionConfig().DialTimeout
 	clientConfig.Net.ReadTimeout = k.Config.ConnectionConfig().ReadTimeout
@@ -113,11 +133,15 @@ func (k *KafkaConnection) initAuth(clientConfig *sarama.Config) error {
 		switch k.Context.SASL.Algorithm {
 		case "sha256":
 		case "SCRAM-SHA-256":
-			clientConfig.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient { return &XDGSCRAMClient{HashGeneratorFcn: SHA256} }
+			clientConfig.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient {
+				return &XDGSCRAMClient{HashGeneratorFcn: sha256.New}
+			}
 			clientConfig.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA256
 		case "sha512":
 		case "SCRAM-SHA-512":
-			clientConfig.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient { return &XDGSCRAMClient{HashGeneratorFcn: SHA512} }
+			clientConfig.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient {
+				return &XDGSCRAMClient{HashGeneratorFcn: sha512.New}
+			}
 			clientConfig.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA512
 		default:
 			clientConfig.Net.SASL.Mechanism = sarama.SASLTypePlaintext
@@ -126,7 +150,6 @@ func (k *KafkaConnection) initAuth(clientConfig *sarama.Config) error {
 	}
 
 	if k.Context.UseTLS {
-
 		tlsConfig, err := k.newTLSConfig()
 		if err != nil {
 			return err
@@ -142,7 +165,10 @@ func (k *KafkaConnection) initAuth(clientConfig *sarama.Config) error {
 func (k *KafkaConnection) connectSr() error {
 	if k.SchemaRegistryClient == nil && k.Context.SchemaRegistry != "" {
 		srClient := srclient.CreateSchemaRegistryClient(k.Context.SchemaRegistry)
-		srClient.SetCredentials(k.Context.SchemaRegistryAuth.Key, k.Context.SchemaRegistryAuth.Secret)
+		srClient.SetCredentials(
+			k.Context.SchemaRegistryAuth.Key,
+			k.Context.SchemaRegistryAuth.Secret,
+		)
 		_, err := srClient.GetGlobalCompatibilityLevel()
 		if err != nil {
 			return fmt.Errorf("error connecting to schema registry: %w", err)

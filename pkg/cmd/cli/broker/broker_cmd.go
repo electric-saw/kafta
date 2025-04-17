@@ -24,9 +24,12 @@ func NewCmdBroker(config *configuration.Configuration) *cobra.Command {
 	return cmd
 }
 
-func ValidBrokers(config *configuration.Configuration, hasArgs bool) ([]string, cobra.ShellCompDirective) {
+func ValidBrokers(
+	config *configuration.Configuration,
+	hasArgs bool,
+) ([]string, cobra.ShellCompDirective) {
 	var brokerList []string
-	conn := kafka.MakeConnection(config)
+	conn := kafka.EstablishKafkaConnection(config)
 	brokers := kafka.GetBrokers(conn)
 	for _, broker := range brokers {
 		brokerList = append(brokerList, broker.Host, strconv.Itoa(int(broker.Id)))

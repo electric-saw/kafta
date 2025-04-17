@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
+const (
 	useContextExample = `
 		# Use the context for the kafka-dev cluster
 		kafta config use-context kafka-dev`

@@ -60,7 +60,6 @@ func ConsumeMessage(conn *KafkaConnection, topic string, group string, verbose b
 			if ctx.Err() != nil || err != nil {
 				break
 			}
-
 		}
 	}()
 
@@ -105,33 +104,46 @@ func (consumer *Consumer) Cleanup(sarama.ConsumerGroupSession) error {
 	return nil
 }
 
-func (consumer *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+func (consumer *Consumer) ConsumeClaim(
+	session sarama.ConsumerGroupSession,
+	claim sarama.ConsumerGroupClaim,
+) error {
 	for message := range claim.Messages() {
 		consumer.printMessage(message)
 		session.MarkMessage(message, "")
-
 	}
 	return nil
 }
 
 func (consumer *Consumer) printMessage(message *sarama.ConsumerMessage) {
-	if consumer.conn.SchemaRegistryClient != nil {
-		if len(message.Value) > 0 && message.Value[0] == 0 {
-			schemaID := binary.BigEndian.Uint32(message.Value[1:5])
-			schema, err := consumer.conn.SchemaRegistryClient.GetSchema(int(schemaID))
-			if err != nil {
-				log.Printf("Error getting schema for topic [%s]: %v", message.Topic, err)
-			} else {
-				native, _, err := schema.Codec().NativeFromBinary(message.Value[5:])
-				value, _ := schema.Codec().TextualFromNative(nil, native)
-				if err != nil {
-					log.Printf("Error decoding message for topic [%s]: %v", message.Topic, err)
-				} else {
-					log.Printf("Partition: %d Key: %s Message: %s", message.Partition, string(message.Key), string(value))
-				}
-			}
-		}
+	if consumer.conn.SchemaRegistryClient == nil {
+		log.Printf(
+			"Partition: %v Key: %s Message: %s",
+			message.Partition,
+			string(message.Key),
+			string(message.Value),
+		)
+	}
+	if len(message.Value) == 0 || message.Value[0] != 0 {
+		return
+	}
+
+	schemaID := binary.BigEndian.Uint32(message.Value[1:5])
+	schema, err := consumer.conn.SchemaRegistryClient.GetSchema(int(schemaID))
+	if err != nil {
+		log.Printf("Error getting schema for topic [%s]: %v", message.Topic, err)
 	} else {
-		log.Printf("Partition: %v Key: %s Message: %s", message.Partition, string(message.Key), string(message.Value))
+		native, _, err := schema.Codec().NativeFromBinary(message.Value[5:])
+		if err != nil {
+			log.Printf("Error decoding message for topic [%s]: %v", message.Topic, err)
+			return
+		}
+
+		value, err := schema.Codec().TextualFromNative(nil, native)
+		if err != nil {
+			log.Printf("Error decoding message for topic [%s]: %v", message.Topic, err)
+		} else {
+			log.Printf("Partition: %d Key: %s Message: %s", message.Partition, string(message.Key), string(value))
+		}
 	}
 }

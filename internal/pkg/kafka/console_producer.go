@@ -16,7 +16,10 @@ import (
 func ProduceMessage(conn *KafkaConnection, topic string) error {
 	var messageInput string
 	var key *string
-	producer, err := sarama.NewAsyncProducer(conn.Config.GetContext().BootstrapServers, conn.Client.Config())
+	producer, err := sarama.NewAsyncProducer(
+		conn.Config.GetContext().BootstrapServers,
+		conn.Client.Config(),
+	)
 	util.CheckErr(err)
 	defer producer.AsyncClose()
 
@@ -26,7 +29,6 @@ func ProduceMessage(conn *KafkaConnection, topic string) error {
 
 producerLoop:
 	for {
-
 		consoleReader := bufio.NewReader(os.Stdin)
 		fmt.Print(">")
 		input, err := consoleReader.ReadString('\n')
@@ -41,7 +43,7 @@ producerLoop:
 
 		if len(inputList) > 0 {
 			key = &inputList[0]
-			messageInput = fmt.Sprint(strings.Join(inputList[1:], ":"))
+			messageInput = strings.Join(inputList[1:], ":")
 		} else {
 			key = nil
 			messageInput = input

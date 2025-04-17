@@ -31,7 +31,6 @@ func NewCmdCreateTopic(config *configuration.Configuration) *cobra.Command {
 	cmd.Flags().StringVarP(&options.name, "configs", "c", "", "Configs")
 
 	return cmd
-
 }
 
 func (o *createTopicOptions) complete(cmd *cobra.Command) error {
@@ -46,7 +45,13 @@ func (o *createTopicOptions) complete(cmd *cobra.Command) error {
 }
 
 func (o *createTopicOptions) run() error {
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
-	return kafka.CreateTopic(conn, o.name, o.partitions, o.rf, cmdutil.StringToMapPointer(o.topicConfigs))
+	return kafka.CreateTopic(
+		conn,
+		o.name,
+		o.partitions,
+		o.rf,
+		cmdutil.StringToMapPointer(o.topicConfigs),
+	)
 }

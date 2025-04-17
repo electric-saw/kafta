@@ -32,24 +32,27 @@ func NewCmdConfigUpdateTopic(config *configuration.Configuration) *cobra.Command
 
 func (o *updateTopicOptions) complete(cmd *cobra.Command) error {
 	args := cmd.Flags().Args()
-	switch {
-	case len(args) == 2 && strings.Contains(args[1], "="):
+
+	haveTwoArgs := len(args) == 2
+	containsEqualsSign := strings.Contains(args[1], "=")
+
+	if haveTwoArgs && containsEqualsSign {
 		o.name = args[0]
 		o.props = make(map[string]string)
 
-		for _, prop := range strings.Split(args[1], "&") {
+		for prop := range strings.SplitSeq(args[1], "&") {
 			keyValue := strings.Split(prop, "=")
 			o.props[keyValue[0]] = keyValue[1]
 		}
-	default:
-		return cmdutil.HelpErrorf(cmd, "Unexpected args: %v", args)
+
+		return nil
 	}
 
-	return nil
+	return cmdutil.HelpErrorf(cmd, "Unexpected args: %v", args)
 }
 
 func (o *updateTopicOptions) run() error {
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 
 	if err := kafka.SetProp(conn, o.name, o.props); err != nil {

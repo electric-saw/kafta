@@ -34,7 +34,7 @@ func NewCmdListConfigs(config *configuration.Configuration) *cobra.Command {
 }
 
 func (o *listConfigsOptions) run() error {
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 
 	resource := sarama.ConfigResource{
@@ -47,6 +47,11 @@ func (o *listConfigsOptions) run() error {
 	}
 
 	rows := []table.Row{}
+
+	sort.Slice(configs, func(i, j int) bool {
+		return configs[i].Name < configs[j].Name
+	})
+
 	for _, config := range configs {
 		value := strings.TrimSpace(config.Value)
 		if value == "" {
@@ -55,10 +60,6 @@ func (o *listConfigsOptions) run() error {
 
 		rows = append(rows, table.Row{config.Name, value, config.Source.String()})
 	}
-
-	sort.Slice(rows, func(i, j int) bool {
-		return rows[i][0].(string) < rows[j][0].(string)
-	})
 
 	cmdutil.PrintTable(
 		table.Row{"Config Name", "Config Value", "Source"},

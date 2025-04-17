@@ -68,19 +68,20 @@ func LoadKaftaconfigOrDefault(configPath string) (*KaftaConfig, bool) {
 
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return config, true
-	} else {
+	}
+	rawYaml, err := os.ReadFile(filepath.Clean(configPath))
+	if err != nil {
+		return config, true
+	}
 
-		rawYaml, err := os.ReadFile(filepath.Clean(configPath))
-		if err != nil {
-			return config, true
-		}
-
-		err = yaml.Unmarshal(rawYaml, &config)
-		if err != nil {
-			fmt.Println(err)
-			fmt.Printf("Error parsing config file, please check the format of %s and try again", configPath)
-			os.Exit(1)
-		}
+	err = yaml.Unmarshal(rawYaml, &config)
+	if err != nil {
+		fmt.Println(err)
+		fmt.Printf(
+			"Error parsing config file, please check the format of %s and try again",
+			configPath,
+		)
+		os.Exit(1)
 	}
 
 	return config, false

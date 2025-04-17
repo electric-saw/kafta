@@ -80,7 +80,12 @@ func (o *RenameContextOptions) RunRenameContext(config *configuration.Configurat
 
 	_, newExists := config.KaftaData.Contexts[o.newName]
 	if newExists {
-		return fmt.Errorf("cannot rename the context %q, the context %q already exists in %s", o.contextName, o.newName, configFile)
+		return fmt.Errorf(
+			"cannot rename the context %q, the context %q already exists in %s",
+			o.contextName,
+			o.newName,
+			configFile,
+		)
 	}
 
 	config.KaftaData.Contexts[o.newName] = context

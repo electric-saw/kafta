@@ -70,7 +70,15 @@ func (o *createAclOptions) complete(cmd *cobra.Command) error {
 }
 
 func (o *createAclOptions) run() error {
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
-	return kafka.CreateAcl(conn, o.resource_name, o.resource_type, o.acl_principal, o.acl_host, o.acl_operation, o.acl_permission_type)
+	return kafka.CreateAcl(
+		conn,
+		o.resource_name,
+		o.resource_type,
+		o.acl_principal,
+		o.acl_host,
+		o.acl_operation,
+		o.acl_permission_type,
+	)
 }

@@ -44,8 +44,10 @@ func InitializeConfiguration(appName string) *Configuration {
 
 func (c *Configuration) BindFlags(cmd *cobra.Command) {
 	cmd.PersistentFlags().BoolVarP(&c.DebugMode, "debug", "d", false, "Debug mode")
-	cmd.PersistentFlags().StringVarP(&c.ActiveContext, "context", "", c.ActiveContext, "The name of the kafkaconfig context to use")
-	cmd.PersistentFlags().StringVarP(&c.KaftaconfigFile, "kafkaconfig", "", c.KaftaconfigFile, "Path to the kafkaconfig file to use for CLI requests.")
+	cmd.PersistentFlags().
+		StringVarP(&c.ActiveContext, "context", "", c.ActiveContext, "The name of the kafkaconfig context to use")
+	cmd.PersistentFlags().
+		StringVarP(&c.KaftaconfigFile, "kafkaconfig", "", c.KaftaconfigFile, "Path to the kafkaconfig file to use for CLI requests.")
 }
 
 func (c *Configuration) EnsureKaftaconfig() {

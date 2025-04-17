@@ -44,7 +44,7 @@ func (o *resetTopicOptions) complete(cmd *cobra.Command) error {
 }
 
 func (o *resetTopicOptions) run() error {
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 
 	if err := kafka.ResetProp(conn, o.name, o.props); err != nil {

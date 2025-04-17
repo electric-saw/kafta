@@ -41,9 +41,5 @@ func NewSubjecVersion(config *configuration.Configuration, subsubjectName string
 		return "", err
 	}
 
-	if err != nil {
-		return "", err
-	}
-
 	return string(body), err
 }

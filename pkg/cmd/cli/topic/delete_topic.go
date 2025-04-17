@@ -31,7 +31,6 @@ func NewCmdDeleteTopic(config *configuration.Configuration) *cobra.Command {
 	cmd.Flags().BoolVarP(&options.quiet, "quiet", "q", false, "Quiet mode")
 
 	return cmd
-
 }
 
 func (o *deleteTopicOptions) complete(cmd *cobra.Command) error {
@@ -52,7 +51,7 @@ func (o *deleteTopicOptions) run() error {
 		}
 	}
 
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 	return kafka.DeleteTopic(conn, o.name)
 }
