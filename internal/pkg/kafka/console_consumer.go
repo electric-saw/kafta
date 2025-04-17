@@ -34,14 +34,18 @@ func ConsumeMessage(conn *KafkaConnection, topic string, group string, verbose b
 
 	ctx, cancel := context.WithCancel(context.Background())
 
+	defer cancel()
+
 	cgConfig := conn.Client.Config()
 
 	cgConfig.Consumer.Offsets.Initial = sarama.OffsetOldest
 
 	client, err := sarama.NewConsumerGroup(conn.Context.BootstrapServers, group, cgConfig)
 
-	util.CheckErr(err)
-	return err
+	if err != nil {
+		util.CheckErr(err)
+		return err
+	}
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
@@ -56,7 +60,7 @@ func ConsumeMessage(conn *KafkaConnection, topic string, group string, verbose b
 			if ctx.Err() != nil || err != nil {
 				break
 			}
-			
+
 		}
 	}()
 
