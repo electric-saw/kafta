@@ -14,5 +14,4 @@ func main() {
 	err := kafta.NewKaftaCommand(baseName).
 		Execute()
 	util.CheckErr(err)
-
 }
