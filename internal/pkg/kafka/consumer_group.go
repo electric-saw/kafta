@@ -46,7 +46,6 @@ func DeleteConsumerGroup(conn *KafkaConnection, group string) error {
 type topicOffset map[int32]int64
 
 func ConsumerLag(conn *KafkaConnection, groups []string) map[string]*ConsumerGroupOffset {
-
 	result := make(map[string]*ConsumerGroupOffset)
 	cacheTopic := make(map[string]topicOffset)
 
@@ -86,7 +85,13 @@ func ConsumerLag(conn *KafkaConnection, groups []string) map[string]*ConsumerGro
 	return result
 }
 
-func ResetConsumerGroupOffset(conn *KafkaConnection, group string, topic string, partition int32, offset int64) error {
+func ResetConsumerGroupOffset(
+	conn *KafkaConnection,
+	group string,
+	topic string,
+	partition int32,
+	offset int64,
+) error {
 	manager, err := sarama.NewOffsetManagerFromClient(group, conn.Client)
 	util.CheckErr(err)
 
@@ -98,6 +103,11 @@ func ResetConsumerGroupOffset(conn *KafkaConnection, group string, topic string,
 	return nil
 }
 
-func GetOffsetForTimestamp(conn *KafkaConnection, topic string, partition int32, timestamp int64) (int64, error) {
+func GetOffsetForTimestamp(
+	conn *KafkaConnection,
+	topic string,
+	partition int32,
+	timestamp int64,
+) (int64, error) {
 	return conn.Client.GetOffset(topic, partition, timestamp)
 }

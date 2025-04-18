@@ -42,7 +42,12 @@ func NewCmdDeleteAcl(config *configuration.Configuration) *cobra.Command {
 		"acl operation can be 'Any', 'All', 'Read', 'Write', 'Create', 'Delete', 'Alter', 'Describe', 'ClusterAction', 'DescribeConfigs', 'AlterConfigs', 'IdempotentWrite'")
 
 	cmd.Flags().VarP(
-		enumflag.NewWithoutDefault(&options.acl_permission_type, "permission", PermissionMapping, enumflag.EnumCaseInsensitive),
+		enumflag.NewWithoutDefault(
+			&options.acl_permission_type,
+			"permission",
+			PermissionMapping,
+			enumflag.EnumCaseInsensitive,
+		),
 		"permission", "m",
 		"acl permission can be 'Any', 'Deny', 'Allow'")
 
@@ -70,7 +75,15 @@ func (o *deleteAclOptions) complete(cmd *cobra.Command) error {
 }
 
 func (o *deleteAclOptions) run() error {
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
-	return kafka.DeleteAcl(conn, o.resource_name, o.resource_type, o.acl_principal, o.acl_host, o.acl_operation, o.acl_permission_type)
+	return kafka.DeleteAcl(
+		conn,
+		o.resource_name,
+		o.resource_type,
+		o.acl_principal,
+		o.acl_host,
+		o.acl_operation,
+		o.acl_permission_type,
+	)
 }

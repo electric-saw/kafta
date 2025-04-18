@@ -44,7 +44,7 @@ type createContextOptions struct {
 	quiet                bool
 }
 
-var (
+const (
 	createContextLong = `
 		Sets a context entry in config
 
@@ -53,13 +53,15 @@ var (
 	createContextExample = `
 		# Set the cluster field on the kafka-dev context entry without touching other values
 		kafta config set-context kafka-dev --server=b-1.kafka.example.com,b-2.kafka.example.com,b-3.kafka.example.com`
+
+	setContextUsage = "set-context [NAME | --current] [--server=server] [--cluster=cluster_nickname] [--schema-registry=url] [--ksql=url]"
 )
 
 func NewCmdConfigSetContext(config *configuration.Configuration) *cobra.Command {
 	options := &createContextOptions{config: config}
 
 	cmd := &cobra.Command{
-		Use:                   "set-context [NAME | --current] [--server=server] [--cluster=cluster_nickname] [--schema-registry=url] [--ksql=url]",
+		Use:                   setContextUsage,
 		DisableFlagsInUseLine: true,
 		Short:                 "Sets a context entry in config",
 		Long:                  createContextLong,
@@ -76,13 +78,17 @@ func NewCmdConfigSetContext(config *configuration.Configuration) *cobra.Command 
 		},
 	}
 
-	cmd.Flags().BoolVar(&options.currContext, "current", options.currContext, "Modify the current context")
+	cmd.Flags().
+		BoolVar(&options.currContext, "current", options.currContext, "Modify the current context")
 	cmd.Flags().Var(&options.schemaRegistry, "schema-registry", "schema-registry for the context")
-	cmd.Flags().Var(&options.schemaRegistrySecret, "schema-registry-secret", "schema-registry secret")
+	cmd.Flags().
+		Var(&options.schemaRegistrySecret, "schema-registry-secret", "schema-registry secret")
 	cmd.Flags().Var(&options.schemaRegistryKey, "schema-registry-key", "schema-registry key")
 	cmd.Flags().Var(&options.ksql, "ksql", "ksql for the context")
-	cmd.Flags().Var(&options.bootstrapServers, "server", "server for the cluster entry in Kaftaconfig")
-	cmd.Flags().Var(&options.version, "version", "kafka vesion for the cluster entry in Kaftaconfig")
+	cmd.Flags().
+		Var(&options.bootstrapServers, "server", "server for the cluster entry in Kaftaconfig")
+	cmd.Flags().
+		Var(&options.version, "version", "kafka vesion for the cluster entry in Kaftaconfig")
 	cmd.Flags().Var(&options.useSASL, "sasl", "Use SASL")
 	cmd.Flags().VarP(&options.algorithm, "algorithm", "a", "algorithm for SASL")
 	cmd.Flags().VarP(&options.user, "username", "u", "Username")
@@ -118,7 +124,7 @@ func (o *createContextOptions) run() (string, bool, error) {
 	context, err := o.modifyContext(*startingInstance)
 	if err != nil {
 		cmdutil.CheckErr(err)
-		return "", false, fmt.Errorf("could not extract TLS configuration")
+		return "", false, errors.New("could not extract TLS configuration")
 	}
 
 	fmt.Printf("\nChecking connection to %s, please wait...\n", context.BootstrapServers)
@@ -134,8 +140,9 @@ func (o *createContextOptions) run() (string, bool, error) {
 	return name, exists, nil
 }
 
-//gocyclo:ignore
-func (o *createContextOptions) modifyContext(context configuration.Context) (*configuration.Context, error) {
+func (o *createContextOptions) modifyContext(
+	context configuration.Context,
+) (*configuration.Context, error) {
 	modifiedContext := context
 
 	if o.ksql.Provided() {
@@ -284,19 +291,22 @@ func testHost(address string) bool {
 	conn, err := net.DialTimeout("tcp", address, 3*time.Second)
 	if err != nil {
 		return false
-	} else {
-		if conn != nil {
-			_ = conn.Close()
-			return true
-		} else {
-			return true
-		}
 	}
+
+	if conn != nil {
+		err = conn.Close()
+		if err != nil {
+			fmt.Printf("Error closing connection: %v\n", err)
+		}
+		return true
+	}
+
+	return true
 }
 
 func (o *createContextOptions) checkConnection(context *configuration.Context) error {
 	if o.bootstrapServers.Provided() {
-		conn, err := kafka.MakeConnectionContext(o.config, context)
+		conn, err := kafka.ConnectionContext(o.config, context)
 		if err != nil {
 			return err
 		}
@@ -306,7 +316,7 @@ func (o *createContextOptions) checkConnection(context *configuration.Context) e
 	return nil
 }
 
-//gocyclo:ignore
+//nolint:funlen
 func (o *createContextOptions) promptNeeded(context *configuration.Context) error {
 	if o.quiet {
 		return nil
@@ -422,11 +432,21 @@ func (o *createContextOptions) promptNeeded(context *configuration.Context) erro
 			return !o.useTLS.Value()
 		}),
 		huh.NewGroup(tlsSetup...).WithHideFunc(func() bool {
-			return !o.useTLS.Value() || !tlsUseCertFiles.GetValue().(bool)
+			result := !o.useTLS.Value()
+
+			if useCert, ok := tlsUseCertFiles.GetValue().(bool); ok {
+				result = result || !useCert
+			}
+
+			return result
 		}),
 		huh.NewGroup(groupSchemaRegistry...),
 		huh.NewGroup(groupSchemaRegistryAuth...).WithHideFunc(func() bool {
-			return !groupSchemaRegistry[0].(*huh.Confirm).GetValue().(bool)
+			if useSchemaRegistry, ok := groupSchemaRegistry[0].GetValue().(bool); ok {
+				return !useSchemaRegistry
+			}
+
+			return false
 		}),
 	)
 	return form.Run()

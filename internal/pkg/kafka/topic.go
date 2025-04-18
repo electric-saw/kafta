@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/electric-saw/kafta/pkg/cmd/util"
+	"github.com/sirupsen/logrus"
 
 	"github.com/IBM/sarama"
 )
@@ -22,9 +23,15 @@ func DescribeTopics(conn *KafkaConnection, topics []string) []*sarama.TopicMetad
 	return response
 }
 
-func CreateTopic(conn *KafkaConnection, topic string, numPartitions int32, replicationFactor int16, configs map[string]*string) error {
+func CreateTopic(
+	conn *KafkaConnection,
+	topic string,
+	numPartitions int32,
+	replicationFactor int16,
+	configs map[string]*string,
+) error {
 	if topic == "" {
-		fmt.Println("Topic name is required")
+		logrus.Error("Topic name is required")
 		os.Exit(0)
 	}
 
@@ -33,8 +40,13 @@ func CreateTopic(conn *KafkaConnection, topic string, numPartitions int32, repli
 		ReplicationFactor: replicationFactor,
 		ConfigEntries:     configs,
 	}, false); err == nil {
-		fmt.Println("Topic created")
-		return err
+		logrus.Infof(
+			"Topic %s created with %d partitions and replication factor %d",
+			topic,
+			numPartitions,
+			replicationFactor,
+		)
+		return nil
 	} else {
 		return err
 	}
@@ -43,7 +55,7 @@ func CreateTopic(conn *KafkaConnection, topic string, numPartitions int32, repli
 func DeleteTopic(conn *KafkaConnection, topic string) error {
 	if err := conn.Admin.DeleteTopic(topic); err == nil {
 		fmt.Println("Topic deleted")
-		return err
+		return nil
 	} else {
 		return err
 	}

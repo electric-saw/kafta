@@ -31,7 +31,6 @@ func NewCmdDeleteConsumer(config *configuration.Configuration) *cobra.Command {
 	cmd.Flags().BoolVarP(&options.quiet, "quiet", "q", false, "Quiet mode")
 
 	return cmd
-
 }
 
 func (o *deleteConsumerOptions) complete(cmd *cobra.Command) error {
@@ -52,7 +51,7 @@ func (o *deleteConsumerOptions) run() error {
 		}
 	}
 
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 	return kafka.DeleteConsumerGroup(conn, o.name)
 }

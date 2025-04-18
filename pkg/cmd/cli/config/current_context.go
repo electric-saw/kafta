@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
@@ -29,7 +30,7 @@ func NewCmdConfigCurrentContext(config *configuration.Configuration) *cobra.Comm
 
 func RunCurrentContext(config *configuration.Configuration) error {
 	if config.KaftaData.CurrentContext == "" {
-		err := fmt.Errorf("current-context is not set")
+		err := errors.New("current-context is not set")
 		return err
 	}
 

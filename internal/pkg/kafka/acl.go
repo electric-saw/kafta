@@ -22,7 +22,15 @@ func ListAllAcls(conn *KafkaConnection) []sarama.ResourceAcls {
 	return acls
 }
 
-func CreateAcl(conn *KafkaConnection, resource_name string, resource_type sarama.AclResourceType, principal string, host string, operation sarama.AclOperation, permission_type sarama.AclPermissionType) error {
+func CreateAcl(
+	conn *KafkaConnection,
+	resource_name string,
+	resource_type sarama.AclResourceType,
+	principal string,
+	host string,
+	operation sarama.AclOperation,
+	permission_type sarama.AclPermissionType,
+) error {
 	if resource_name == "" {
 		fmt.Println("Resource name is required")
 		os.Exit(0)
@@ -42,29 +50,37 @@ func CreateAcl(conn *KafkaConnection, resource_name string, resource_type sarama
 
 	if err := conn.Admin.CreateACL(resource, acl); err == nil {
 		fmt.Println("Acl created")
-		return err
+		return nil
 	} else {
 		return err
 	}
 }
 
-func DeleteAcl(conn *KafkaConnection, resource_name string, resource_type sarama.AclResourceType, principal string, host string, operation sarama.AclOperation, permission_type sarama.AclPermissionType) error {
-	if resource_name == "" {
+func DeleteAcl(
+	conn *KafkaConnection,
+	name string,
+	resourceType sarama.AclResourceType,
+	principal string,
+	host string,
+	operation sarama.AclOperation,
+	permissionType sarama.AclPermissionType,
+) error {
+	if name == "" {
 		fmt.Println("Resource name is required")
 		os.Exit(0)
 	}
 
 	if _, err := conn.Admin.DeleteACL(sarama.AclFilter{
-		ResourceName:              &resource_name,
-		ResourceType:              resource_type,
+		ResourceName:              &name,
+		ResourceType:              resourceType,
 		Principal:                 &principal,
 		Host:                      &host,
 		Operation:                 operation,
-		PermissionType:            permission_type,
+		PermissionType:            permissionType,
 		ResourcePatternTypeFilter: sarama.AclPatternAny,
 	}, false); err == nil {
 		fmt.Println("Acl deleted")
-		return err
+		return nil
 	} else {
 		return err
 	}

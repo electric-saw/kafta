@@ -20,10 +20,12 @@ func NewCmdConfig(config *configuration.Configuration) *cobra.Command {
 	cmd.AddCommand(NewCmdConfigUseContext(config))
 
 	return cmd
-
 }
 
-func ValidContexts(config *configuration.Configuration, hasArgs bool) ([]string, cobra.ShellCompDirective) {
+func ValidContexts(
+	config *configuration.Configuration,
+	hasArgs bool,
+) ([]string, cobra.ShellCompDirective) {
 	var contexts []string
 	if hasArgs {
 		return contexts, cobra.ShellCompDirectiveNoFileComp

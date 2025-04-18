@@ -50,7 +50,12 @@ func (o *GetContextsOptions) Complete(cmd *cobra.Command, args []string) {
 func (o *GetContextsOptions) RunGetContexts() {
 	out := util.GetNewTabWriter(os.Stdout)
 	config := o.config.KaftaData
-	defer out.Flush()
+	defer func() {
+		err := out.Flush()
+		if err != nil {
+			fmt.Printf("Error closing controller: %v\n", err)
+		}
+	}()
 
 	toPrint := []string{}
 	if len(o.contextNames) == 0 {
@@ -73,7 +78,16 @@ func (o *GetContextsOptions) RunGetContexts() {
 
 	sort.Strings(toPrint)
 	for _, name := range toPrint {
-		rows = append(rows, table.Row{name, config.Contexts[name].BootstrapServers[0], config.Contexts[name].SchemaRegistry, config.Contexts[name].Ksql, config.CurrentContext == name})
+		rows = append(
+			rows,
+			table.Row{
+				name,
+				config.Contexts[name].BootstrapServers[0],
+				config.Contexts[name].SchemaRegistry,
+				config.Contexts[name].Ksql,
+				config.CurrentContext == name,
+			},
+		)
 	}
 
 	util.PrintTable(header, rows)

@@ -50,19 +50,22 @@ func (o *consumerOptions) complete(cmd *cobra.Command) error {
 }
 
 func (o *consumerOptions) run() error {
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 	return kafka.ConsumeMessage(conn, o.topic, o.group, o.verbose)
 }
 
-func ValidTopics(config *configuration.Configuration, hasArgs bool) ([]string, cobra.ShellCompDirective) {
+func ValidTopics(
+	config *configuration.Configuration,
+	hasArgs bool,
+) ([]string, cobra.ShellCompDirective) {
 	var topicsList []string
 
 	if hasArgs {
 		return topicsList, cobra.ShellCompDirectiveNoFileComp
 	}
 
-	conn := kafka.MakeConnection(config)
+	conn := kafka.EstablishKafkaConnection(config)
 	topics := kafka.ListAllTopics(conn)
 	for name := range topics {
 		topicsList = append(topicsList, name)

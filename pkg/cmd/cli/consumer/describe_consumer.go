@@ -32,7 +32,6 @@ func NewCmdDescribeConsumer(config *configuration.Configuration) *cobra.Command 
 	}
 
 	return cmd
-
 }
 
 func (o *describeConsumerOptions) complete(cmd *cobra.Command) error {
@@ -48,7 +47,7 @@ func (o *describeConsumerOptions) complete(cmd *cobra.Command) error {
 }
 
 func (o *describeConsumerOptions) run() {
-	conn := kafka.MakeConnection(o.config)
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 	consumer := kafka.DescribeConsumerGroups(conn, o.groups)[0]
 
@@ -59,7 +58,16 @@ func (o *describeConsumerOptions) run() {
 func (o *describeConsumerOptions) printBasicInfo(group *sarama.GroupDescription) {
 	header := table.Row{"id", "protocol", "protocol type", "state", "member count"}
 	rows := []table.Row{}
-	rows = append(rows, table.Row{group.GroupId, group.Protocol, group.ProtocolType, group.State, len(group.Members)})
+	rows = append(
+		rows,
+		table.Row{
+			group.GroupId,
+			group.Protocol,
+			group.ProtocolType,
+			group.State,
+			len(group.Members),
+		},
+	)
 	cmdutil.PrintTable(header, rows)
 }
 
@@ -85,7 +93,10 @@ func (o *describeConsumerOptions) printMembers(members map[string]*sarama.GroupM
 	fmt.Println(tab.Render())
 }
 
-func (o *describeConsumerOptions) printContextPartition(member *sarama.GroupMemberDescription, tab table.Writer) error {
+func (o *describeConsumerOptions) printContextPartition(
+	member *sarama.GroupMemberDescription,
+	tab table.Writer,
+) error {
 	memberAssignment, err := member.GetMemberAssignment()
 	cmdutil.CheckErr(err)
 	memberMetadata, err := member.GetMemberMetadata()
@@ -98,7 +109,9 @@ func (o *describeConsumerOptions) printContextPartition(member *sarama.GroupMemb
 	}
 
 	for _, topic := range memberMetadata.Topics {
-		tab.AppendRow(table.Row{member.ClientId, member.ClientHost, topic, memberAssignment.Topics[topic]})
+		tab.AppendRow(
+			table.Row{member.ClientId, member.ClientHost, topic, memberAssignment.Topics[topic]},
+		)
 	}
 	return err
 }

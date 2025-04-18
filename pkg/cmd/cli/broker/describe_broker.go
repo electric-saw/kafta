@@ -33,7 +33,7 @@ func (o *clusterDescribe) defaultValue(cmd *cobra.Command) error {
 	args := cmd.Flags().Args()
 
 	if len(args) == 0 {
-		conn := kafka.MakeConnection(o.config)
+		conn := kafka.EstablishKafkaConnection(o.config)
 		defer conn.Close()
 
 		brokers := kafka.GetBrokers(conn)
@@ -54,8 +54,8 @@ func (o *clusterDescribe) defaultValue(cmd *cobra.Command) error {
 	return nil
 }
 
-func (o *clusterDescribe) run(cmd *cobra.Command) {
-	conn := kafka.MakeConnection(o.config)
+func (o *clusterDescribe) run(_ *cobra.Command) {
+	conn := kafka.EstablishKafkaConnection(o.config)
 	defer conn.Close()
 
 	description := kafka.DescribeBroker(conn, o.brokerId)
@@ -77,10 +77,17 @@ func (o *clusterDescribe) run(cmd *cobra.Command) {
 
 	for _, log := range description.Logs {
 		for _, entry := range log.Entries {
-			rows = append(rows, table.Row{log.Path, entry.Permanent, entry.Temporary, entry.Permanent + entry.Temporary})
+			rows = append(
+				rows,
+				table.Row{
+					log.Path,
+					entry.Permanent,
+					entry.Temporary,
+					entry.Permanent + entry.Temporary,
+				},
+			)
 		}
 	}
 
 	util.PrintTable(header, rows)
-
 }

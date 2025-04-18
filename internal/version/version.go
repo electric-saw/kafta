@@ -7,8 +7,8 @@ import (
 var (
 	version = "v0.1.2"
 
-	metadata  = ""
-	gitCommit = ""
+	metadata  = "" //nolint:gochecknoglobals // This will be overridden by the linker
+	gitCommit = "" //nolint:gochecknoglobals // This will be overridden by the linker
 )
 
 type BuildInfo struct {
@@ -27,7 +27,7 @@ func GetVersion() string {
 	return version + "+" + metadata
 }
 
-// Get returns build info
+// Get returns build info.
 func Get() BuildInfo {
 	v := BuildInfo{
 		Version:   GetVersion(),

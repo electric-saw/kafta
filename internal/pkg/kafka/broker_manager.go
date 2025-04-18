@@ -33,7 +33,12 @@ func GetBrokers(conn *KafkaConnection) BrokersById {
 
 	controller, err := conn.Client.Controller()
 	util.CheckErr(err)
-	defer controller.Close()
+	defer func() {
+		err := controller.Close()
+		if err != nil {
+			fmt.Printf("Error closing controller: %v\n", err)
+		}
+	}()
 
 	for _, rawBroker := range rawBrokers {
 		result = append(result, NewBroker(rawBroker, controller.ID()))
@@ -54,11 +59,10 @@ func DescribeBroker(conn *KafkaConnection, idOrAddr any) *BrokerMetadata {
 
 	metadata.Details = broker
 
-	logDirs, err := conn.Admin.DescribeLogDirs([]int32{int32(broker.Id)})
+	logDirs, err := conn.Admin.DescribeLogDirs([]int32{broker.Id})
 	util.CheckErr(err)
 
 	for _, logDir := range logDirs {
-
 		for _, dir := range logDir {
 			logFile := newLogFile(dir.Path)
 			for _, topic := range dir.Topics {
@@ -72,11 +76,12 @@ func DescribeBroker(conn *KafkaConnection, idOrAddr any) *BrokerMetadata {
 
 	err = broker.Open(conn.Client.Config())
 	util.CheckErr(err)
-	defer broker.Close()
+	defer func() {
+		err := broker.Close()
+		if err != nil {
+			fmt.Printf("Error closing controller: %v\n", err)
+		}
+	}()
 
 	return metadata
-}
-
-func GetConfigBroker(conn *KafkaConnection, broker string) {
-
 }

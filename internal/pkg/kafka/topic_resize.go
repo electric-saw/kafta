@@ -8,7 +8,6 @@ import (
 )
 
 func UpdatePartitions(conn *KafkaConnection, topic string, props map[string]string) error {
-
 	val, err := conn.Admin.DescribeTopics([]string{topic})
 	if err != nil {
 		return err
