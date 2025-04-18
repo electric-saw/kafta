@@ -11,9 +11,8 @@ import (
 func main() {
 	baseName := filepath.Base(os.Args[0])
 
-	err := kafta.NewKaftaCommand(
-		baseName,
-	).Execute()
+	err := kafta.NewKaftaCommand(baseName).
+		Execute()
 	util.CheckErr(err)
 
 }
