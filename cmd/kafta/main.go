@@ -13,7 +13,7 @@ func main() {
 
 	err := kafta.NewKaftaCommand(
 		baseName,
-		).Execute()
+	).Execute()
 	util.CheckErr(err)
 
 }
