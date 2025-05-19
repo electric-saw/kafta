@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
@@ -35,13 +36,15 @@ func BuildGetRequestSchemaRegistry(
 
 	if config.GetContext().SchemaRegistryAuth.Secret != "" &&
 		config.GetContext().SchemaRegistryAuth.Key != "" {
+		secret := config.GetContext().SchemaRegistryAuth.Secret
+		key := config.GetContext().SchemaRegistryAuth.Key
+
 		req.Header.Add(
 			"Authorization",
-			"Basic "+basicAuth(
-				config.GetContext().SchemaRegistryAuth.Secret,
-				config.GetContext().SchemaRegistryAuth.Key,
-			),
+			"Basic "+basicAuth(key, secret),
 		)
+	} else {
+		fmt.Println("Missing Schema Registry authentication credentials")
 	}
 
 	resp, err := client.Do(req)
@@ -55,4 +58,52 @@ func BuildGetRequestSchemaRegistry(
 func basicAuth(username, password string) string {
 	auth := username + ":" + password
 	return base64.StdEncoding.EncodeToString([]byte(auth))
+}
+
+func BuildPostRequestSchemaRegistry(
+	config *configuration.Configuration,
+	path string,
+	body string,
+) *http.Response {
+	ctx, cancel := context.WithTimeout(
+		context.Background(),
+		30*time.Second,
+	)
+
+	defer cancel()
+
+	client := &http.Client{}
+	url := fmt.Sprintf("%v/%v", config.GetContext().SchemaRegistry, path)
+
+	req, err := http.NewRequestWithContext(
+		ctx,
+		http.MethodPost,
+		url,
+		strings.NewReader(body),
+	)
+	if err != nil {
+		util.CheckErr(fmt.Errorf("error creating request: %w", err))
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	if config.GetContext().SchemaRegistryAuth.Secret != "" &&
+		config.GetContext().SchemaRegistryAuth.Key != "" {
+		secret := config.GetContext().SchemaRegistryAuth.Secret
+		key := config.GetContext().SchemaRegistryAuth.Key
+
+		req.Header.Add(
+			"Authorization",
+			"Basic "+basicAuth(key, secret),
+		)
+	} else {
+		fmt.Println("Missing Schema Registry authentication credentials")
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		util.CheckErr(err)
+	}
+
+	return resp
 }

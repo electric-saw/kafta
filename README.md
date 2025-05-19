@@ -339,6 +339,90 @@ $ kafta schema subjects-list
 +-------------------------------------------+
 ```
 
+## Schema GET
+Get a specific schema
+
+```
+$ kafta schema get --subject example --version 1
+
+{
+  "type": "record",
+  "name": "example",
+  "namespace": "br.com.example",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "name": "test",
+      "type": "string"
+    },
+    {
+      "name": "version",
+      "type": "string"
+    },
+    {
+      "name": "value",
+      "type": "string"
+    },
+    {
+      "name": "xpto",
+      "type": "string"
+    }
+  ]
+}
+
+```
+
+## Schema diff
+Compare schemas
+
+```
+$ kafta schema diff --subject example --version 1 --schema "$(cat ./your-schema.json)"
+
++---------------------------------------------------------------------+
+|                           SCHEMA DIFF                               |
+|                                                                     |
++---------------------------------------------------------------------+
+|{    "fields": [                                                     |
+|      0: {                                                           |
+|        "name": "id",                                                |
+|        "type": "string"                                             |
+|      },                                                             |
+|      1: {                                                           |
+|        "name": "featureName",                                       |
+|        "type": "string"                                             |
+|      },                                                             |
+|      2: {                                                           |
+|        "name": "version",                                           |
+|        "type": "string"                                             |
+|      },                                                             |
+|      3: {                                                           |
+|        "name": "value",                                             |
+|        "type": "string"                                             |
+|      },                                                             |
+|      4: {                                                           |
+|        "name": "test",                                              |
+| -      "type": "string"                                             |
+| +      "type": "long"                                               |
+|      }                                                              |
+|    ],                                                               |
+|    "name": "example",                                               |
+|    "namespace": "example.com",                                      |
+|    "type": "record"                                                 |
+|  }                                                                  |
+|                                                                     |
++---------------------------------------------------------------------+
+
+```
+Compare versions
+
+```
+$ kafta schema diff --subject example --version 1 --schema "$(kafta schema get --subject example --version 2)"
+```
+
+
 # 💻 Code Contributors
 
 <a href="https://github.com/electric-saw/kafta/graphs/contributors">
