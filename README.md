@@ -16,6 +16,9 @@ Kafta is a modern non-JVM command line for managing Kafka Clusters written in go
   - [Producer](#producer)
   - [Consumer](#consumer)
   - [Subjects List](#subjects-list)
+  - [Subject Version](#subjects-version)
+  - [Get schema](#schema-get)
+  - [Schema diff](#schema-diff)
 - [💻 Code Contributors](#-code-contributors)
 - [Next features](#next-features)
 
@@ -324,6 +327,14 @@ kafta console consumer topic.test  [group=group.test] [--verbose]
 2022/05/17 19:50:05 Partition: 0 Key: 1 Message: event 2
 ```
 
+## Subjects version
+To list all versions of a specific subject in the Schema Registry, run:
+
+```
+$ kafta schema versions --subject example
+```
+![alt text](./img/subjects-version.png)
+
 ## Subjects List
 List subjects in SchemaRegistry
 
@@ -338,6 +349,57 @@ $ kafta schema subjects-list
 | topic2-value                              |
 +-------------------------------------------+
 ```
+
+## Schema GET
+Get a specific schema
+
+```
+$ kafta schema get --subject example --version 1
+
+{
+  "type": "record",
+  "name": "example",
+  "namespace": "br.com.example",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "name": "test",
+      "type": "string"
+    },
+    {
+      "name": "version",
+      "type": "string"
+    },
+    {
+      "name": "value",
+      "type": "string"
+    },
+    {
+      "name": "xpto",
+      "type": "string"
+    }
+  ]
+}
+
+```
+
+## Schema diff
+Compare schemas
+
+```
+$ kafta schema diff --subject example --version 1 --schema "$(cat ./your-schema.json)"
+```
+![alt text](./img/diff-schema.png)
+Compare versions
+
+```
+$ export SCHEMA_OUTPUT=$(kafta schema get --subject example --version 1 2>&1)
+$ kafta schema diff --subject example --version 1 --schema "$SCHEMA_OUTPUT"
+```
+![alt text](./img/diff-versions.png)
 
 # 💻 Code Contributors
 
