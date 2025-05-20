@@ -16,6 +16,9 @@ Kafta is a modern non-JVM command line for managing Kafka Clusters written in go
   - [Producer](#producer)
   - [Consumer](#consumer)
   - [Subjects List](#subjects-list)
+  - [Subject Version](#subjects-version)
+  - [Get schema](#schema-get)
+  - [Schema diff](#schema-diff)
 - [💻 Code Contributors](#-code-contributors)
 - [Next features](#next-features)
 
@@ -324,6 +327,14 @@ kafta console consumer topic.test  [group=group.test] [--verbose]
 2022/05/17 19:50:05 Partition: 0 Key: 1 Message: event 2
 ```
 
+## Subjects version
+To list all versions of a specific subject in the Schema Registry, run:
+
+```
+$ kafta schema versions --subject example
+```
+![alt text](./img/subjects-version.png)
+
 ## Subjects List
 List subjects in SchemaRegistry
 
@@ -380,48 +391,15 @@ Compare schemas
 
 ```
 $ kafta schema diff --subject example --version 1 --schema "$(cat ./your-schema.json)"
-
-+---------------------------------------------------------------------+
-|                           SCHEMA DIFF                               |
-|                                                                     |
-+---------------------------------------------------------------------+
-|{    "fields": [                                                     |
-|      0: {                                                           |
-|        "name": "id",                                                |
-|        "type": "string"                                             |
-|      },                                                             |
-|      1: {                                                           |
-|        "name": "featureName",                                       |
-|        "type": "string"                                             |
-|      },                                                             |
-|      2: {                                                           |
-|        "name": "version",                                           |
-|        "type": "string"                                             |
-|      },                                                             |
-|      3: {                                                           |
-|        "name": "value",                                             |
-|        "type": "string"                                             |
-|      },                                                             |
-|      4: {                                                           |
-|        "name": "test",                                              |
-| -      "type": "string"                                             |
-| +      "type": "long"                                               |
-|      }                                                              |
-|    ],                                                               |
-|    "name": "example",                                               |
-|    "namespace": "example.com",                                      |
-|    "type": "record"                                                 |
-|  }                                                                  |
-|                                                                     |
-+---------------------------------------------------------------------+
-
 ```
+![alt text](./img/diff-schema.png)
 Compare versions
 
 ```
-$ kafta schema diff --subject example --version 1 --schema "$(kafta schema get --subject example --version 2)"
+$ export SCHEMA_OUTPUT=$(kafta schema get --subject example --version 1 2>&1)
+$ kafta schema diff --subject example --version 1 --schema "$SCHEMA_OUTPUT"
 ```
-
+![alt text](./img/diff-versions.png)
 
 # 💻 Code Contributors
 
