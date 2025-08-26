@@ -1,4 +1,4 @@
-# Kafta
+![kafta logo](img/kafta.png)
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/electric-saw/kafta)](https://goreportcard.com/report/github.com/electric-saw/kafta)
 [![License](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE.txt)
@@ -6,6 +6,48 @@
 [![Go Version](https://img.shields.io/github/go-mod/go-version/electric-saw/kafta)](https://golang.org/)
 
 A modern, **non-JVM** command-line interface for managing **Apache Kafka** clusters. Inspired by `kubectl`, Kafta provides a simple and efficient way to manage topics, brokers, consumer groups, and more across multiple Kafka clusters.
+
+## Table of Contents
+
+- [Why Kafta?](#-why-kafta)
+- [Installation](#-installation)
+  - [Prerequisites](#prerequisites)
+  - [Quick Install](#quick-install)
+  - [macOS Installation Guide](#-macos-installation-guide)
+  - [Linux Installation](#-linux-installation)
+  - [Windows Installation](#-windows-installation)
+- [Troubleshooting Installation](#-troubleshooting-installation)
+  - [Common Issues](#common-issues)
+  - [Diagnostic Script](#-diagnostic-script)
+- [Configuration](#️-configuration)
+  - [Initial Setup](#initial-setup)
+  - [Configuration with Authentication](#configuration-with-authentication)
+  - [Sample Configuration File](#sample-configuration-file)
+- [Usage Examples](#-usage-examples)
+  - [Cluster Management](#cluster-management)
+  - [Topic Management](#topic-management)
+  - [Consumer Group Management](#consumer-group-management)
+  - [Message Production & Consumption](#message-production--consumption)
+  - [Schema Registry Operations](#schema-registry-operations)
+  - [Output Formats](#output-formats)
+- [Smart Features](#-smart-features)
+  - [Intelligent Suggestions](#intelligent-suggestions)
+  - [Command Completion](#command-completion)
+- [Advanced Features](#️-advanced-features)
+  - [Environment Variables](#environment-variables)
+  - [Configuration Templates](#configuration-templates)
+- [Development](#️-development)
+  - [Building from Source](#building-from-source)
+  - [Running Tests](#running-tests)
+- [Contributing](#-contributing)
+  - [Quick Start for Contributors](#quick-start-for-contributors)
+  - [Development Setup](#development-setup)
+- [Roadmap](#-roadmap)
+- [Known Issues](#-known-issues)
+- [License](#-license)
+- [Acknowledgments](#-acknowledgments)
+- [Support & Community](#-support--community)
+- [Star History](#-star-history)
 
 ## 🚀 Why Kafta?
 
