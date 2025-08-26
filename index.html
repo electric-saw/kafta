@@ -1,27 +1,27 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kafta - CLI Moderno para Apache Kafka</title>
+    <title>Kafta - Modern CLI for Apache Kafka</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
     
-    <!-- Meta tags para SEO e redes sociais -->
-    <meta name="description" content="Kafta - Ferramenta CLI moderna para gerenciar clusters Apache Kafka. Alternativa leve e eficiente aos tools baseados em JVM.">
+    <!-- Meta tags for SEO and social media -->
+    <meta name="description" content="Kafta - Modern CLI tool for managing Apache Kafka clusters. Lightweight and efficient alternative to JVM-based tools.">
     <meta name="keywords" content="kafka, cli, apache kafka, go, golang, devops, microservices, streaming">
     <meta name="author" content="Glauco Torres">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://torresglauco.github.io/kafta/">
-    <meta property="og:title" content="Kafta - CLI Moderno para Apache Kafka">
-    <meta property="og:description" content="Ferramenta CLI moderna para gerenciar clusters Apache Kafka. Alternativa leve e eficiente aos tools baseados em JVM.">
+    <meta property="og:title" content="Kafta - Modern CLI for Apache Kafka">
+    <meta property="og:description" content="Modern CLI tool for managing Apache Kafka clusters. Lightweight and efficient alternative to JVM-based tools.">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://torresglauco.github.io/kafta/">
-    <meta property="twitter:title" content="Kafta - CLI Moderno para Apache Kafka">
-    <meta property="twitter:description" content="Ferramenta CLI moderna para gerenciar clusters Apache Kafka. Alternativa leve e eficiente aos tools baseados em JVM.">
+    <meta property="twitter:title" content="Kafta - Modern CLI for Apache Kafka">
+    <meta property="twitter:description" content="Modern CLI tool for managing Apache Kafka clusters. Lightweight and efficient alternative to JVM-based tools.">
 
     <style>
         :root {
@@ -58,7 +58,7 @@
             overflow-x: hidden;
         }
 
-        /* Scrollbar personalizada */
+        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -76,7 +76,7 @@
             background: var(--golang-blue);
         }
 
-        /* Animações */
+        /* Animations */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -284,22 +284,25 @@
 
         .terminal-line {
             display: flex;
-            align-items: center;
             margin-bottom: 0.5rem;
         }
 
         .terminal-prompt {
             color: var(--kafka-orange);
             margin-right: 0.5rem;
+            flex-shrink: 0;
         }
 
         .terminal-input {
             color: var(--text-light);
+            flex: 1;
         }
 
         .terminal-output {
             color: var(--text-muted);
+            white-space: pre-line;
             margin-left: 1rem;
+            flex: 1;
         }
 
         .cursor {
@@ -308,6 +311,7 @@
             height: 16px;
             background: var(--kafka-orange);
             animation: blink 1s infinite;
+            margin-left: 2px;
         }
 
         /* Buttons */
@@ -398,6 +402,7 @@
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
             animation: fadeInUp 0.6s ease-out;
+            animation-play-state: paused;
         }
 
         .feature-card:hover {
@@ -454,6 +459,8 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-family: inherit;
+            font-size: inherit;
         }
 
         .tab-button.active {
@@ -498,6 +505,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             opacity: 0.7;
+            font-family: inherit;
         }
 
         .copy-button:hover {
@@ -544,6 +552,8 @@
             overflow: hidden;
             border: 1px solid var(--border-color);
             transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+            animation-play-state: paused;
         }
 
         .example-card:hover {
@@ -590,6 +600,7 @@
             padding: 1rem;
             font-family: 'Fira Code', monospace;
             color: var(--success-color);
+            white-space: pre-line;
         }
 
         /* Footer */
@@ -763,9 +774,9 @@
         <nav class="nav">
             <div class="logo">☕ Kafta</div>
             <ul class="nav-links">
-                <li><a href="#features">Recursos</a></li>
-                <li><a href="#installation">Instalação</a></li>
-                <li><a href="#examples">Exemplos</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#examples">Examples</a></li>
                 <li><a href="https://github.com/torresglauco/kafta" target="_blank">GitHub</a></li>
             </ul>
         </nav>
@@ -775,10 +786,10 @@
     <section class="hero">
         <div class="hero-content">
             <div class="hero-text">
-                <h1 class="hero-title">CLI Moderno para Apache Kafka</h1>
+                <h1 class="hero-title">Modern CLI for Apache Kafka</h1>
                 <p class="hero-subtitle">
-                    Ferramenta de linha de comando leve e eficiente para gerenciar clusters Kafka. 
-                    Alternativa moderna aos tools baseados em JVM, inspirada no kubectl.
+                    Lightweight and efficient command-line tool for managing Kafka clusters. 
+                    A modern alternative to JVM-based tools, inspired by kubectl.
                 </p>
                 <div class="tech-stack">
                     <div class="tech-item">
@@ -796,10 +807,10 @@
                 </div>
                 <div class="btn-group">
                     <a href="#installation" class="btn btn-primary">
-                        🚀 Começar Agora
+                        🚀 Get Started
                     </a>
                     <a href="https://github.com/torresglauco/kafta" target="_blank" class="btn btn-secondary">
-                        📖 Ver no GitHub
+                        📖 View on GitHub
                     </a>
                 </div>
             </div>
@@ -814,7 +825,7 @@
                         <div class="terminal-title">Terminal - Kafta Demo</div>
                     </div>
                     <div class="terminal-body" id="terminal-demo">
-                        <!-- Conteúdo será preenchido via JavaScript -->
+                        <!-- Content will be filled via JavaScript -->
                     </div>
                 </div>
             </div>
@@ -824,72 +835,72 @@
     <!-- Features Section -->
     <section class="features" id="features">
         <div class="container">
-            <h2 class="section-title">Recursos Poderosos</h2>
+            <h2 class="section-title">Powerful Features</h2>
             <p class="section-subtitle">
-                Simplifique o gerenciamento de clusters Kafka com uma ferramenta CLI moderna, rápida e intuitiva.
+                Simplify Kafka cluster management with a modern, fast and intuitive CLI tool.
             </p>
             <div class="features-grid">
                 <div class="feature-card">
                     <span class="feature-icon">📊</span>
-                    <h3 class="feature-title">Gerenciamento de Tópicos</h3>
+                    <h3 class="feature-title">Topic Management</h3>
                     <p class="feature-description">
-                        Crie, delete, liste e descreva tópicos Kafka com comandos simples e intuitivos.
+                        Create, delete, list and describe Kafka topics with simple and intuitive commands.
                     </p>
                 </div>
                 <div class="feature-card">
                     <span class="feature-icon">👥</span>
                     <h3 class="feature-title">Consumer Groups</h3>
                     <p class="feature-description">
-                        Monitore, descreva e gerencie consumer groups, incluindo análise de lag em tempo real.
+                        Monitor, describe and manage consumer groups, including real-time lag analysis.
                     </p>
                 </div>
                 <div class="feature-card">
                     <span class="feature-icon">💬</span>
-                    <h3 class="feature-title">Produção e Consumo</h3>
+                    <h3 class="feature-title">Produce & Consume</h3>
                     <p class="feature-description">
-                        Produza e consuma mensagens diretamente do terminal com interface interativa.
+                        Produce and consume messages directly from the terminal with interactive interface.
                     </p>
                 </div>
                 <div class="feature-card">
                     <span class="feature-icon">🔧</span>
                     <h3 class="feature-title">Schema Registry</h3>
                     <p class="feature-description">
-                        Gerencie esquemas Avro, liste subjects, compare versões e muito mais.
+                        Manage Avro schemas, list subjects, compare versions and much more.
                     </p>
                 </div>
                 <div class="feature-card">
                     <span class="feature-icon">🌐</span>
                     <h3 class="feature-title">Multi-cluster</h3>
                     <p class="feature-description">
-                        Suporte nativo para múltiplos clusters Kafka em diferentes ambientes.
+                        Native support for multiple Kafka clusters across different environments.
                     </p>
                 </div>
                 <div class="feature-card">
                     <span class="feature-icon">🚀</span>
                     <h3 class="feature-title">Performance</h3>
                     <p class="feature-description">
-                        Binário leve sem dependência de JVM, garantindo execução rápida e eficiente.
+                        Lightweight binary with no JVM dependency, ensuring fast and efficient execution.
                     </p>
                 </div>
                 <div class="feature-card">
                     <span class="feature-icon">🔒</span>
-                    <h3 class="feature-title">Segurança</h3>
+                    <h3 class="feature-title">Security</h3>
                     <p class="feature-description">
-                        Suporte completo para autenticação SASL e comunicação segura via TLS.
+                        Complete support for SASL authentication and secure communication via TLS.
                     </p>
                 </div>
                 <div class="feature-card">
                     <span class="feature-icon">📱</span>
-                    <h3 class="feature-title">Formatos de Saída</h3>
+                    <h3 class="feature-title">Output Formats</h3>
                     <p class="feature-description">
-                        Visualize dados em formatos Table, JSON e YAML para diferentes necessidades.
+                        Display data in Table, JSON and YAML formats for different needs.
                     </p>
                 </div>
                 <div class="feature-card">
                     <span class="feature-icon">💡</span>
                     <h3 class="feature-title">Auto-complete</h3>
                     <p class="feature-description">
-                        Sugestões inteligentes e auto-complete para bash, zsh e fish shells.
+                        Smart suggestions and auto-complete for bash, zsh and fish shells.
                     </p>
                 </div>
             </div>
@@ -899,9 +910,9 @@
     <!-- Installation Section -->
     <section class="installation" id="installation">
         <div class="container">
-            <h2 class="section-title">Instalação Simples</h2>
+            <h2 class="section-title">Simple Installation</h2>
             <p class="section-subtitle">
-                Instale o Kafta rapidamente usando Go. Requer Go 1.18+ e acesso a um cluster Apache Kafka.
+                Install Kafta quickly using Go. Requires Go 1.18+ and access to an Apache Kafka cluster.
             </p>
             <div class="tab-container">
                 <div class="tab-buttons">
@@ -912,7 +923,7 @@
                         📦 Legacy (Go < 1.18)
                     </button>
                     <button class="tab-button" data-tab="setup">
-                        ⚙️ Configuração
+                        ⚙️ Setup
                     </button>
                 </div>
                 
@@ -920,13 +931,13 @@
                     <div class="code-block">
                         <button class="copy-button" onclick="copyToClipboard('go-install-code')">📋</button>
                         <div id="go-install-code">
-                            <div class="code-line"><span class="comment"># Instalar a versão mais recente</span></div>
+                            <div class="code-line"><span class="comment"># Install latest version</span></div>
                             <div class="code-line"><span class="command">go install github.com/electric-saw/kafta/cmd/kafta@latest</span></div>
                             <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># Verificar instalação</span></div>
+                            <div class="code-line"><span class="comment"># Verify installation</span></div>
                             <div class="code-line"><span class="command">kafta --help</span></div>
                             <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># Verificar versão</span></div>
+                            <div class="code-line"><span class="comment"># Check version</span></div>
                             <div class="code-line"><span class="command">kafta version</span></div>
                         </div>
                     </div>
@@ -936,10 +947,10 @@
                     <div class="code-block">
                         <button class="copy-button" onclick="copyToClipboard('legacy-code')">📋</button>
                         <div id="legacy-code">
-                            <div class="code-line"><span class="comment"># Para Go < 1.18</span></div>
+                            <div class="code-line"><span class="comment"># For Go < 1.18</span></div>
                             <div class="code-line"><span class="command">go get -u github.com/electric-saw/kafta</span></div>
                             <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># Compilar da fonte</span></div>
+                            <div class="code-line"><span class="comment"># Build from source</span></div>
                             <div class="code-line"><span class="command">git clone https://github.com/electric-saw/kafta.git</span></div>
                             <div class="code-line"><span class="command">cd kafta</span></div>
                             <div class="code-line"><span class="command">go build -o kafta cmd/kafta/main.go</span></div>
@@ -951,13 +962,13 @@
                     <div class="code-block">
                         <button class="copy-button" onclick="copyToClipboard('setup-code')">📋</button>
                         <div id="setup-code">
-                            <div class="code-line"><span class="comment"># Configurar PATH (se necessário)</span></div>
+                            <div class="code-line"><span class="comment"># Configure PATH (if needed)</span></div>
                             <div class="code-line"><span class="command">export PATH=$PATH:$(go env GOPATH)/bin</span></div>
                             <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># Configurar cluster Kafka</span></div>
+                            <div class="code-line"><span class="comment"># Configure Kafka cluster</span></div>
                             <div class="code-line"><span class="command">kafta config set-cluster my-cluster --bootstrap-servers localhost:9092</span></div>
                             <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># Ativar auto-complete (bash)</span></div>
+                            <div class="code-line"><span class="comment"># Enable auto-complete (bash)</span></div>
                             <div class="code-line"><span class="command">kafta completion bash >> ~/.bashrc</span></div>
                         </div>
                     </div>
@@ -969,106 +980,94 @@
     <!-- Examples Section -->
     <section class="examples" id="examples">
         <div class="container">
-            <h2 class="section-title">Exemplos de Uso</h2>
+            <h2 class="section-title">Usage Examples</h2>
             <p class="section-subtitle">
-                Veja como usar o Kafta para gerenciar seus clusters Kafka de forma eficiente.
+                See how to use Kafta to manage your Kafka clusters efficiently.
             </p>
             <div class="examples-grid">
                 <div class="example-card">
                     <div class="example-header">
-                        <div class="example-title">Listar Tópicos</div>
-                        <div class="example-description">Visualize todos os tópicos do cluster</div>
+                        <div class="example-title">List Topics</div>
+                        <div class="example-description">View all topics in the cluster</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
                             $ kafta topic list
                         </div>
-                        <div class="example-output">
-                            ✓ user-events<br>
-                            ✓ order-events<br>
-                            ✓ payment-events
-                        </div>
+                        <div class="example-output">✓ user-events
+✓ order-events
+✓ payment-events</div>
                     </div>
                 </div>
                 
                 <div class="example-card">
                     <div class="example-header">
-                        <div class="example-title">Criar Tópico</div>
-                        <div class="example-description">Crie novos tópicos com configurações específicas</div>
+                        <div class="example-title">Create Topic</div>
+                        <div class="example-description">Create new topics with specific configurations</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
                             $ kafta topic create my-topic --partitions 3 --replication-factor 1
                         </div>
-                        <div class="example-output">
-                            ✓ Topic 'my-topic' created successfully
-                        </div>
+                        <div class="example-output">✓ Topic 'my-topic' created successfully</div>
                     </div>
                 </div>
                 
                 <div class="example-card">
                     <div class="example-header">
                         <div class="example-title">Consumer Lag</div>
-                        <div class="example-description">Monitore o lag dos consumer groups</div>
+                        <div class="example-description">Monitor consumer group lag</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
                             $ kafta consumer lag my-group
                         </div>
-                        <div class="example-output">
-                            TOPIC      PARTITION  LAG<br>
-                            my-topic   0          15<br>
-                            my-topic   1          3
-                        </div>
+                        <div class="example-output">TOPIC      PARTITION  LAG
+my-topic   0          15
+my-topic   1          3</div>
                     </div>
                 </div>
                 
                 <div class="example-card">
                     <div class="example-header">
-                        <div class="example-title">Produzir Mensagens</div>
-                        <div class="example-description">Envie mensagens para tópicos interativamente</div>
+                        <div class="example-title">Produce Messages</div>
+                        <div class="example-description">Send messages to topics interactively</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
                             $ kafta producer --topic my-topic
                         </div>
-                        <div class="example-output">
-                            > Hello Kafka!<br>
-                            ✓ Message sent to partition 0, offset 1234
-                        </div>
+                        <div class="example-output">> Hello Kafka!
+✓ Message sent to partition 0, offset 1234</div>
                     </div>
                 </div>
                 
                 <div class="example-card">
                     <div class="example-header">
                         <div class="example-title">Schema Registry</div>
-                        <div class="example-description">Gerencie schemas Avro</div>
+                        <div class="example-description">Manage Avro schemas</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
                             $ kafta schema subjects-list
                         </div>
-                        <div class="example-output">
-                            user-value<br>
-                            order-key<br>
-                            payment-value
-                        </div>
+                        <div class="example-output">user-value
+order-key
+payment-value</div>
                     </div>
                 </div>
                 
                 <div class="example-card">
                     <div class="example-header">
-                        <div class="example-title">Consumir Mensagens</div>
-                        <div class="example-description">Consuma mensagens em tempo real</div>
+                        <div class="example-title">Consume Messages</div>
+                        <div class="example-description">Consume messages in real-time</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
                             $ kafta console consumer --topic my-topic --group my-group
                         </div>
-                        <div class="example-output">
-                            {"id": 1, "message": "Hello Kafka!"}<br>
-                            {"id": 2, "message": "Another message"}
-                        </div>
+                        <div class="example-output">{"id": 1, "message": "Hello Kafka!"}
+{"id": 2, "message": "Another message"}</div>
                     </div>
                 </div>
             </div>
@@ -1080,48 +1079,48 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>Sobre o Kafta</h3>
+                    <h3>About Kafta</h3>
                     <p>
-                        Uma ferramenta CLI moderna e eficiente para gerenciar clusters Apache Kafka, 
-                        oferecendo uma alternativa leve aos tools baseados em JVM.
+                        A modern and efficient CLI tool for managing Apache Kafka clusters, 
+                        offering a lightweight alternative to JVM-based tools.
                     </p>
                 </div>
                 <div class="footer-section">
-                    <h3>Links Úteis</h3>
+                    <h3>Useful Links</h3>
                     <ul class="footer-links">
-                        <li><a href="https://github.com/torresglauco/kafta">Código Fonte</a></li>
-                        <li><a href="https://github.com/torresglauco/kafta/blob/main/README.md">Documentação</a></li>
-                        <li><a href="https://github.com/torresglauco/kafta/issues">Reportar Bug</a></li>
-                        <li><a href="https://github.com/torresglauco/kafta/discussions">Discussões</a></li>
+                        <li><a href="https://github.com/torresglauco/kafta">Source Code</a></li>
+                        <li><a href="https://github.com/torresglauco/kafta/blob/main/README.md">Documentation</a></li>
+                        <li><a href="https://github.com/torresglauco/kafta/issues">Report Bug</a></li>
+                        <li><a href="https://github.com/torresglauco/kafta/discussions">Discussions</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h3>Tecnologias</h3>
+                    <h3>Technologies</h3>
                     <ul class="footer-links">
                         <li><a href="https://golang.org">Go (Golang)</a></li>
                         <li><a href="https://kafka.apache.org">Apache Kafka</a></li>
                         <li><a href="https://avro.apache.org">Apache Avro</a></li>
-                        <li><a href="https://kubernetes.io">Kubernetes (inspiração)</a></li>
+                        <li><a href="https://kubernetes.io">Kubernetes (inspiration)</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h3>Comunidade</h3>
+                    <h3>Community</h3>
                     <ul class="footer-links">
-                        <li><a href="https://github.com/torresglauco/kafta/blob/main/CONTRIBUTING.md">Como Contribuir</a></li>
-                        <li><a href="https://github.com/torresglauco/kafta/issues/new">Solicitar Feature</a></li>
-                        <li><a href="https://github.com/torresglauco">Perfil do Autor</a></li>
-                        <li><a href="mailto:contato@example.com">Contato</a></li>
+                        <li><a href="https://github.com/torresglauco/kafta/blob/main/CONTRIBUTING.md">How to Contribute</a></li>
+                        <li><a href="https://github.com/torresglauco/kafta/issues/new">Request Feature</a></li>
+                        <li><a href="https://github.com/torresglauco">Author Profile</a></li>
+                        <li><a href="mailto:contact@example.com">Contact</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Kafta CLI. Projeto open source desenvolvido por <a href="https://github.com/torresglauco" style="color: var(--kafka-orange);">Glauco Torres</a>.</p>
+                <p>&copy; 2024 Kafta CLI. Open source project developed by <a href="https://github.com/torresglauco" style="color: var(--kafka-orange);">Glauco Torres</a>.</p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Terminal Animation com comandos reais do Kafta
+        // Terminal Animation with real Kafta commands
         class TerminalAnimation {
             constructor(element) {
                 this.element = element;
@@ -1131,20 +1130,20 @@
                         output: '✓ user-events\n✓ order-events\n✓ payment-events'
                     },
                     {
-                        input: 'kafta consumer lag my-group',
-                        output: 'TOPIC      PARTITION  LAG\nmy-topic   0          15\nmy-topic   1          3'
+                        input: 'kafta consumer lag analytics-group',
+                        output: 'TOPIC      PARTITION  LAG\nanalytics  0          25\nanalytics  1          8\nanalytics  2          0'
                     },
                     {
                         input: 'kafta schema subjects-list',
-                        output: 'user-value\norder-key\npayment-value'
+                        output: 'user-value\norder-key\npayment-value\nanalytics-schema'
                     },
                     {
                         input: 'kafta cluster describe',
-                        output: 'Cluster: my-cluster\nBootstrap: localhost:9092\nBrokers: 3'
+                        output: 'Cluster: production\nBootstrap: kafka.example.com:9092\nBrokers: 3\nController: 1'
                     },
                     {
-                        input: 'kafta topic create analytics --partitions 6',
-                        output: '✓ Topic 'analytics' created successfully'
+                        input: 'kafta topic create events --partitions 6',
+                        output: '✓ Topic \'events\' created successfully'
                     }
                 ];
                 this.currentCommand = 0;
@@ -1167,7 +1166,7 @@
                 while (true) {
                     await this.typeCommand();
                     await this.showOutput();
-                    await this.wait(3000);
+                    await this.wait(3500);
                     this.nextCommand();
                     await this.wait(1000);
                 }
@@ -1186,8 +1185,10 @@
                 for (let i = 0; i < command.length; i++) {
                     if (!inputElement) break;
                     inputElement.textContent += command[i];
-                    await this.wait(50 + Math.random() * 50);
+                    await this.wait(60 + Math.random() * 40);
                 }
+                
+                await this.wait(800);
             }
 
             async showOutput() {
@@ -1198,11 +1199,16 @@
                 
                 const outputLine = document.createElement('div');
                 outputLine.className = 'terminal-line';
-                outputLine.innerHTML = `<span class="terminal-output">${output.replace(/\n/g, '<br>')}</span>`;
                 
+                const outputSpan = document.createElement('span');
+                outputSpan.className = 'terminal-output';
+                outputSpan.textContent = output.replace(/\\n/g, '\n');
+                outputSpan.style.whiteSpace = 'pre-line';
+                
+                outputLine.appendChild(outputSpan);
                 this.element.appendChild(outputLine);
                 
-                await this.wait(2000);
+                await this.wait(2500);
             }
 
             nextCommand() {
@@ -1274,41 +1280,51 @@
                 .map(line => line.trim())
                 .join('\n');
             
-            navigator.clipboard.writeText(cleanText).then(() => {
-                const button = element.parentNode.querySelector('.copy-button');
-                if (button) {
-                    const originalText = button.textContent;
-                    
-                    button.textContent = '✅';
-                    button.classList.add('copied');
-                    
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                        button.classList.remove('copied');
-                    }, 2000);
-                }
-            }).catch(err => {
-                console.error('Erro ao copiar:', err);
-                // Fallback for older browsers
-                const textarea = document.createElement('textarea');
-                textarea.value = cleanText;
-                textarea.style.position = 'fixed';
-                textarea.style.opacity = '0';
-                document.body.appendChild(textarea);
-                textarea.select();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(cleanText).then(() => {
+                    showCopyFeedback(element);
+                }).catch(err => {
+                    console.error('Error copying:', err);
+                    fallbackCopy(cleanText, element);
+                });
+            } else {
+                fallbackCopy(cleanText, element);
+            }
+        }
+
+        function fallbackCopy(text, element) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            
+            try {
                 document.execCommand('copy');
-                document.body.removeChild(textarea);
+                showCopyFeedback(element);
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+            }
+            
+            document.body.removeChild(textarea);
+        }
+
+        function showCopyFeedback(element) {
+            const button = element.parentNode.querySelector('.copy-button');
+            if (button) {
+                const originalText = button.textContent;
                 
-                // Show feedback even for fallback
-                const button = element.parentNode.querySelector('.copy-button');
-                if (button) {
-                    const originalText = button.textContent;
-                    button.textContent = '✅';
-                    setTimeout(() => {
-                        button.textContent = originalText;
-                    }, 2000);
-                }
-            });
+                button.textContent = '✅';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }
         }
 
         // Smooth Scrolling for Navigation Links
@@ -1353,7 +1369,6 @@
             // Observe elements with animation classes
             const animatedElements = document.querySelectorAll('.feature-card, .example-card');
             animatedElements.forEach((el, index) => {
-                el.style.animationPlayState = 'paused';
                 el.style.animationDelay = `${index * 0.1}s`;
                 observer.observe(el);
             });
@@ -1385,7 +1400,7 @@
                 }
                 
                 lastScroll = currentScroll;
-            });
+            }, { passive: true });
         }
 
         // Initialize all components when DOM is loaded
@@ -1393,7 +1408,10 @@
             // Initialize terminal animation
             const terminalDemo = document.getElementById('terminal-demo');
             if (terminalDemo) {
-                new TerminalAnimation(terminalDemo);
+                // Small delay to ensure element is ready
+                setTimeout(() => {
+                    new TerminalAnimation(terminalDemo);
+                }, 500);
             }
             
             // Initialize tab system
