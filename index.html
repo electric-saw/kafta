@@ -1,237 +1,16 @@
----
-layout: default
-title: "Home"
----
-
-<section class="hero">
-    <div class="container">
-        <div class="hero-content">
-            <div class="hero-text">
-                <h1 class="hero-title">
-                    <img src="img/kafta.png" alt="Kafta Logo" class="hero-logo">
-                    Kafta
-                </h1>
-                <p class="hero-subtitle">
-                    Modern, <strong>non-JVM</strong> command-line interface for managing <strong>Apache Kafka</strong> clusters
-                </p>
-                <p class="hero-description">
-                    Inspired by kubectl, Kafta provides a simple and efficient way to manage topics, brokers, 
-                    consumer groups, and more across multiple Kafka clusters.
-                </p>
-                
-                <div class="hero-badges">
-                    <img src="https://goreportcard.com/badge/github.com/electric-saw/kafta" alt="Go Report Card">
-                    <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License">
-                    <img src="https://img.shields.io/github/release/electric-saw/kafta.svg" alt="Release">
-                </div>
-                
-                <div class="hero-actions">
-                    <a href="pages/installation.html" class="btn btn-primary">
-                        <i class="fas fa-download"></i> Get Started
-                    </a>
-                    <a href="https://github.com/electric-saw/kafta" class="btn btn-secondary" target="_blank">
-                        <i class="fab fa-github"></i> View on GitHub
-                    </a>
-                </div>
-            </div>
-            
-            <div class="hero-demo">
-                <div class="terminal">
-                    <div class="terminal-header">
-                        <div class="terminal-controls">
-                            <span class="control close"></span>
-                            <span class="control minimize"></span>
-                            <span class="control maximize"></span>
-                        </div>
-                        <div class="terminal-title">kafta</div>
-                    </div>
-                    <div class="terminal-body">
-                        <div class="terminal-line">
-                            <span class="prompt">$</span> kafta topic list
-                        </div>
-                        <div class="terminal-output">
-                            <div class="table-header">TOPIC NAME    PARTITIONS  REPLICATION  SIZE</div>
-                            <div>orders       3           2            1.2GB</div>
-                            <div>payments     6           3            856MB</div>
-                            <div>users        2           2            234MB</div>
-                        </div>
-                        <div class="terminal-line">
-                            <span class="prompt">$</span> kafta consumer lag order-service
-                        </div>
-                        <div class="terminal-output">
-                            <div class="status-green">✅ Consumer group: order-service</div>
-                            <div>Total lag: 0 messages</div>
-                            <div>Status: HEALTHY</div>
-                        </div>
-                        <div class="terminal-line">
-                            <span class="prompt">$</span> <span class="cursor">|</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="features">
-    <div class="container">
-        <h2 class="section-title">Why Choose Kafta?</h2>
-        
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-fire"></i>
-                </div>
-                <h3>No Java Required</h3>
-                <p>Binary executable, no JVM setup needed. Just download and run.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-tachometer-alt"></i>
-                </div>
-                <h3>Fast & Lightweight</h3>
-                <p>Written in Go for speed and efficiency. Lightning-fast operations.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-layer-group"></i>
-                </div>
-                <h3>Multi-cluster</h3>
-                <p>Easy switching between different Kafka environments and clusters.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-brain"></i>
-                </div>
-                <h3>Smart Suggestions</h3>
-                <p>Intelligent command corrections and helpful hints for better UX.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <h3>Security First</h3>
-                <p>Built-in support for SASL authentication and TLS encryption.</p>
-            </div>
-            
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-code"></i>
-                </div>
-                <h3>kubectl-inspired</h3>
-                <p>Familiar interface for Kubernetes users with consistent patterns.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="quick-start">
-    <div class="container">
-        <h2 class="section-title">Quick Start</h2>
-        
-        <div class="quick-start-tabs">
-            <div class="tabs">
-                <button class="tab-button active" data-tab="macos">
-                    <i class="fab fa-apple"></i> macOS
-                </button>
-                <button class="tab-button" data-tab="linux">
-                    <i class="fab fa-linux"></i> Linux
-                </button>
-                <button class="tab-button" data-tab="windows">
-                    <i class="fab fa-windows"></i> Windows
-                </button>
-            </div>
-            
-            <div class="tab-content">
-                <div class="tab-pane active" id="macos">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span>Installation</span>
-                            <button class="copy-btn" data-copy="go install github.com/electric-saw/kafta/cmd/kafta@latest">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                        <pre><code># Install Kafta
-go install github.com/electric-saw/kafta/cmd/kafta@latest
-
-# Add to PATH
-echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.zshrc
-source ~/.zshrc
-
-# Verify installation
-kafta --help</code></pre>
-                    </div>
-                </div>
-                
-                <div class="tab-pane" id="linux">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span>Installation</span>
-                            <button class="copy-btn">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                        <pre><code># Install Kafta
-go install github.com/electric-saw/kafta/cmd/kafta@latest
-
-# Add to PATH
-echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
-source ~/.bashrc
-
-# Verify installation
-kafta --help</code></pre>
-                    </div>
-                </div>
-                
-                <div class="tab-pane" id="windows">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span>PowerShell</span>
-                            <button class="copy-btn">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                        <pre><code># Install Kafta
-go install github.com/electric-saw/kafta/cmd/kafta@latest
-
-# Add to PATH via System Properties
-# Verify installation
-kafta --help</code></pre>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="stats">
-    <div class="container">
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-number" data-count="95">0</div>
-                <div class="stat-label">GitHub Stars</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" data-count="8">0</div>
-                <div class="stat-label">Forks</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" data-count="6">0</div>
-                <div class="stat-label">Contributors</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" data-count="100">0</div>
-                <div class="stat-label">% Go</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<style>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kafta - Modern Kafka CLI</title>
+    <meta name="description" content="Modern, non-JVM command-line interface for managing Apache Kafka clusters">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
 /* CSS inline para GitHub Pages funcionar sem arquivo separado */
 :root {
     --primary-color: #2c5aa0;
@@ -267,6 +46,75 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+}
+
+/* Header & Navigation */
+.header {
+    background: var(--white);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar {
+    padding: 1rem 0;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-brand .brand-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+.navbar-brand .logo {
+    height: 40px;
+    margin-right: 12px;
+}
+
+.navbar-brand .brand-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.navbar-nav {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    transition: var(--transition);
+    padding: 0.5rem 0;
+}
+
+.nav-link:hover {
+    color: var(--primary-color);
+}
+
+.navbar-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.navbar-toggle span {
+    width: 25px;
+    height: 3px;
+    background: var(--text-color);
+    margin: 3px 0;
+    transition: var(--transition);
 }
 
 /* Hero Section */
@@ -617,8 +465,92 @@ body {
     opacity: 0.9;
 }
 
+/* Footer */
+.footer {
+    background: var(--dark-gray);
+    color: var(--white);
+    padding: 3rem 0 1rem;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-section h4 {
+    margin-bottom: 1rem;
+    color: var(--white);
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-section ul li a {
+    color: #ccc;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.footer-section ul li a:hover {
+    color: var(--white);
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-links a {
+    color: #ccc;
+    font-size: 1.5rem;
+    transition: var(--transition);
+}
+
+.social-links a:hover {
+    color: var(--white);
+}
+
+.footer-bottom {
+    border-top: 1px solid #495057;
+    padding-top: 1rem;
+    text-align: center;
+    color: #ccc;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
+    .navbar-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--white);
+        box-shadow: var(--shadow);
+        padding: 1rem;
+    }
+    
+    .navbar-menu.active {
+        display: block;
+    }
+    
+    .navbar-nav {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .navbar-toggle {
+        display: flex;
+    }
+    
     .hero-content {
         grid-template-columns: 1fr;
         text-align: center;
@@ -674,11 +606,323 @@ body {
         font-size: 2rem;
     }
 }
-</style>
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="navbar-brand">
+                    <a href="#" class="brand-link">
+                        <img src="img/kafta.png" alt="Kafta Logo" class="logo">
+                        <span class="brand-text">Kafta</span>
+                    </a>
+                </div>
+                
+                <div class="navbar-menu" id="navbar-menu">
+                    <div class="navbar-nav">
+                        <a href="#" class="nav-link">Home</a>
+                        <a href="#installation" class="nav-link">Installation</a>
+                        <a href="#features" class="nav-link">Features</a>
+                        <a href="https://github.com/electric-saw/kafta" class="nav-link" target="_blank">
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="navbar-toggle" id="navbar-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Main Content -->
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1 class="hero-title">
+                            <img src="img/kafta.png" alt="Kafta Logo" class="hero-logo">
+                            Kafta
+                        </h1>
+                        <p class="hero-subtitle">
+                            Modern, <strong>non-JVM</strong> command-line interface for managing <strong>Apache Kafka</strong> clusters
+                        </p>
+                        <p class="hero-description">
+                            Inspired by kubectl, Kafta provides a simple and efficient way to manage topics, brokers, 
+                            consumer groups, and more across multiple Kafka clusters.
+                        </p>
+                        
+                        <div class="hero-badges">
+                            <img src="https://goreportcard.com/badge/github.com/electric-saw/kafta" alt="Go Report Card">
+                            <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License">
+                            <img src="https://img.shields.io/github/release/electric-saw/kafta.svg" alt="Release">
+                        </div>
+                        
+                        <div class="hero-actions">
+                            <a href="#installation" class="btn btn-primary">
+                                <i class="fas fa-download"></i> Get Started
+                            </a>
+                            <a href="https://github.com/electric-saw/kafta" class="btn btn-secondary" target="_blank">
+                                <i class="fab fa-github"></i> View on GitHub
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-demo">
+                        <div class="terminal">
+                            <div class="terminal-header">
+                                <div class="terminal-controls">
+                                    <span class="control close"></span>
+                                    <span class="control minimize"></span>
+                                    <span class="control maximize"></span>
+                                </div>
+                                <div class="terminal-title">kafta</div>
+                            </div>
+                            <div class="terminal-body">
+                                <div class="terminal-line">
+                                    <span class="prompt">$</span> kafta topic list
+                                </div>
+                                <div class="terminal-output">
+                                    <div class="table-header">TOPIC NAME    PARTITIONS  REPLICATION  SIZE</div>
+                                    <div>orders       3           2            1.2GB</div>
+                                    <div>payments     6           3            856MB</div>
+                                    <div>users        2           2            234MB</div>
+                                </div>
+                                <div class="terminal-line">
+                                    <span class="prompt">$</span> kafta consumer lag order-service
+                                </div>
+                                <div class="terminal-output">
+                                    <div class="status-green">✅ Consumer group: order-service</div>
+                                    <div>Total lag: 0 messages</div>
+                                    <div>Status: HEALTHY</div>
+                                </div>
+                                <div class="terminal-line">
+                                    <span class="prompt">$</span> <span class="cursor">|</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-<script>
+        <section class="features" id="features">
+            <div class="container">
+                <h2 class="section-title">Why Choose Kafta?</h2>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <h3>No Java Required</h3>
+                        <p>Binary executable, no JVM setup needed. Just download and run.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <h3>Fast & Lightweight</h3>
+                        <p>Written in Go for speed and efficiency. Lightning-fast operations.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <h3>Multi-cluster</h3>
+                        <p>Easy switching between different Kafka environments and clusters.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>Smart Suggestions</h3>
+                        <p>Intelligent command corrections and helpful hints for better UX.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Security First</h3>
+                        <p>Built-in support for SASL authentication and TLS encryption.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h3>kubectl-inspired</h3>
+                        <p>Familiar interface for Kubernetes users with consistent patterns.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="quick-start" id="installation">
+            <div class="container">
+                <h2 class="section-title">Quick Start</h2>
+                
+                <div class="quick-start-tabs">
+                    <div class="tabs">
+                        <button class="tab-button active" data-tab="macos">
+                            <i class="fab fa-apple"></i> macOS
+                        </button>
+                        <button class="tab-button" data-tab="linux">
+                            <i class="fab fa-linux"></i> Linux
+                        </button>
+                        <button class="tab-button" data-tab="windows">
+                            <i class="fab fa-windows"></i> Windows
+                        </button>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="macos">
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span>Installation</span>
+                                    <button class="copy-btn" data-copy="go install github.com/electric-saw/kafta/cmd/kafta@latest">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                <pre><code># Install Kafta
+go install github.com/electric-saw/kafta/cmd/kafta@latest
+
+# Add to PATH
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.zshrc
+source ~/.zshrc
+
+# Verify installation
+kafta --help</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane" id="linux">
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span>Installation</span>
+                                    <button class="copy-btn">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                <pre><code># Install Kafta
+go install github.com/electric-saw/kafta/cmd/kafta@latest
+
+# Add to PATH
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
+source ~/.bashrc
+
+# Verify installation
+kafta --help</code></pre>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane" id="windows">
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span>PowerShell</span>
+                                    <button class="copy-btn">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                <pre><code># Install Kafta
+go install github.com/electric-saw/kafta/cmd/kafta@latest
+
+# Add to PATH via System Properties
+# Verify installation
+kafta --help</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="95">0</div>
+                        <div class="stat-label">GitHub Stars</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="8">0</div>
+                        <div class="stat-label">Forks</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="6">0</div>
+                        <div class="stat-label">Contributors</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" data-count="100">0</div>
+                        <div class="stat-label">% Go</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Kafta</h4>
+                    <p>Modern CLI for Apache Kafka</p>
+                    <div class="social-links">
+                        <a href="https://github.com/electric-saw/kafta" target="_blank">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Documentation</h4>
+                    <ul>
+                        <li><a href="#installation">Installation</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="https://github.com/electric-saw/kafta">GitHub</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="https://github.com/electric-saw/kafta/issues">Issues</a></li>
+                        <li><a href="https://github.com/electric-saw/kafta/discussions">Discussions</a></li>
+                        <li><a href="https://github.com/electric-saw/kafta/releases">Releases</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Electric Saw Team. Licensed under AGPL-3.0.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
 // JavaScript inline para funcionalidade
 document.addEventListener('DOMContentLoaded', function() {
+    // Mobile Navigation Toggle
+    const navbarToggle = document.getElementById('navbar-toggle');
+    const navbarMenu = document.getElementById('navbar-menu');
+    
+    if (navbarToggle && navbarMenu) {
+        navbarToggle.addEventListener('click', function() {
+            navbarMenu.classList.toggle('active');
+        });
+    }
+    
     // Tab functionality
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabPanes = document.querySelectorAll('.tab-pane');
@@ -759,5 +1003,23 @@ document.addEventListener('DOMContentLoaded', function() {
             element.textContent = Math.floor(current);
         }, 30);
     }
+    
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
 });
-</script>
+    </script>
+</body>
+</html>
