@@ -3,35 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kafta - Terminal de Comandos Inteligente</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+    <title>Kafta - CLI Moderno para Apache Kafka</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
     
     <!-- Meta tags para SEO e redes sociais -->
-    <meta name="description" content="Kafta - Uma ferramenta revolucionária que transforma comandos de terminal em linguagem natural usando IA. Simplifique sua linha de comando!">
-    <meta name="keywords" content="terminal, comandos, IA, inteligência artificial, linha de comando, CLI, bash, zsh, fish">
-    <meta name="author" content="Kafta Team">
+    <meta name="description" content="Kafta - Ferramenta CLI moderna para gerenciar clusters Apache Kafka. Alternativa leve e eficiente aos tools baseados em JVM.">
+    <meta name="keywords" content="kafka, cli, apache kafka, go, golang, devops, microservices, streaming">
+    <meta name="author" content="Glauco Torres">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://seu-usuario.github.io/kafta/">
-    <meta property="og:title" content="Kafta - Terminal de Comandos Inteligente">
-    <meta property="og:description" content="Transforme comandos de terminal em linguagem natural usando IA">
-    <meta property="og:image" content="https://seu-usuario.github.io/kafta/og-image.png">
+    <meta property="og:url" content="https://torresglauco.github.io/kafta/">
+    <meta property="og:title" content="Kafta - CLI Moderno para Apache Kafka">
+    <meta property="og:description" content="Ferramenta CLI moderna para gerenciar clusters Apache Kafka. Alternativa leve e eficiente aos tools baseados em JVM.">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://seu-usuario.github.io/kafta/">
-    <meta property="twitter:title" content="Kafta - Terminal de Comandos Inteligente">
-    <meta property="twitter:description" content="Transforme comandos de terminal em linguagem natural usando IA">
-    <meta property="twitter:image" content="https://seu-usuario.github.io/kafta/og-image.png">
+    <meta property="twitter:url" content="https://torresglauco.github.io/kafta/">
+    <meta property="twitter:title" content="Kafta - CLI Moderno para Apache Kafka">
+    <meta property="twitter:description" content="Ferramenta CLI moderna para gerenciar clusters Apache Kafka. Alternativa leve e eficiente aos tools baseados em JVM.">
 
     <style>
         :root {
-            --primary-color: #00D9FF;
-            --secondary-color: #FF6B6B;
-            --accent-color: #4ECDC4;
-            --bg-dark: #0A0E27;
-            --bg-darker: #070B1F;
+            --primary-color: #FF6B35;
+            --secondary-color: #004E64;
+            --accent-color: #00A5CF;
+            --bg-dark: #0A0E1A;
+            --bg-darker: #070B15;
             --text-light: #E2E8F0;
             --text-muted: #94A3B8;
             --border-color: #334155;
@@ -39,7 +37,9 @@
             --warning-color: #F59E0B;
             --error-color: #EF4444;
             --code-bg: #1E293B;
-            --gradient-1: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            --kafka-orange: #FF6B35;
+            --golang-blue: #00A5CF;
+            --gradient-1: linear-gradient(135deg, var(--kafka-orange), var(--golang-blue));
             --gradient-2: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
             --gradient-3: linear-gradient(135deg, var(--bg-darker), var(--bg-dark));
         }
@@ -68,12 +68,12 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
+            background: var(--kafka-orange);
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-color);
+            background: var(--golang-blue);
         }
 
         /* Animações */
@@ -99,24 +99,6 @@
             }
         }
 
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-
         @keyframes blink {
             0%, 50% {
                 opacity: 1;
@@ -126,12 +108,21 @@
             }
         }
 
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
         /* Header */
         .header {
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(10, 14, 39, 0.95);
+            background: rgba(10, 14, 26, 0.95);
             backdrop-filter: blur(10px);
             z-index: 1000;
             padding: 1rem 0;
@@ -155,6 +146,9 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .nav-links {
@@ -171,7 +165,7 @@
         }
 
         .nav-links a:hover {
-            color: var(--primary-color);
+            color: var(--kafka-orange);
         }
 
         /* Hero Section */
@@ -295,7 +289,7 @@
         }
 
         .terminal-prompt {
-            color: var(--primary-color);
+            color: var(--kafka-orange);
             margin-right: 0.5rem;
         }
 
@@ -312,7 +306,7 @@
             display: inline-block;
             width: 8px;
             height: 16px;
-            background: var(--primary-color);
+            background: var(--kafka-orange);
             animation: blink 1s infinite;
         }
 
@@ -350,12 +344,12 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 217, 255, 0.3);
+            box-shadow: 0 10px 20px rgba(255, 107, 53, 0.3);
         }
 
         .btn-secondary:hover {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
+            border-color: var(--kafka-orange);
+            color: var(--kafka-orange);
         }
 
         /* Features Section */
@@ -408,8 +402,8 @@
 
         .feature-card:hover {
             transform: translateY(-5px);
-            border-color: var(--primary-color);
-            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.1);
+            border-color: var(--kafka-orange);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.1);
         }
 
         .feature-icon {
@@ -463,9 +457,9 @@
         }
 
         .tab-button.active {
-            background: var(--primary-color);
+            background: var(--kafka-orange);
             color: white;
-            border-color: var(--primary-color);
+            border-color: var(--kafka-orange);
         }
 
         .tab-button:not(.active):hover {
@@ -507,7 +501,7 @@
         }
 
         .copy-button:hover {
-            background: var(--primary-color);
+            background: var(--kafka-orange);
             opacity: 1;
         }
 
@@ -524,11 +518,11 @@
         }
 
         .command {
-            color: var(--primary-color);
+            color: var(--golang-blue);
         }
 
         .string {
-            color: var(--accent-color);
+            color: var(--kafka-orange);
         }
 
         /* Examples Section */
@@ -554,8 +548,8 @@
 
         .example-card:hover {
             transform: translateY(-5px);
-            border-color: var(--primary-color);
-            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.1);
+            border-color: var(--kafka-orange);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.1);
         }
 
         .example-header {
@@ -586,7 +580,7 @@
             padding: 1rem;
             margin-bottom: 1rem;
             font-family: 'Fira Code', monospace;
-            color: var(--text-light);
+            color: var(--golang-blue);
         }
 
         .example-output {
@@ -638,7 +632,7 @@
         }
 
         .footer-links a:hover {
-            color: var(--primary-color);
+            color: var(--kafka-orange);
         }
 
         .footer-bottom {
@@ -646,6 +640,24 @@
             padding-top: 2rem;
             border-top: 1px solid var(--border-color);
             color: var(--text-muted);
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+            align-items: center;
+        }
+
+        .tech-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--code-bg);
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
         }
 
         /* Responsive Design */
@@ -705,6 +717,11 @@
             .code-block {
                 border-radius: 8px;
             }
+
+            .tech-stack {
+                flex-direction: column;
+                gap: 1rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -735,7 +752,7 @@
         .btn:focus,
         .tab-button:focus,
         .copy-button:focus {
-            outline: 2px solid var(--primary-color);
+            outline: 2px solid var(--kafka-orange);
             outline-offset: 2px;
         }
     </style>
@@ -744,12 +761,12 @@
     <!-- Header -->
     <header class="header">
         <nav class="nav">
-            <div class="logo">🚀 Kafta</div>
+            <div class="logo">☕ Kafta</div>
             <ul class="nav-links">
                 <li><a href="#features">Recursos</a></li>
                 <li><a href="#installation">Instalação</a></li>
                 <li><a href="#examples">Exemplos</a></li>
-                <li><a href="https://github.com/seu-usuario/kafta" target="_blank">GitHub</a></li>
+                <li><a href="https://github.com/torresglauco/kafta" target="_blank">GitHub</a></li>
             </ul>
         </nav>
     </header>
@@ -758,16 +775,30 @@
     <section class="hero">
         <div class="hero-content">
             <div class="hero-text">
-                <h1 class="hero-title">Terminal Inteligente com IA</h1>
+                <h1 class="hero-title">CLI Moderno para Apache Kafka</h1>
                 <p class="hero-subtitle">
-                    Transforme comandos complexos em linguagem natural. 
-                    Kafta usa inteligência artificial para simplificar sua experiência no terminal.
+                    Ferramenta de linha de comando leve e eficiente para gerenciar clusters Kafka. 
+                    Alternativa moderna aos tools baseados em JVM, inspirada no kubectl.
                 </p>
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <span>🐹</span>
+                        <span>Go</span>
+                    </div>
+                    <div class="tech-item">
+                        <span>☕</span>
+                        <span>Apache Kafka</span>
+                    </div>
+                    <div class="tech-item">
+                        <span>⚡</span>
+                        <span>CLI</span>
+                    </div>
+                </div>
                 <div class="btn-group">
                     <a href="#installation" class="btn btn-primary">
-                        ⚡ Começar Agora
+                        🚀 Começar Agora
                     </a>
-                    <a href="https://github.com/seu-usuario/kafta" target="_blank" class="btn btn-secondary">
+                    <a href="https://github.com/torresglauco/kafta" target="_blank" class="btn btn-secondary">
                         📖 Ver no GitHub
                     </a>
                 </div>
@@ -795,49 +826,70 @@
         <div class="container">
             <h2 class="section-title">Recursos Poderosos</h2>
             <p class="section-subtitle">
-                Descubra como o Kafta pode revolucionar sua experiência no terminal com recursos inteligentes e intuitivos.
+                Simplifique o gerenciamento de clusters Kafka com uma ferramenta CLI moderna, rápida e intuitiva.
             </p>
             <div class="features-grid">
                 <div class="feature-card">
-                    <span class="feature-icon">🧠</span>
-                    <h3 class="feature-title">IA Avançada</h3>
+                    <span class="feature-icon">📊</span>
+                    <h3 class="feature-title">Gerenciamento de Tópicos</h3>
                     <p class="feature-description">
-                        Processamento de linguagem natural que entende comandos em português e traduz para a sintaxe correta do terminal.
+                        Crie, delete, liste e descreva tópicos Kafka com comandos simples e intuitivos.
                     </p>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">⚡</span>
-                    <h3 class="feature-title">Execução Rápida</h3>
+                    <span class="feature-icon">👥</span>
+                    <h3 class="feature-title">Consumer Groups</h3>
                     <p class="feature-description">
-                        Interface otimizada que processa comandos instantaneamente, mantendo a velocidade que você precisa.
+                        Monitore, descreva e gerencie consumer groups, incluindo análise de lag em tempo real.
                     </p>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">🔒</span>
-                    <h3 class="feature-title">Segurança Total</h3>
+                    <span class="feature-icon">💬</span>
+                    <h3 class="feature-title">Produção e Consumo</h3>
                     <p class="feature-description">
-                        Validação inteligente de comandos perigosos com confirmação antes da execução de operações críticas.
+                        Produza e consuma mensagens diretamente do terminal com interface interativa.
                     </p>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">🎯</span>
-                    <h3 class="feature-title">Precisão Contextual</h3>
+                    <span class="feature-icon">🔧</span>
+                    <h3 class="feature-title">Schema Registry</h3>
                     <p class="feature-description">
-                        Compreende o contexto do seu projeto e sugere comandos relevantes baseados no diretório atual.
-                    </p>
-                </div>
-                <div class="feature-card">
-                    <span class="feature-icon">📚</span>
-                    <h3 class="feature-title">Aprendizado Contínuo</h3>
-                    <p class="feature-description">
-                        Sistema que aprende com seus padrões de uso e melhora as sugestões ao longo do tempo.
+                        Gerencie esquemas Avro, liste subjects, compare versões e muito mais.
                     </p>
                 </div>
                 <div class="feature-card">
                     <span class="feature-icon">🌐</span>
-                    <h3 class="feature-title">Multi-plataforma</h3>
+                    <h3 class="feature-title">Multi-cluster</h3>
                     <p class="feature-description">
-                        Compatível com Windows, macOS e Linux. Funciona em qualquer terminal moderno.
+                        Suporte nativo para múltiplos clusters Kafka em diferentes ambientes.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🚀</span>
+                    <h3 class="feature-title">Performance</h3>
+                    <p class="feature-description">
+                        Binário leve sem dependência de JVM, garantindo execução rápida e eficiente.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🔒</span>
+                    <h3 class="feature-title">Segurança</h3>
+                    <p class="feature-description">
+                        Suporte completo para autenticação SASL e comunicação segura via TLS.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📱</span>
+                    <h3 class="feature-title">Formatos de Saída</h3>
+                    <p class="feature-description">
+                        Visualize dados em formatos Table, JSON e YAML para diferentes necessidades.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">💡</span>
+                    <h3 class="feature-title">Auto-complete</h3>
+                    <p class="feature-description">
+                        Sugestões inteligentes e auto-complete para bash, zsh e fish shells.
                     </p>
                 </div>
             </div>
@@ -849,74 +901,64 @@
         <div class="container">
             <h2 class="section-title">Instalação Simples</h2>
             <p class="section-subtitle">
-                Escolha seu sistema operacional e siga as instruções para começar a usar o Kafta em minutos.
+                Instale o Kafta rapidamente usando Go. Requer Go 1.18+ e acesso a um cluster Apache Kafka.
             </p>
             <div class="tab-container">
                 <div class="tab-buttons">
-                    <button class="tab-button active" data-tab="macos">
-                        🍎 macOS
+                    <button class="tab-button active" data-tab="go-install">
+                        🐹 Go Install
                     </button>
-                    <button class="tab-button" data-tab="linux">
-                        🐧 Linux
+                    <button class="tab-button" data-tab="legacy">
+                        📦 Legacy (Go < 1.18)
                     </button>
-                    <button class="tab-button" data-tab="windows">
-                        🪟 Windows
+                    <button class="tab-button" data-tab="setup">
+                        ⚙️ Configuração
                     </button>
                 </div>
                 
-                <div class="tab-content active" id="macos">
+                <div class="tab-content active" id="go-install">
                     <div class="code-block">
-                        <button class="copy-button" onclick="copyToClipboard('macos-code')">📋</button>
-                        <div id="macos-code">
-                            <div class="code-line"><span class="comment"># Instalar via Homebrew</span></div>
-                            <div class="code-line"><span class="command">brew install kafta</span></div>
+                        <button class="copy-button" onclick="copyToClipboard('go-install-code')">📋</button>
+                        <div id="go-install-code">
+                            <div class="code-line"><span class="comment"># Instalar a versão mais recente</span></div>
+                            <div class="code-line"><span class="command">go install github.com/electric-saw/kafta/cmd/kafta@latest</span></div>
                             <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># Ou via curl</span></div>
-                            <div class="code-line"><span class="command">curl -fsSL https://install.kafta.dev | sh</span></div>
+                            <div class="code-line"><span class="comment"># Verificar instalação</span></div>
+                            <div class="code-line"><span class="command">kafta --help</span></div>
                             <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># Configurar shell</span></div>
-                            <div class="code-line"><span class="command">echo 'eval "$(kafta init)"' >> ~/.zshrc</span></div>
-                            <div class="code-line"><span class="command">source ~/.zshrc</span></div>
+                            <div class="code-line"><span class="comment"># Verificar versão</span></div>
+                            <div class="code-line"><span class="command">kafta version</span></div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="tab-content" id="linux">
+                <div class="tab-content" id="legacy">
                     <div class="code-block">
-                        <button class="copy-button" onclick="copyToClipboard('linux-code')">📋</button>
-                        <div id="linux-code">
-                            <div class="code-line"><span class="comment"># Ubuntu/Debian</span></div>
-                            <div class="code-line"><span class="command">wget -qO- https://install.kafta.dev/deb | sudo bash</span></div>
+                        <button class="copy-button" onclick="copyToClipboard('legacy-code')">📋</button>
+                        <div id="legacy-code">
+                            <div class="code-line"><span class="comment"># Para Go < 1.18</span></div>
+                            <div class="code-line"><span class="command">go get -u github.com/electric-saw/kafta</span></div>
                             <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># Fedora/CentOS/RHEL</span></div>
-                            <div class="code-line"><span class="command">curl -fsSL https://install.kafta.dev/rpm | sudo bash</span></div>
-                            <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># Instalação universal</span></div>
-                            <div class="code-line"><span class="command">curl -fsSL https://install.kafta.dev | sh</span></div>
-                            <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># Configurar shell</span></div>
-                            <div class="code-line"><span class="command">echo 'eval "$(kafta init)"' >> ~/.bashrc</span></div>
-                            <div class="code-line"><span class="command">source ~/.bashrc</span></div>
+                            <div class="code-line"><span class="comment"># Compilar da fonte</span></div>
+                            <div class="code-line"><span class="command">git clone https://github.com/electric-saw/kafta.git</span></div>
+                            <div class="code-line"><span class="command">cd kafta</span></div>
+                            <div class="code-line"><span class="command">go build -o kafta cmd/kafta/main.go</span></div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="tab-content" id="windows">
+                <div class="tab-content" id="setup">
                     <div class="code-block">
-                        <button class="copy-button" onclick="copyToClipboard('windows-code')">📋</button>
-                        <div id="windows-code">
-                            <div class="code-line"><span class="comment"># PowerShell (Recomendado)</span></div>
-                            <div class="code-line"><span class="command">iwr -useb https://install.kafta.dev/windows | iex</span></div>
+                        <button class="copy-button" onclick="copyToClipboard('setup-code')">📋</button>
+                        <div id="setup-code">
+                            <div class="code-line"><span class="comment"># Configurar PATH (se necessário)</span></div>
+                            <div class="code-line"><span class="command">export PATH=$PATH:$(go env GOPATH)/bin</span></div>
                             <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># Ou via Chocolatey</span></div>
-                            <div class="code-line"><span class="command">choco install kafta</span></div>
+                            <div class="code-line"><span class="comment"># Configurar cluster Kafka</span></div>
+                            <div class="code-line"><span class="command">kafta config set-cluster my-cluster --bootstrap-servers localhost:9092</span></div>
                             <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># Ou via Scoop</span></div>
-                            <div class="code-line"><span class="command">scoop bucket add extras</span></div>
-                            <div class="code-line"><span class="command">scoop install kafta</span></div>
-                            <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># Configurar PowerShell</span></div>
-                            <div class="code-line"><span class="command">Add-Content $PROFILE 'Invoke-Expression (kafta init)'</span></div>
+                            <div class="code-line"><span class="comment"># Ativar auto-complete (bash)</span></div>
+                            <div class="code-line"><span class="command">kafta completion bash >> ~/.bashrc</span></div>
                         </div>
                     </div>
                 </div>
@@ -927,97 +969,105 @@
     <!-- Examples Section -->
     <section class="examples" id="examples">
         <div class="container">
-            <h2 class="section-title">Exemplos Práticos</h2>
+            <h2 class="section-title">Exemplos de Uso</h2>
             <p class="section-subtitle">
-                Veja como o Kafta transforma comandos complexos em linguagem natural e vice-versa.
+                Veja como usar o Kafta para gerenciar seus clusters Kafka de forma eficiente.
             </p>
             <div class="examples-grid">
                 <div class="example-card">
                     <div class="example-header">
-                        <div class="example-title">Buscar Arquivos</div>
-                        <div class="example-description">Encontre arquivos por nome ou conteúdo</div>
+                        <div class="example-title">Listar Tópicos</div>
+                        <div class="example-description">Visualize todos os tópicos do cluster</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
-                            💬 "encontrar todos os arquivos .js modificados hoje"
+                            $ kafta topic list
                         </div>
                         <div class="example-output">
-                            ⚡ find . -name "*.js" -mtime 0
+                            ✓ user-events<br>
+                            ✓ order-events<br>
+                            ✓ payment-events
                         </div>
                     </div>
                 </div>
                 
                 <div class="example-card">
                     <div class="example-header">
-                        <div class="example-title">Gerenciar Processos</div>
-                        <div class="example-description">Controle processos do sistema facilmente</div>
+                        <div class="example-title">Criar Tópico</div>
+                        <div class="example-description">Crie novos tópicos com configurações específicas</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
-                            💬 "mostrar processos que usam mais CPU"
+                            $ kafta topic create my-topic --partitions 3 --replication-factor 1
                         </div>
                         <div class="example-output">
-                            ⚡ ps aux --sort=-%cpu | head -10
+                            ✓ Topic 'my-topic' created successfully
                         </div>
                     </div>
                 </div>
                 
                 <div class="example-card">
                     <div class="example-header">
-                        <div class="example-title">Git Operations</div>
-                        <div class="example-description">Simplifique comandos Git complexos</div>
+                        <div class="example-title">Consumer Lag</div>
+                        <div class="example-description">Monitore o lag dos consumer groups</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
-                            💬 "fazer commit de todos os arquivos com mensagem 'fix: correção de bugs'"
+                            $ kafta consumer lag my-group
                         </div>
                         <div class="example-output">
-                            ⚡ git add -A && git commit -m "fix: correção de bugs"
+                            TOPIC      PARTITION  LAG<br>
+                            my-topic   0          15<br>
+                            my-topic   1          3
                         </div>
                     </div>
                 </div>
                 
                 <div class="example-card">
                     <div class="example-header">
-                        <div class="example-title">Compressão de Arquivos</div>
-                        <div class="example-description">Arquive e comprima arquivos facilmente</div>
+                        <div class="example-title">Produzir Mensagens</div>
+                        <div class="example-description">Envie mensagens para tópicos interativamente</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
-                            💬 "comprimir pasta 'projeto' em arquivo zip"
+                            $ kafta producer --topic my-topic
                         </div>
                         <div class="example-output">
-                            ⚡ zip -r projeto.zip projeto/
+                            > Hello Kafka!<br>
+                            ✓ Message sent to partition 0, offset 1234
                         </div>
                     </div>
                 </div>
                 
                 <div class="example-card">
                     <div class="example-header">
-                        <div class="example-title">Monitoramento de Sistema</div>
-                        <div class="example-description">Verifique status e recursos do sistema</div>
+                        <div class="example-title">Schema Registry</div>
+                        <div class="example-description">Gerencie schemas Avro</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
-                            💬 "mostrar uso de disco por diretório"
+                            $ kafta schema subjects-list
                         </div>
                         <div class="example-output">
-                            ⚡ du -h --max-depth=1 | sort -hr
+                            user-value<br>
+                            order-key<br>
+                            payment-value
                         </div>
                     </div>
                 </div>
                 
                 <div class="example-card">
                     <div class="example-header">
-                        <div class="example-title">Rede e Conectividade</div>
-                        <div class="example-description">Teste conexões e diagnósticos de rede</div>
+                        <div class="example-title">Consumir Mensagens</div>
+                        <div class="example-description">Consuma mensagens em tempo real</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
-                            💬 "testar conectividade com google.com"
+                            $ kafta console consumer --topic my-topic --group my-group
                         </div>
                         <div class="example-output">
-                            ⚡ ping -c 4 google.com
+                            {"id": 1, "message": "Hello Kafka!"}<br>
+                            {"id": 2, "message": "Another message"}
                         </div>
                     </div>
                 </div>
@@ -1032,69 +1082,69 @@
                 <div class="footer-section">
                     <h3>Sobre o Kafta</h3>
                     <p>
-                        Uma ferramenta revolucionária que democratiza o uso do terminal através de inteligência artificial, 
-                        tornando comandos complexos acessíveis para todos.
+                        Uma ferramenta CLI moderna e eficiente para gerenciar clusters Apache Kafka, 
+                        oferecendo uma alternativa leve aos tools baseados em JVM.
                     </p>
                 </div>
                 <div class="footer-section">
                     <h3>Links Úteis</h3>
                     <ul class="footer-links">
-                        <li><a href="https://github.com/seu-usuario/kafta">Código Fonte</a></li>
-                        <li><a href="https://github.com/seu-usuario/kafta/blob/main/docs/API.md">Documentação</a></li>
-                        <li><a href="https://github.com/seu-usuario/kafta/issues">Reportar Bug</a></li>
-                        <li><a href="https://github.com/seu-usuario/kafta/discussions">Discussões</a></li>
+                        <li><a href="https://github.com/torresglauco/kafta">Código Fonte</a></li>
+                        <li><a href="https://github.com/torresglauco/kafta/blob/main/README.md">Documentação</a></li>
+                        <li><a href="https://github.com/torresglauco/kafta/issues">Reportar Bug</a></li>
+                        <li><a href="https://github.com/torresglauco/kafta/discussions">Discussões</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Tecnologias</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://golang.org">Go (Golang)</a></li>
+                        <li><a href="https://kafka.apache.org">Apache Kafka</a></li>
+                        <li><a href="https://avro.apache.org">Apache Avro</a></li>
+                        <li><a href="https://kubernetes.io">Kubernetes (inspiração)</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h3>Comunidade</h3>
                     <ul class="footer-links">
-                        <li><a href="https://discord.gg/kafta">Discord</a></li>
-                        <li><a href="https://twitter.com/kafta_terminal">Twitter</a></li>
-                        <li><a href="https://reddit.com/r/kafta">Reddit</a></li>
-                        <li><a href="mailto:contato@kafta.dev">Contato</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Contribua</h3>
-                    <ul class="footer-links">
-                        <li><a href="https://github.com/seu-usuario/kafta/blob/main/CONTRIBUTING.md">Como Contribuir</a></li>
-                        <li><a href="https://github.com/seu-usuario/kafta/blob/main/CODE_OF_CONDUCT.md">Código de Conduta</a></li>
-                        <li><a href="https://github.com/sponsors/seu-usuario">Patrocinar</a></li>
-                        <li><a href="https://opencollective.com/kafta">Open Collective</a></li>
+                        <li><a href="https://github.com/torresglauco/kafta/blob/main/CONTRIBUTING.md">Como Contribuir</a></li>
+                        <li><a href="https://github.com/torresglauco/kafta/issues/new">Solicitar Feature</a></li>
+                        <li><a href="https://github.com/torresglauco">Perfil do Autor</a></li>
+                        <li><a href="mailto:contato@example.com">Contato</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Kafta Terminal. Licenciado sob MIT. Feito com ❤️ para a comunidade open source.</p>
+                <p>&copy; 2024 Kafta CLI. Projeto open source desenvolvido por <a href="https://github.com/torresglauco" style="color: var(--kafka-orange);">Glauco Torres</a>.</p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Terminal Animation
+        // Terminal Animation com comandos reais do Kafta
         class TerminalAnimation {
             constructor(element) {
                 this.element = element;
                 this.commands = [
                     {
-                        input: 'kafta "listar arquivos grandes"',
-                        output: 'find . -type f -size +100M -exec ls -lh {} \;'
+                        input: 'kafta topic list',
+                        output: '✓ user-events\n✓ order-events\n✓ payment-events'
                     },
                     {
-                        input: 'kafta "comprimir logs antigos"',
-                        output: 'find /var/log -name "*.log" -mtime +30 | xargs gzip'
+                        input: 'kafta consumer lag my-group',
+                        output: 'TOPIC      PARTITION  LAG\nmy-topic   0          15\nmy-topic   1          3'
                     },
                     {
-                        input: 'kafta "backup do banco de dados"',
-                        output: 'pg_dump -h localhost -U user database > backup_$(date +%Y%m%d).sql'
+                        input: 'kafta schema subjects-list',
+                        output: 'user-value\norder-key\npayment-value'
                     },
                     {
-                        input: 'kafta "mostrar processos do Chrome"',
-                        output: 'ps aux | grep -i chrome | grep -v grep'
+                        input: 'kafta cluster describe',
+                        output: 'Cluster: my-cluster\nBootstrap: localhost:9092\nBrokers: 3'
                     },
                     {
-                        input: 'kafta "sincronizar diretório remoto"',
-                        output: 'rsync -avz --progress /local/dir/ user@server:/remote/dir/'
+                        input: 'kafta topic create analytics --partitions 6',
+                        output: '✓ Topic 'analytics' created successfully'
                     }
                 ];
                 this.currentCommand = 0;
@@ -1105,7 +1155,7 @@
             init() {
                 this.element.innerHTML = `
                     <div class="terminal-line">
-                        <span class="terminal-prompt">❯</span>
+                        <span class="terminal-prompt">$</span>
                         <span class="terminal-input" id="current-input"></span>
                         <span class="cursor" id="cursor"></span>
                     </div>
@@ -1148,7 +1198,7 @@
                 
                 const outputLine = document.createElement('div');
                 outputLine.className = 'terminal-line';
-                outputLine.innerHTML = `<span class="terminal-output">⚡ ${output}</span>`;
+                outputLine.innerHTML = `<span class="terminal-output">${output.replace(/\n/g, '<br>')}</span>`;
                 
                 this.element.appendChild(outputLine);
                 
@@ -1161,7 +1211,7 @@
                 // Clear terminal and restart
                 this.element.innerHTML = `
                     <div class="terminal-line">
-                        <span class="terminal-prompt">❯</span>
+                        <span class="terminal-prompt">$</span>
                         <span class="terminal-input" id="current-input"></span>
                         <span class="cursor" id="cursor"></span>
                     </div>
@@ -1320,10 +1370,10 @@
                 const currentScroll = window.pageYOffset;
                 
                 if (currentScroll > 100) {
-                    header.style.background = 'rgba(10, 14, 39, 0.98)';
+                    header.style.background = 'rgba(10, 14, 26, 0.98)';
                     header.style.backdropFilter = 'blur(15px)';
                 } else {
-                    header.style.background = 'rgba(10, 14, 39, 0.95)';
+                    header.style.background = 'rgba(10, 14, 26, 0.95)';
                     header.style.backdropFilter = 'blur(10px)';
                 }
                 
@@ -1336,18 +1386,6 @@
                 
                 lastScroll = currentScroll;
             });
-        }
-
-        // Performance monitoring
-        function logPerformance() {
-            if ('performance' in window) {
-                window.addEventListener('load', () => {
-                    setTimeout(() => {
-                        const perfData = performance.getEntriesByType('navigation')[0];
-                        console.log('Page load time:', perfData.loadEventEnd - perfData.loadEventStart, 'ms');
-                    }, 0);
-                });
-            }
         }
 
         // Initialize all components when DOM is loaded
@@ -1365,7 +1403,6 @@
             initSmoothScrolling();
             initScrollAnimations();
             initHeaderScroll();
-            logPerformance();
             
             // Add loading animation
             document.body.style.opacity = '0';
@@ -1397,19 +1434,6 @@
                 }
             }
         });
-
-        // Mobile menu toggle (for future enhancement)
-        function initMobileMenu() {
-            const burger = document.querySelector('.burger');
-            const nav = document.querySelector('.nav-links');
-            
-            if (burger && nav) {
-                burger.addEventListener('click', () => {
-                    nav.classList.toggle('nav-active');
-                    burger.classList.toggle('toggle');
-                });
-            }
-        }
 
         // Error handling for failed animations
         window.addEventListener('error', (e) => {
