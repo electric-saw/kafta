@@ -1,0 +1,763 @@
+---
+layout: default
+title: "Home"
+---
+
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <img src="img/kafta.png" alt="Kafta Logo" class="hero-logo">
+                    Kafta
+                </h1>
+                <p class="hero-subtitle">
+                    Modern, <strong>non-JVM</strong> command-line interface for managing <strong>Apache Kafka</strong> clusters
+                </p>
+                <p class="hero-description">
+                    Inspired by kubectl, Kafta provides a simple and efficient way to manage topics, brokers, 
+                    consumer groups, and more across multiple Kafka clusters.
+                </p>
+                
+                <div class="hero-badges">
+                    <img src="https://goreportcard.com/badge/github.com/electric-saw/kafta" alt="Go Report Card">
+                    <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License">
+                    <img src="https://img.shields.io/github/release/electric-saw/kafta.svg" alt="Release">
+                </div>
+                
+                <div class="hero-actions">
+                    <a href="pages/installation.html" class="btn btn-primary">
+                        <i class="fas fa-download"></i> Get Started
+                    </a>
+                    <a href="https://github.com/electric-saw/kafta" class="btn btn-secondary" target="_blank">
+                        <i class="fab fa-github"></i> View on GitHub
+                    </a>
+                </div>
+            </div>
+            
+            <div class="hero-demo">
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-controls">
+                            <span class="control close"></span>
+                            <span class="control minimize"></span>
+                            <span class="control maximize"></span>
+                        </div>
+                        <div class="terminal-title">kafta</div>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="terminal-line">
+                            <span class="prompt">$</span> kafta topic list
+                        </div>
+                        <div class="terminal-output">
+                            <div class="table-header">TOPIC NAME    PARTITIONS  REPLICATION  SIZE</div>
+                            <div>orders       3           2            1.2GB</div>
+                            <div>payments     6           3            856MB</div>
+                            <div>users        2           2            234MB</div>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="prompt">$</span> kafta consumer lag order-service
+                        </div>
+                        <div class="terminal-output">
+                            <div class="status-green">✅ Consumer group: order-service</div>
+                            <div>Total lag: 0 messages</div>
+                            <div>Status: HEALTHY</div>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="prompt">$</span> <span class="cursor">|</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">Why Choose Kafta?</h2>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <h3>No Java Required</h3>
+                <p>Binary executable, no JVM setup needed. Just download and run.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <h3>Fast & Lightweight</h3>
+                <p>Written in Go for speed and efficiency. Lightning-fast operations.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                <h3>Multi-cluster</h3>
+                <p>Easy switching between different Kafka environments and clusters.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>Smart Suggestions</h3>
+                <p>Intelligent command corrections and helpful hints for better UX.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Security First</h3>
+                <p>Built-in support for SASL authentication and TLS encryption.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3>kubectl-inspired</h3>
+                <p>Familiar interface for Kubernetes users with consistent patterns.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="quick-start">
+    <div class="container">
+        <h2 class="section-title">Quick Start</h2>
+        
+        <div class="quick-start-tabs">
+            <div class="tabs">
+                <button class="tab-button active" data-tab="macos">
+                    <i class="fab fa-apple"></i> macOS
+                </button>
+                <button class="tab-button" data-tab="linux">
+                    <i class="fab fa-linux"></i> Linux
+                </button>
+                <button class="tab-button" data-tab="windows">
+                    <i class="fab fa-windows"></i> Windows
+                </button>
+            </div>
+            
+            <div class="tab-content">
+                <div class="tab-pane active" id="macos">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Installation</span>
+                            <button class="copy-btn" data-copy="go install github.com/electric-saw/kafta/cmd/kafta@latest">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <pre><code># Install Kafta
+go install github.com/electric-saw/kafta/cmd/kafta@latest
+
+# Add to PATH
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.zshrc
+source ~/.zshrc
+
+# Verify installation
+kafta --help</code></pre>
+                    </div>
+                </div>
+                
+                <div class="tab-pane" id="linux">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Installation</span>
+                            <button class="copy-btn">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <pre><code># Install Kafta
+go install github.com/electric-saw/kafta/cmd/kafta@latest
+
+# Add to PATH
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
+source ~/.bashrc
+
+# Verify installation
+kafta --help</code></pre>
+                    </div>
+                </div>
+                
+                <div class="tab-pane" id="windows">
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>PowerShell</span>
+                            <button class="copy-btn">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <pre><code># Install Kafta
+go install github.com/electric-saw/kafta/cmd/kafta@latest
+
+# Add to PATH via System Properties
+# Verify installation
+kafta --help</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="stats">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number" data-count="95">0</div>
+                <div class="stat-label">GitHub Stars</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="8">0</div>
+                <div class="stat-label">Forks</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="6">0</div>
+                <div class="stat-label">Contributors</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-count="100">0</div>
+                <div class="stat-label">% Go</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* CSS inline para GitHub Pages funcionar sem arquivo separado */
+:root {
+    --primary-color: #2c5aa0;
+    --secondary-color: #34495e;
+    --accent-color: #e74c3c;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --light-gray: #f8f9fa;
+    --dark-gray: #343a40;
+    --border-color: #dee2e6;
+    --text-color: #333;
+    --text-muted: #6c757d;
+    --white: #ffffff;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    --border-radius: 8px;
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--white);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, var(--light-gray) 0%, var(--white) 100%);
+    padding: 5rem 0;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.hero-logo {
+    height: 80px;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.7;
+}
+
+.hero-badges {
+    margin-bottom: 2rem;
+}
+
+.hero-badges img {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    border: 2px solid transparent;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background: #1e4080;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--light-gray);
+    border-color: var(--primary-color);
+}
+
+/* Terminal Demo */
+.hero-demo {
+    display: flex;
+    justify-content: center;
+}
+
+.terminal {
+    background: #1e1e1e;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 500px;
+}
+
+.terminal-header {
+    background: #323232;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.terminal-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.control {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.control.close { background: #ff5f56; }
+.control.minimize { background: #ffbd2e; }
+.control.maximize { background: #27ca3f; }
+
+.terminal-title {
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.terminal-body {
+    padding: 1rem;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.terminal-line {
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.prompt {
+    color: #27ca3f;
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+.terminal-output {
+    color: #ccc;
+    margin: 0.5rem 0 1rem 1.5rem;
+}
+
+.terminal-output .table-header {
+    color: #fff;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.terminal-output .status-green {
+    color: #27ca3f;
+}
+
+.cursor {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+/* Features Section */
+.features {
+    padding: 5rem 0;
+    background: var(--white);
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+    color: var(--text-color);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.feature-card {
+    text-align: center;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.feature-card p {
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* Quick Start Section */
+.quick-start {
+    padding: 5rem 0;
+    background: var(--light-gray);
+}
+
+.quick-start-tabs {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.tab-button {
+    background: var(--white);
+    border: none;
+    padding: 1rem 2rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tab-button:hover,
+.tab-button.active {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.tab-content {
+    position: relative;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.code-block {
+    background: #1e1e1e;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.code-header {
+    background: #323232;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--white);
+    font-weight: 500;
+}
+
+.copy-btn {
+    background: none;
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.copy-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.code-block pre {
+    margin: 0;
+    padding: 1.5rem;
+    overflow-x: auto;
+}
+
+.code-block code {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    color: #ccc;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Stats Section */
+.stats {
+    padding: 3rem 0;
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    text-align: center;
+}
+
+.stat-item {
+    padding: 1rem;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+        justify-content: center;
+    }
+    
+    .hero-logo {
+        height: 60px;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tabs {
+        flex-direction: column;
+    }
+    
+    .hero-actions {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 3rem 0;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+        flex-direction: column;
+    }
+    
+    .hero-logo {
+        height: 50px;
+    }
+    
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .features,
+    .quick-start {
+        padding: 3rem 0;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+}
+</style>
+
+<script>
+// JavaScript inline para funcionalidade
+document.addEventListener('DOMContentLoaded', function() {
+    // Tab functionality
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+            
+            // Remove active class from all buttons and panes
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabPanes.forEach(pane => pane.classList.remove('active'));
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Show target pane
+            const targetPane = document.getElementById(targetTab);
+            if (targetPane) {
+                targetPane.classList.add('active');
+            }
+        });
+    });
+    
+    // Copy to clipboard functionality
+    const copyButtons = document.querySelectorAll('.copy-btn');
+    
+    copyButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const copyText = this.getAttribute('data-copy') || 
+                           this.closest('.code-block').querySelector('code').textContent;
+            
+            navigator.clipboard.writeText(copyText).then(() => {
+                // Show feedback
+                const originalIcon = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check"></i>';
+                this.style.color = '#27ae60';
+                
+                setTimeout(() => {
+                    this.innerHTML = originalIcon;
+                    this.style.color = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        });
+    });
+    
+    // Animated counters for stats
+    const statNumbers = document.querySelectorAll('.stat-number');
+    const observerOptions = {
+        threshold: 0.7
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const target = entry.target;
+                const count = parseInt(target.getAttribute('data-count'));
+                animateCounter(target, count);
+                observer.unobserve(target);
+            }
+        });
+    }, observerOptions);
+    
+    statNumbers.forEach(counter => {
+        observer.observe(counter);
+    });
+    
+    function animateCounter(element, target) {
+        let current = 0;
+        const increment = target / 50;
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                current = target;
+                clearInterval(timer);
+            }
+            element.textContent = Math.floor(current);
+        }, 30);
+    }
+});
+</script>
