@@ -1,4 +1,4 @@
-![kafta logo](img/kafta.png)
+#![kafta logo](img/kafta.png)
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/electric-saw/kafta)](https://goreportcard.com/report/github.com/electric-saw/kafta)
 [![License](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE.txt)
@@ -39,9 +39,18 @@ A modern, **non-JVM** command-line interface for managing **Apache Kafka** clust
 - [Development](#️-development)
   - [Building from Source](#building-from-source)
   - [Running Tests](#running-tests)
-- [Contributing](#-contributing)
-  - [Quick Start for Contributors](#quick-start-for-contributors)
   - [Development Setup](#development-setup)
+    - [macOS Development Setup](#-macos-development-setup)
+    - [Linux Development Setup](#-linux-development-setup)
+    - [Windows Development Setup](#-windows-development-setup)
+  - [Development Environment Verification](#-development-environment-verification)
+  - [Quick Start for Contributors](#️-quick-start-for-contributors)
+  - [Docker Development Environment](#-docker-development-environment)
+  - [Development Workflow](#-development-workflow)
+  - [Code Quality Tools](#-code-quality-tools)
+  - [Testing Guidelines](#-testing-guidelines)
+  - [Performance Profiling](#-performance-profiling)
+- [Contributing](#-contributing)
 - [Roadmap](#-roadmap)
 - [Known Issues](#-known-issues)
 - [License](#-license)
@@ -463,6 +472,337 @@ go test -cover ./...
 go test -tags=integration ./...
 ```
 
+### Development Setup
+
+#### 🍎 macOS Development Setup
+
+```bash
+# 1. Install Homebrew (if not already installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# 2. Install Go (if not already installed)
+brew install go
+
+# 3. Install development tools
+brew install golangci-lint pre-commit
+
+# 4. Clone and setup project
+git clone https://github.com/electric-saw/kafta.git
+cd kafta
+
+# 5. Install Go dependencies
+go mod download
+
+# 6. Setup pre-commit hooks
+pre-commit install
+
+# 7. Run initial checks
+golangci-lint run
+go test ./...
+
+# 8. Verify installation
+echo "✅ Development environment ready!"
+kafta --version || echo "Build the project first: go build -o kafta cmd/kafta/main.go"
+```
+
+#### 🐧 Linux Development Setup
+
+**Ubuntu/Debian:**
+```bash
+# 1. Update package manager
+sudo apt update
+
+# 2. Install Go (if not already installed)
+sudo apt install golang-go
+
+# 3. Install Python and pip (for pre-commit)
+sudo apt install python3 python3-pip
+
+# 4. Install pre-commit
+pip3 install pre-commit
+
+# 5. Install golangci-lint
+curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
+
+# 6. Add Go bin to PATH
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
+source ~/.bashrc
+
+# 7. Clone and setup project
+git clone https://github.com/electric-saw/kafta.git
+cd kafta
+
+# 8. Install Go dependencies
+go mod download
+
+# 9. Setup pre-commit hooks
+pre-commit install
+
+# 10. Run initial checks
+golangci-lint run
+go test ./...
+```
+
+**CentOS/RHEL/Fedora:**
+```bash
+# 1. Install Go (if not already installed)
+sudo dnf install golang  # Fedora
+# OR
+sudo yum install golang  # CentOS/RHEL
+
+# 2. Install Python and pip
+sudo dnf install python3 python3-pip  # Fedora
+# OR
+sudo yum install python3 python3-pip  # CentOS/RHEL
+
+# 3. Install pre-commit
+pip3 install --user pre-commit
+
+# 4. Install golangci-lint
+curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
+
+# 5. Add to PATH
+echo 'export PATH=$PATH:$(go env GOPATH)/bin:$HOME/.local/bin' >> ~/.bashrc
+source ~/.bashrc
+
+# 6. Continue with project setup (same as Ubuntu)
+git clone https://github.com/electric-saw/kafta.git
+cd kafta
+go mod download
+pre-commit install
+golangci-lint run
+go test ./...
+```
+
+#### 🪟 Windows Development Setup
+
+**PowerShell (Run as Administrator):**
+```powershell
+# 1. Install Chocolatey (package manager for Windows)
+Set-ExecutionPolicy Bypass -Scope Process -Force
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+# 2. Install Go (if not already installed)
+choco install golang
+
+# 3. Install Python (for pre-commit)
+choco install python
+
+# 4. Install Git (if not already installed)
+choco install git
+
+# 5. Refresh environment variables
+refreshenv
+
+# 6. Install pre-commit
+pip install pre-commit
+
+# 7. Install golangci-lint
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+# 8. Clone and setup project
+git clone https://github.com/electric-saw/kafta.git
+cd kafta
+
+# 9. Install Go dependencies
+go mod download
+
+# 10. Setup pre-commit hooks
+pre-commit install
+
+# 11. Run initial checks
+golangci-lint run
+go test ./...
+```
+
+**Alternative Windows Setup (without Chocolatey):**
+```powershell
+# 1. Download and install Go manually from https://golang.org/dl/
+# 2. Download and install Python from https://python.org/downloads/
+# 3. Download and install Git from https://git-scm.com/download/win
+
+# 4. Install pre-commit via pip
+pip install pre-commit
+
+# 5. Install golangci-lint via Go
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+# 6. Ensure Go bin is in PATH (usually automatic, but check)
+# Add %USERPROFILE%\goin to your PATH environment variable if needed
+
+# 7. Continue with project setup
+git clone https://github.com/electric-saw/kafta.git
+cd kafta
+go mod download
+pre-commit install
+golangci-lint run
+go test ./...
+```
+
+### 🩺 Development Environment Verification
+
+Run this script to verify your development setup:
+
+```bash
+#!/bin/bash
+echo "🔍 Kafta Development Environment Check"
+echo "====================================="
+
+echo ""
+echo "📦 Go Environment:"
+go version 2>/dev/null || echo "❌ Go not installed"
+echo "GOPATH: $(go env GOPATH 2>/dev/null)"
+echo "GOROOT: $(go env GOROOT 2>/dev/null)"
+
+echo ""
+echo "🔧 Development Tools:"
+golangci-lint --version 2>/dev/null || echo "❌ golangci-lint not installed"
+pre-commit --version 2>/dev/null || echo "❌ pre-commit not installed"
+git --version 2>/dev/null || echo "❌ git not installed"
+
+echo ""
+echo "📁 Project Setup:"
+[ -f "go.mod" ] && echo "✅ go.mod found" || echo "❌ go.mod not found"
+[ -f ".golangci.yml" ] && echo "✅ .golangci.yml found" || echo "❌ .golangci.yml not found"
+[ -f ".pre-commit-config.yaml" ] && echo "✅ .pre-commit-config.yaml found" || echo "❌ .pre-commit-config.yaml not found"
+
+echo ""
+echo "🧪 Running Quick Tests:"
+echo "• go mod tidy: $(go mod tidy 2>&1 && echo "✅ OK" || echo "❌ Failed")"
+echo "• go build: $(go build cmd/kafta/main.go 2>&1 && echo "✅ OK" || echo "❌ Failed")"
+echo "• golangci-lint: $(golangci-lint run --timeout=60s 2>&1 >/dev/null && echo "✅ OK" || echo "⚠️ Issues found")"
+
+echo ""
+if command -v kafta >/dev/null 2>&1; then
+    echo "✅ kafta command available: $(kafta --version 2>/dev/null || echo "version command not available")"
+else
+    echo "ℹ️  kafta not in PATH (build and install: go install ./cmd/kafta)"
+fi
+```
+
+### 🏃‍♂️ Quick Start for Contributors
+
+```bash
+# One-liner setup for macOS
+brew install go golangci-lint pre-commit && git clone https://github.com/electric-saw/kafta.git && cd kafta && go mod download && pre-commit install
+
+# One-liner setup for Ubuntu/Debian
+sudo apt update && sudo apt install golang-go python3-pip && pip3 install pre-commit && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+
+# Verify everything works
+go test ./... && golangci-lint run && echo "🎉 Ready to contribute!"
+```
+
+### 🐳 Docker Development Environment
+
+If you prefer to use Docker for development:
+
+```bash
+# Build development Docker image
+docker build -t kafta-dev -f Dockerfile.dev .
+
+# Run development container
+docker run -it --rm -v $(pwd):/workspace kafta-dev
+
+# Inside container, run development commands
+go test ./...
+golangci-lint run
+```
+
+### 📋 Development Workflow
+
+1. **Fork the repository** on GitHub
+2. **Clone your fork** locally:
+   ```bash
+   git clone https://github.com/YOUR-USERNAME/kafta.git
+   cd kafta
+   ```
+3. **Install dependencies**:
+   ```bash
+   go mod download
+   ```
+4. **Setup development tools**:
+   ```bash
+   pre-commit install
+   ```
+5. **Create a feature branch**:
+   ```bash
+   git checkout -b feature/my-awesome-feature
+   ```
+6. **Make your changes** and test:
+   ```bash
+   go test ./...
+   golangci-lint run
+   ```
+7. **Commit your changes**:
+   ```bash
+   git add .
+   git commit -m "feat: add awesome feature"
+   ```
+8. **Push and create Pull Request**:
+   ```bash
+   git push origin feature/my-awesome-feature
+   ```
+
+### 🔍 Code Quality Tools
+
+```bash
+# Format code
+go fmt ./...
+
+# Vet code for issues
+go vet ./...
+
+# Run linter with auto-fix
+golangci-lint run --fix
+
+# Run pre-commit on all files
+pre-commit run --all-files
+
+# Update dependencies
+go mod tidy
+go mod vendor  # if using vendor
+
+# Security scan
+go list -json -m all | nancy sleuth  # requires nancy to be installed
+```
+
+### 🧪 Testing Guidelines
+
+```bash
+# Run specific test
+go test ./pkg/cmd/...
+
+# Run tests with verbose output
+go test -v ./...
+
+# Run tests with race detection
+go test -race ./...
+
+# Generate coverage report
+go test -coverprofile=coverage.out ./...
+go tool cover -html=coverage.out
+
+# Benchmark tests
+go test -bench=. ./...
+```
+
+### 📈 Performance Profiling
+
+```bash
+# CPU profiling
+go test -cpuprofile=cpu.prof ./...
+go tool pprof cpu.prof
+
+# Memory profiling
+go test -memprofile=mem.prof ./...
+go tool pprof mem.prof
+
+# Build with profiling enabled
+go build -tags=profile ./cmd/kafta
+```
+
 ---
 
 ## 🤝 Contributing
@@ -476,22 +816,6 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
-### Development Setup
-
-```bash
-# Install development dependencies
-go mod download
-
-# Install pre-commit hooks
-pre-commit install
-
-# Run linting
-golangci-lint run
-
-# Run tests
-go test ./...
-```
 
 ---
 
