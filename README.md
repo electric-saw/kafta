@@ -1,4 +1,4 @@
-#![kafta logo](img/kafta.png)
+![kafta logo](img/kafta.png)
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/electric-saw/kafta)](https://goreportcard.com/report/github.com/electric-saw/kafta)
 [![License](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE.txt)
