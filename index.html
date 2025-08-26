@@ -1,1025 +1,1427 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kafta - Modern Kafka CLI</title>
-    <meta name="description" content="Modern, non-JVM command-line interface for managing Apache Kafka clusters">
+    <title>Kafta - Terminal de Comandos Inteligente</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
     
-    <!-- CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Meta tags para SEO e redes sociais -->
+    <meta name="description" content="Kafta - Uma ferramenta revolucionária que transforma comandos de terminal em linguagem natural usando IA. Simplifique sua linha de comando!">
+    <meta name="keywords" content="terminal, comandos, IA, inteligência artificial, linha de comando, CLI, bash, zsh, fish">
+    <meta name="author" content="Kafta Team">
     
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://seu-usuario.github.io/kafta/">
+    <meta property="og:title" content="Kafta - Terminal de Comandos Inteligente">
+    <meta property="og:description" content="Transforme comandos de terminal em linguagem natural usando IA">
+    <meta property="og:image" content="https://seu-usuario.github.io/kafta/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://seu-usuario.github.io/kafta/">
+    <meta property="twitter:title" content="Kafta - Terminal de Comandos Inteligente">
+    <meta property="twitter:description" content="Transforme comandos de terminal em linguagem natural usando IA">
+    <meta property="twitter:image" content="https://seu-usuario.github.io/kafta/og-image.png">
+
     <style>
-/* CSS inline para GitHub Pages funcionar sem arquivo separado */
-:root {
-    --primary-color: #2c5aa0;
-    --secondary-color: #34495e;
-    --accent-color: #e74c3c;
-    --success-color: #27ae60;
-    --warning-color: #f39c12;
-    --light-gray: #f8f9fa;
-    --dark-gray: #343a40;
-    --border-color: #dee2e6;
-    --text-color: #333;
-    --text-muted: #6c757d;
-    --white: #ffffff;
-    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    --border-radius: 8px;
-    --transition: all 0.3s ease;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    background-color: var(--white);
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-/* Header & Navigation */
-.header {
-    background: var(--white);
-    box-shadow: var(--shadow);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.navbar {
-    padding: 1rem 0;
-}
-
-.navbar .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.navbar-brand .brand-link {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: var(--text-color);
-}
-
-.navbar-brand .logo {
-    height: 40px;
-    margin-right: 12px;
-}
-
-.navbar-brand .brand-text {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-}
-
-.navbar-nav {
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-}
-
-.nav-link {
-    text-decoration: none;
-    color: var(--text-color);
-    font-weight: 500;
-    transition: var(--transition);
-    padding: 0.5rem 0;
-}
-
-.nav-link:hover {
-    color: var(--primary-color);
-}
-
-.navbar-toggle {
-    display: none;
-    flex-direction: column;
-    cursor: pointer;
-}
-
-.navbar-toggle span {
-    width: 25px;
-    height: 3px;
-    background: var(--text-color);
-    margin: 3px 0;
-    transition: var(--transition);
-}
-
-/* Hero Section */
-.hero {
-    background: linear-gradient(135deg, var(--light-gray) 0%, var(--white) 100%);
-    padding: 5rem 0;
-    min-height: 80vh;
-    display: flex;
-    align-items: center;
-}
-
-.hero-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-}
-
-.hero-title {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.hero-logo {
-    height: 80px;
-}
-
-.hero-subtitle {
-    font-size: 1.5rem;
-    color: var(--text-muted);
-    margin-bottom: 1rem;
-}
-
-.hero-description {
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-    line-height: 1.7;
-}
-
-.hero-badges {
-    margin-bottom: 2rem;
-}
-
-.hero-badges img {
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.hero-actions {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    border-radius: var(--border-radius);
-    text-decoration: none;
-    font-weight: 600;
-    transition: var(--transition);
-    border: 2px solid transparent;
-}
-
-.btn-primary {
-    background: var(--primary-color);
-    color: var(--white);
-}
-
-.btn-primary:hover {
-    background: #1e4080;
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-}
-
-.btn-secondary {
-    background: transparent;
-    color: var(--text-color);
-    border-color: var(--border-color);
-}
-
-.btn-secondary:hover {
-    background: var(--light-gray);
-    border-color: var(--primary-color);
-}
-
-/* Terminal Demo */
-.hero-demo {
-    display: flex;
-    justify-content: center;
-}
-
-.terminal {
-    background: #1e1e1e;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    width: 100%;
-    max-width: 500px;
-}
-
-.terminal-header {
-    background: #323232;
-    padding: 0.75rem 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.terminal-controls {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.control {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
-
-.control.close { background: #ff5f56; }
-.control.minimize { background: #ffbd2e; }
-.control.maximize { background: #27ca3f; }
-
-.terminal-title {
-    color: #fff;
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-.terminal-body {
-    padding: 1rem;
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 0.9rem;
-    line-height: 1.4;
-}
-
-.terminal-line {
-    color: #fff;
-    margin-bottom: 0.5rem;
-}
-
-.prompt {
-    color: #27ca3f;
-    font-weight: bold;
-    margin-right: 0.5rem;
-}
-
-.terminal-output {
-    color: #ccc;
-    margin: 0.5rem 0 1rem 1.5rem;
-}
-
-.terminal-output .table-header {
-    color: #fff;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-}
-
-.terminal-output .status-green {
-    color: #27ca3f;
-}
-
-.cursor {
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
-}
-
-/* Features Section */
-.features {
-    padding: 5rem 0;
-    background: var(--white);
-}
-
-.section-title {
-    text-align: center;
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 3rem;
-    color: var(--text-color);
-}
-
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-}
-
-.feature-card {
-    text-align: center;
-    padding: 2rem;
-    border-radius: var(--border-radius);
-    transition: var(--transition);
-}
-
-.feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow);
-}
-
-.feature-icon {
-    font-size: 3rem;
-    color: var(--primary-color);
-    margin-bottom: 1rem;
-}
-
-.feature-card h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
-
-.feature-card p {
-    color: var(--text-muted);
-    line-height: 1.6;
-}
-
-/* Quick Start Section */
-.quick-start {
-    padding: 5rem 0;
-    background: var(--light-gray);
-}
-
-.quick-start-tabs {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.tabs {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 2rem;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-}
-
-.tab-button {
-    background: var(--white);
-    border: none;
-    padding: 1rem 2rem;
-    cursor: pointer;
-    transition: var(--transition);
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.tab-button:hover,
-.tab-button.active {
-    background: var(--primary-color);
-    color: var(--white);
-}
-
-.tab-content {
-    position: relative;
-}
-
-.tab-pane {
-    display: none;
-}
-
-.tab-pane.active {
-    display: block;
-}
-
-.code-block {
-    background: #1e1e1e;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-}
-
-.code-header {
-    background: #323232;
-    padding: 0.75rem 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--white);
-    font-weight: 500;
-}
-
-.copy-btn {
-    background: none;
-    border: none;
-    color: var(--white);
-    cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    transition: var(--transition);
-}
-
-.copy-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.code-block pre {
-    margin: 0;
-    padding: 1.5rem;
-    overflow-x: auto;
-}
-
-.code-block code {
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    color: #ccc;
-    font-size: 0.9rem;
-    line-height: 1.5;
-}
-
-/* Stats Section */
-.stats {
-    padding: 3rem 0;
-    background: var(--primary-color);
-    color: var(--white);
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    text-align: center;
-}
-
-.stat-item {
-    padding: 1rem;
-}
-
-.stat-number {
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-}
-
-.stat-label {
-    font-size: 1.1rem;
-    opacity: 0.9;
-}
-
-/* Footer */
-.footer {
-    background: var(--dark-gray);
-    color: var(--white);
-    padding: 3rem 0 1rem;
-}
-
-.footer-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
-
-.footer-section h4 {
-    margin-bottom: 1rem;
-    color: var(--white);
-}
-
-.footer-section ul {
-    list-style: none;
-}
-
-.footer-section ul li {
-    margin-bottom: 0.5rem;
-}
-
-.footer-section ul li a {
-    color: #ccc;
-    text-decoration: none;
-    transition: var(--transition);
-}
-
-.footer-section ul li a:hover {
-    color: var(--white);
-}
-
-.social-links {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.social-links a {
-    color: #ccc;
-    font-size: 1.5rem;
-    transition: var(--transition);
-}
-
-.social-links a:hover {
-    color: var(--white);
-}
-
-.footer-bottom {
-    border-top: 1px solid #495057;
-    padding-top: 1rem;
-    text-align: center;
-    color: #ccc;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .navbar-menu {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: var(--white);
-        box-shadow: var(--shadow);
-        padding: 1rem;
-    }
-    
-    .navbar-menu.active {
-        display: block;
-    }
-    
-    .navbar-nav {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .navbar-toggle {
-        display: flex;
-    }
-    
-    .hero-content {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-    
-    .hero-title {
-        font-size: 2.5rem;
-        justify-content: center;
-    }
-    
-    .hero-logo {
-        height: 60px;
-    }
-    
-    .features-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .tabs {
-        flex-direction: column;
-    }
-    
-    .hero-actions {
-        justify-content: center;
-    }
-}
-
-@media (max-width: 480px) {
-    .hero {
-        padding: 3rem 0;
-    }
-    
-    .hero-title {
-        font-size: 2rem;
-        flex-direction: column;
-    }
-    
-    .hero-logo {
-        height: 50px;
-    }
-    
-    .btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-    }
-    
-    .features,
-    .quick-start {
-        padding: 3rem 0;
-    }
-    
-    .section-title {
-        font-size: 2rem;
-    }
-}
+        :root {
+            --primary-color: #00D9FF;
+            --secondary-color: #FF6B6B;
+            --accent-color: #4ECDC4;
+            --bg-dark: #0A0E27;
+            --bg-darker: #070B1F;
+            --text-light: #E2E8F0;
+            --text-muted: #94A3B8;
+            --border-color: #334155;
+            --success-color: #10B981;
+            --warning-color: #F59E0B;
+            --error-color: #EF4444;
+            --code-bg: #1E293B;
+            --gradient-1: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            --gradient-2: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            --gradient-3: linear-gradient(135deg, var(--bg-darker), var(--bg-dark));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-darker);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
+        /* Animações */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: var(--gradient-3);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23334155" stroke-width="0.5" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.1;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text {
+            animation: fadeInLeft 1s ease-out;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .hero-terminal {
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        /* Terminal */
+        .terminal {
+            background: var(--code-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+        }
+
+        .terminal-header {
+            background: var(--bg-darker);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.red {
+            background: var(--error-color);
+        }
+
+        .dot.yellow {
+            background: var(--warning-color);
+        }
+
+        .dot.green {
+            background: var(--success-color);
+        }
+
+        .terminal-title {
+            margin-left: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .terminal-body {
+            padding: 1.5rem;
+            font-family: 'Fira Code', 'Monaco', 'Cascadia Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 300px;
+        }
+
+        .terminal-line {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .terminal-prompt {
+            color: var(--primary-color);
+            margin-right: 0.5rem;
+        }
+
+        .terminal-input {
+            color: var(--text-light);
+        }
+
+        .terminal-output {
+            color: var(--text-muted);
+            margin-left: 1rem;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: var(--primary-color);
+            animation: blink 1s infinite;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 217, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 0;
+            background: var(--bg-dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--code-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .feature-description {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Installation Section */
+        .installation {
+            padding: 6rem 0;
+            background: var(--bg-darker);
+        }
+
+        .tab-container {
+            margin-top: 3rem;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px 8px 0 0;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-button.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .tab-button:not(.active):hover {
+            background: var(--border-color);
+            color: var(--text-light);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0 8px 8px 8px;
+            padding: 1.5rem;
+            font-family: 'Fira Code', 'Monaco', 'Cascadia Code', monospace;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--border-color);
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+
+        .copy-button:hover {
+            background: var(--primary-color);
+            opacity: 1;
+        }
+
+        .copy-button.copied {
+            background: var(--success-color);
+        }
+
+        .code-line {
+            margin-bottom: 0.5rem;
+        }
+
+        .comment {
+            color: var(--text-muted);
+        }
+
+        .command {
+            color: var(--primary-color);
+        }
+
+        .string {
+            color: var(--accent-color);
+        }
+
+        /* Examples Section */
+        .examples {
+            padding: 6rem 0;
+            background: var(--bg-dark);
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .example-card {
+            background: var(--code-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .example-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.1);
+        }
+
+        .example-header {
+            padding: 1rem 1.5rem;
+            background: var(--bg-darker);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .example-title {
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .example-description {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .example-body {
+            padding: 1.5rem;
+        }
+
+        .example-input {
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-family: 'Fira Code', monospace;
+            color: var(--text-light);
+        }
+
+        .example-output {
+            background: var(--bg-darker);
+            border: 1px solid var(--success-color);
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: 'Fira Code', monospace;
+            color: var(--success-color);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-darker);
+            padding: 3rem 0 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-section p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2rem;
+                padding: 0 1rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-buttons {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                border-radius: 8px;
+            }
+
+            .code-block {
+                border-radius: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .terminal-body {
+                padding: 1rem;
+                font-size: 0.8rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        .btn:focus,
+        .tab-button:focus,
+        .copy-button:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
-        <nav class="navbar">
-            <div class="container">
-                <div class="navbar-brand">
-                    <a href="#" class="brand-link">
-                        <img src="img/kafta.png" alt="Kafta Logo" class="logo">
-                        <span class="brand-text">Kafta</span>
-                    </a>
-                </div>
-                
-                <div class="navbar-menu" id="navbar-menu">
-                    <div class="navbar-nav">
-                        <a href="#" class="nav-link">Home</a>
-                        <a href="#installation" class="nav-link">Installation</a>
-                        <a href="#features" class="nav-link">Features</a>
-                        <a href="https://github.com/electric-saw/kafta" class="nav-link" target="_blank">
-                            <i class="fab fa-github"></i> GitHub
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="navbar-toggle" id="navbar-toggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
+        <nav class="nav">
+            <div class="logo">🚀 Kafta</div>
+            <ul class="nav-links">
+                <li><a href="#features">Recursos</a></li>
+                <li><a href="#installation">Instalação</a></li>
+                <li><a href="#examples">Exemplos</a></li>
+                <li><a href="https://github.com/seu-usuario/kafta" target="_blank">GitHub</a></li>
+            </ul>
         </nav>
     </header>
-    
-    <!-- Main Content -->
-    <main>
-        <section class="hero">
-            <div class="container">
-                <div class="hero-content">
-                    <div class="hero-text">
-                        <h1 class="hero-title">
-                            <img src="img/kafta.png" alt="Kafta Logo" class="hero-logo">
-                            Kafta
-                        </h1>
-                        <p class="hero-subtitle">
-                            Modern, <strong>non-JVM</strong> command-line interface for managing <strong>Apache Kafka</strong> clusters
-                        </p>
-                        <p class="hero-description">
-                            Inspired by kubectl, Kafta provides a simple and efficient way to manage topics, brokers, 
-                            consumer groups, and more across multiple Kafka clusters.
-                        </p>
-                        
-                        <div class="hero-badges">
-                            <img src="https://goreportcard.com/badge/github.com/electric-saw/kafta" alt="Go Report Card">
-                            <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License">
-                            <img src="https://img.shields.io/github/release/electric-saw/kafta.svg" alt="Release">
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">Terminal Inteligente com IA</h1>
+                <p class="hero-subtitle">
+                    Transforme comandos complexos em linguagem natural. 
+                    Kafta usa inteligência artificial para simplificar sua experiência no terminal.
+                </p>
+                <div class="btn-group">
+                    <a href="#installation" class="btn btn-primary">
+                        ⚡ Começar Agora
+                    </a>
+                    <a href="https://github.com/seu-usuario/kafta" target="_blank" class="btn btn-secondary">
+                        📖 Ver no GitHub
+                    </a>
+                </div>
+            </div>
+            <div class="hero-terminal">
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <div class="dot red"></div>
+                            <div class="dot yellow"></div>
+                            <div class="dot green"></div>
                         </div>
-                        
-                        <div class="hero-actions">
-                            <a href="#installation" class="btn btn-primary">
-                                <i class="fas fa-download"></i> Get Started
-                            </a>
-                            <a href="https://github.com/electric-saw/kafta" class="btn btn-secondary" target="_blank">
-                                <i class="fab fa-github"></i> View on GitHub
-                            </a>
-                        </div>
+                        <div class="terminal-title">Terminal - Kafta Demo</div>
                     </div>
-                    
-                    <div class="hero-demo">
-                        <div class="terminal">
-                            <div class="terminal-header">
-                                <div class="terminal-controls">
-                                    <span class="control close"></span>
-                                    <span class="control minimize"></span>
-                                    <span class="control maximize"></span>
-                                </div>
-                                <div class="terminal-title">kafta</div>
-                            </div>
-                            <div class="terminal-body">
-                                <div class="terminal-line">
-                                    <span class="prompt">$</span> kafta topic list
-                                </div>
-                                <div class="terminal-output">
-                                    <div class="table-header">TOPIC NAME    PARTITIONS  REPLICATION  SIZE</div>
-                                    <div>orders       3           2            1.2GB</div>
-                                    <div>payments     6           3            856MB</div>
-                                    <div>users        2           2            234MB</div>
-                                </div>
-                                <div class="terminal-line">
-                                    <span class="prompt">$</span> kafta consumer lag order-service
-                                </div>
-                                <div class="terminal-output">
-                                    <div class="status-green">✅ Consumer group: order-service</div>
-                                    <div>Total lag: 0 messages</div>
-                                    <div>Status: HEALTHY</div>
-                                </div>
-                                <div class="terminal-line">
-                                    <span class="prompt">$</span> <span class="cursor">|</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="terminal-body" id="terminal-demo">
+                        <!-- Conteúdo será preenchido via JavaScript -->
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="features" id="features">
-            <div class="container">
-                <h2 class="section-title">Why Choose Kafta?</h2>
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Recursos Poderosos</h2>
+            <p class="section-subtitle">
+                Descubra como o Kafta pode revolucionar sua experiência no terminal com recursos inteligentes e intuitivos.
+            </p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🧠</span>
+                    <h3 class="feature-title">IA Avançada</h3>
+                    <p class="feature-description">
+                        Processamento de linguagem natural que entende comandos em português e traduz para a sintaxe correta do terminal.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">⚡</span>
+                    <h3 class="feature-title">Execução Rápida</h3>
+                    <p class="feature-description">
+                        Interface otimizada que processa comandos instantaneamente, mantendo a velocidade que você precisa.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🔒</span>
+                    <h3 class="feature-title">Segurança Total</h3>
+                    <p class="feature-description">
+                        Validação inteligente de comandos perigosos com confirmação antes da execução de operações críticas.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🎯</span>
+                    <h3 class="feature-title">Precisão Contextual</h3>
+                    <p class="feature-description">
+                        Compreende o contexto do seu projeto e sugere comandos relevantes baseados no diretório atual.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📚</span>
+                    <h3 class="feature-title">Aprendizado Contínuo</h3>
+                    <p class="feature-description">
+                        Sistema que aprende com seus padrões de uso e melhora as sugestões ao longo do tempo.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🌐</span>
+                    <h3 class="feature-title">Multi-plataforma</h3>
+                    <p class="feature-description">
+                        Compatível com Windows, macOS e Linux. Funciona em qualquer terminal moderno.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section class="installation" id="installation">
+        <div class="container">
+            <h2 class="section-title">Instalação Simples</h2>
+            <p class="section-subtitle">
+                Escolha seu sistema operacional e siga as instruções para começar a usar o Kafta em minutos.
+            </p>
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-button active" data-tab="macos">
+                        🍎 macOS
+                    </button>
+                    <button class="tab-button" data-tab="linux">
+                        🐧 Linux
+                    </button>
+                    <button class="tab-button" data-tab="windows">
+                        🪟 Windows
+                    </button>
+                </div>
                 
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-fire"></i>
+                <div class="tab-content active" id="macos">
+                    <div class="code-block">
+                        <button class="copy-button" onclick="copyToClipboard('macos-code')">📋</button>
+                        <div id="macos-code">
+                            <div class="code-line"><span class="comment"># Instalar via Homebrew</span></div>
+                            <div class="code-line"><span class="command">brew install kafta</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Ou via curl</span></div>
+                            <div class="code-line"><span class="command">curl -fsSL https://install.kafta.dev | sh</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Configurar shell</span></div>
+                            <div class="code-line"><span class="command">echo 'eval "$(kafta init)"' >> ~/.zshrc</span></div>
+                            <div class="code-line"><span class="command">source ~/.zshrc</span></div>
                         </div>
-                        <h3>No Java Required</h3>
-                        <p>Binary executable, no JVM setup needed. Just download and run.</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-tachometer-alt"></i>
-                        </div>
-                        <h3>Fast & Lightweight</h3>
-                        <p>Written in Go for speed and efficiency. Lightning-fast operations.</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-layer-group"></i>
-                        </div>
-                        <h3>Multi-cluster</h3>
-                        <p>Easy switching between different Kafka environments and clusters.</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <h3>Smart Suggestions</h3>
-                        <p>Intelligent command corrections and helpful hints for better UX.</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <h3>Security First</h3>
-                        <p>Built-in support for SASL authentication and TLS encryption.</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-code"></i>
-                        </div>
-                        <h3>kubectl-inspired</h3>
-                        <p>Familiar interface for Kubernetes users with consistent patterns.</p>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <section class="quick-start" id="installation">
-            <div class="container">
-                <h2 class="section-title">Quick Start</h2>
                 
-                <div class="quick-start-tabs">
-                    <div class="tabs">
-                        <button class="tab-button active" data-tab="macos">
-                            <i class="fab fa-apple"></i> macOS
-                        </button>
-                        <button class="tab-button" data-tab="linux">
-                            <i class="fab fa-linux"></i> Linux
-                        </button>
-                        <button class="tab-button" data-tab="windows">
-                            <i class="fab fa-windows"></i> Windows
-                        </button>
+                <div class="tab-content" id="linux">
+                    <div class="code-block">
+                        <button class="copy-button" onclick="copyToClipboard('linux-code')">📋</button>
+                        <div id="linux-code">
+                            <div class="code-line"><span class="comment"># Ubuntu/Debian</span></div>
+                            <div class="code-line"><span class="command">wget -qO- https://install.kafta.dev/deb | sudo bash</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Fedora/CentOS/RHEL</span></div>
+                            <div class="code-line"><span class="command">curl -fsSL https://install.kafta.dev/rpm | sudo bash</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Instalação universal</span></div>
+                            <div class="code-line"><span class="command">curl -fsSL https://install.kafta.dev | sh</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Configurar shell</span></div>
+                            <div class="code-line"><span class="command">echo 'eval "$(kafta init)"' >> ~/.bashrc</span></div>
+                            <div class="code-line"><span class="command">source ~/.bashrc</span></div>
+                        </div>
                     </div>
-                    
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="macos">
-                            <div class="code-block">
-                                <div class="code-header">
-                                    <span>Installation</span>
-                                    <button class="copy-btn" data-copy="go install github.com/electric-saw/kafta/cmd/kafta@latest">
-                                        <i class="fas fa-copy"></i>
-                                    </button>
-                                </div>
-                                <pre><code># Install Kafta
-go install github.com/electric-saw/kafta/cmd/kafta@latest
-
-# Add to PATH
-echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.zshrc
-source ~/.zshrc
-
-# Verify installation
-kafta --help</code></pre>
-                            </div>
-                        </div>
-                        
-                        <div class="tab-pane" id="linux">
-                            <div class="code-block">
-                                <div class="code-header">
-                                    <span>Installation</span>
-                                    <button class="copy-btn">
-                                        <i class="fas fa-copy"></i>
-                                    </button>
-                                </div>
-                                <pre><code># Install Kafta
-go install github.com/electric-saw/kafta/cmd/kafta@latest
-
-# Add to PATH
-echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
-source ~/.bashrc
-
-# Verify installation
-kafta --help</code></pre>
-                            </div>
-                        </div>
-                        
-                        <div class="tab-pane" id="windows">
-                            <div class="code-block">
-                                <div class="code-header">
-                                    <span>PowerShell</span>
-                                    <button class="copy-btn">
-                                        <i class="fas fa-copy"></i>
-                                    </button>
-                                </div>
-                                <pre><code># Install Kafta
-go install github.com/electric-saw/kafta/cmd/kafta@latest
-
-# Add to PATH via System Properties
-# Verify installation
-kafta --help</code></pre>
-                            </div>
+                </div>
+                
+                <div class="tab-content" id="windows">
+                    <div class="code-block">
+                        <button class="copy-button" onclick="copyToClipboard('windows-code')">📋</button>
+                        <div id="windows-code">
+                            <div class="code-line"><span class="comment"># PowerShell (Recomendado)</span></div>
+                            <div class="code-line"><span class="command">iwr -useb https://install.kafta.dev/windows | iex</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Ou via Chocolatey</span></div>
+                            <div class="code-line"><span class="command">choco install kafta</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Ou via Scoop</span></div>
+                            <div class="code-line"><span class="command">scoop bucket add extras</span></div>
+                            <div class="code-line"><span class="command">scoop install kafta</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Configurar PowerShell</span></div>
+                            <div class="code-line"><span class="command">Add-Content $PROFILE 'Invoke-Expression (kafta init)'</span></div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="stats">
-            <div class="container">
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-number" data-count="95">0</div>
-                        <div class="stat-label">GitHub Stars</div>
+    <!-- Examples Section -->
+    <section class="examples" id="examples">
+        <div class="container">
+            <h2 class="section-title">Exemplos Práticos</h2>
+            <p class="section-subtitle">
+                Veja como o Kafta transforma comandos complexos em linguagem natural e vice-versa.
+            </p>
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">Buscar Arquivos</div>
+                        <div class="example-description">Encontre arquivos por nome ou conteúdo</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number" data-count="8">0</div>
-                        <div class="stat-label">Forks</div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            💬 "encontrar todos os arquivos .js modificados hoje"
+                        </div>
+                        <div class="example-output">
+                            ⚡ find . -name "*.js" -mtime 0
+                        </div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number" data-count="6">0</div>
-                        <div class="stat-label">Contributors</div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">Gerenciar Processos</div>
+                        <div class="example-description">Controle processos do sistema facilmente</div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number" data-count="100">0</div>
-                        <div class="stat-label">% Go</div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            💬 "mostrar processos que usam mais CPU"
+                        </div>
+                        <div class="example-output">
+                            ⚡ ps aux --sort=-%cpu | head -10
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">Git Operations</div>
+                        <div class="example-description">Simplifique comandos Git complexos</div>
+                    </div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            💬 "fazer commit de todos os arquivos com mensagem 'fix: correção de bugs'"
+                        </div>
+                        <div class="example-output">
+                            ⚡ git add -A && git commit -m "fix: correção de bugs"
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">Compressão de Arquivos</div>
+                        <div class="example-description">Arquive e comprima arquivos facilmente</div>
+                    </div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            💬 "comprimir pasta 'projeto' em arquivo zip"
+                        </div>
+                        <div class="example-output">
+                            ⚡ zip -r projeto.zip projeto/
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">Monitoramento de Sistema</div>
+                        <div class="example-description">Verifique status e recursos do sistema</div>
+                    </div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            💬 "mostrar uso de disco por diretório"
+                        </div>
+                        <div class="example-output">
+                            ⚡ du -h --max-depth=1 | sort -hr
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">Rede e Conectividade</div>
+                        <div class="example-description">Teste conexões e diagnósticos de rede</div>
+                    </div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            💬 "testar conectividade com google.com"
+                        </div>
+                        <div class="example-output">
+                            ⚡ ping -c 4 google.com
+                        </div>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
-    
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4>Kafta</h4>
-                    <p>Modern CLI for Apache Kafka</p>
-                    <div class="social-links">
-                        <a href="https://github.com/electric-saw/kafta" target="_blank">
-                            <i class="fab fa-github"></i>
-                        </a>
-                    </div>
+                    <h3>Sobre o Kafta</h3>
+                    <p>
+                        Uma ferramenta revolucionária que democratiza o uso do terminal através de inteligência artificial, 
+                        tornando comandos complexos acessíveis para todos.
+                    </p>
                 </div>
-                
                 <div class="footer-section">
-                    <h4>Documentation</h4>
-                    <ul>
-                        <li><a href="#installation">Installation</a></li>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="https://github.com/electric-saw/kafta">GitHub</a></li>
+                    <h3>Links Úteis</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/seu-usuario/kafta">Código Fonte</a></li>
+                        <li><a href="https://github.com/seu-usuario/kafta/blob/main/docs/API.md">Documentação</a></li>
+                        <li><a href="https://github.com/seu-usuario/kafta/issues">Reportar Bug</a></li>
+                        <li><a href="https://github.com/seu-usuario/kafta/discussions">Discussões</a></li>
                     </ul>
                 </div>
-                
                 <div class="footer-section">
-                    <h4>Community</h4>
-                    <ul>
-                        <li><a href="https://github.com/electric-saw/kafta/issues">Issues</a></li>
-                        <li><a href="https://github.com/electric-saw/kafta/discussions">Discussions</a></li>
-                        <li><a href="https://github.com/electric-saw/kafta/releases">Releases</a></li>
+                    <h3>Comunidade</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://discord.gg/kafta">Discord</a></li>
+                        <li><a href="https://twitter.com/kafta_terminal">Twitter</a></li>
+                        <li><a href="https://reddit.com/r/kafta">Reddit</a></li>
+                        <li><a href="mailto:contato@kafta.dev">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contribua</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/seu-usuario/kafta/blob/main/CONTRIBUTING.md">Como Contribuir</a></li>
+                        <li><a href="https://github.com/seu-usuario/kafta/blob/main/CODE_OF_CONDUCT.md">Código de Conduta</a></li>
+                        <li><a href="https://github.com/sponsors/seu-usuario">Patrocinar</a></li>
+                        <li><a href="https://opencollective.com/kafta">Open Collective</a></li>
                     </ul>
                 </div>
             </div>
-            
             <div class="footer-bottom">
-                <p>&copy; 2024 Electric Saw Team. Licensed under AGPL-3.0.</p>
+                <p>&copy; 2024 Kafta Terminal. Licenciado sob MIT. Feito com ❤️ para a comunidade open source.</p>
             </div>
         </div>
     </footer>
 
     <script>
-// JavaScript inline para funcionalidade
-document.addEventListener('DOMContentLoaded', function() {
-    // Mobile Navigation Toggle
-    const navbarToggle = document.getElementById('navbar-toggle');
-    const navbarMenu = document.getElementById('navbar-menu');
-    
-    if (navbarToggle && navbarMenu) {
-        navbarToggle.addEventListener('click', function() {
-            navbarMenu.classList.toggle('active');
-        });
-    }
-    
-    // Tab functionality
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabPanes = document.querySelectorAll('.tab-pane');
-    
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const targetTab = this.getAttribute('data-tab');
-            
-            // Remove active class from all buttons and panes
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabPanes.forEach(pane => pane.classList.remove('active'));
-            
-            // Add active class to clicked button
-            this.classList.add('active');
-            
-            // Show target pane
-            const targetPane = document.getElementById(targetTab);
-            if (targetPane) {
-                targetPane.classList.add('active');
+        // Terminal Animation
+        class TerminalAnimation {
+            constructor(element) {
+                this.element = element;
+                this.commands = [
+                    {
+                        input: 'kafta "listar arquivos grandes"',
+                        output: 'find . -type f -size +100M -exec ls -lh {} \;'
+                    },
+                    {
+                        input: 'kafta "comprimir logs antigos"',
+                        output: 'find /var/log -name "*.log" -mtime +30 | xargs gzip'
+                    },
+                    {
+                        input: 'kafta "backup do banco de dados"',
+                        output: 'pg_dump -h localhost -U user database > backup_$(date +%Y%m%d).sql'
+                    },
+                    {
+                        input: 'kafta "mostrar processos do Chrome"',
+                        output: 'ps aux | grep -i chrome | grep -v grep'
+                    },
+                    {
+                        input: 'kafta "sincronizar diretório remoto"',
+                        output: 'rsync -avz --progress /local/dir/ user@server:/remote/dir/'
+                    }
+                ];
+                this.currentCommand = 0;
+                this.isTyping = false;
+                this.init();
             }
-        });
-    });
-    
-    // Copy to clipboard functionality
-    const copyButtons = document.querySelectorAll('.copy-btn');
-    
-    copyButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const copyText = this.getAttribute('data-copy') || 
-                           this.closest('.code-block').querySelector('code').textContent;
-            
-            navigator.clipboard.writeText(copyText).then(() => {
-                // Show feedback
-                const originalIcon = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-check"></i>';
-                this.style.color = '#27ae60';
+
+            init() {
+                this.element.innerHTML = `
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">❯</span>
+                        <span class="terminal-input" id="current-input"></span>
+                        <span class="cursor" id="cursor"></span>
+                    </div>
+                `;
+                this.startAnimation();
+            }
+
+            async startAnimation() {
+                while (true) {
+                    await this.typeCommand();
+                    await this.showOutput();
+                    await this.wait(3000);
+                    this.nextCommand();
+                    await this.wait(1000);
+                }
+            }
+
+            async typeCommand() {
+                const command = this.commands[this.currentCommand].input;
+                const inputElement = document.getElementById('current-input');
+                const cursor = document.getElementById('cursor');
                 
-                setTimeout(() => {
-                    this.innerHTML = originalIcon;
-                    this.style.color = '';
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy text: ', err);
-            });
-        });
-    });
-    
-    // Animated counters for stats
-    const statNumbers = document.querySelectorAll('.stat-number');
-    const observerOptions = {
-        threshold: 0.7
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const target = entry.target;
-                const count = parseInt(target.getAttribute('data-count'));
-                animateCounter(target, count);
-                observer.unobserve(target);
+                if (!inputElement || !cursor) return;
+                
+                cursor.style.display = 'inline-block';
+                inputElement.textContent = '';
+                
+                for (let i = 0; i < command.length; i++) {
+                    if (!inputElement) break;
+                    inputElement.textContent += command[i];
+                    await this.wait(50 + Math.random() * 50);
+                }
             }
-        });
-    }, observerOptions);
-    
-    statNumbers.forEach(counter => {
-        observer.observe(counter);
-    });
-    
-    function animateCounter(element, target) {
-        let current = 0;
-        const increment = target / 50;
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= target) {
-                current = target;
-                clearInterval(timer);
+
+            async showOutput() {
+                const output = this.commands[this.currentCommand].output;
+                const cursor = document.getElementById('cursor');
+                
+                if (cursor) cursor.style.display = 'none';
+                
+                const outputLine = document.createElement('div');
+                outputLine.className = 'terminal-line';
+                outputLine.innerHTML = `<span class="terminal-output">⚡ ${output}</span>`;
+                
+                this.element.appendChild(outputLine);
+                
+                await this.wait(2000);
             }
-            element.textContent = Math.floor(current);
-        }, 30);
-    }
-    
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+
+            nextCommand() {
+                this.currentCommand = (this.currentCommand + 1) % this.commands.length;
+                
+                // Clear terminal and restart
+                this.element.innerHTML = `
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">❯</span>
+                        <span class="terminal-input" id="current-input"></span>
+                        <span class="cursor" id="cursor"></span>
+                    </div>
+                `;
+            }
+
+            wait(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // Tab System
+        class TabSystem {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                const tabButtons = document.querySelectorAll('.tab-button');
+                const tabContents = document.querySelectorAll('.tab-content');
+
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const targetTab = button.getAttribute('data-tab');
+                        
+                        // Remove active class from all buttons and contents
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        tabContents.forEach(content => content.classList.remove('active'));
+                        
+                        // Add active class to clicked button and corresponding content
+                        button.classList.add('active');
+                        const targetContent = document.getElementById(targetTab);
+                        if (targetContent) {
+                            targetContent.classList.add('active');
+                        }
+                    });
+
+                    // Keyboard support
+                    button.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            button.click();
+                        }
+                    });
                 });
             }
+        }
+
+        // Copy to Clipboard Function
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const text = element.textContent || element.innerText;
+            
+            // Remove comments and empty lines for cleaner copy
+            const cleanText = text
+                .split('\n')
+                .filter(line => line.trim() && !line.trim().startsWith('#'))
+                .map(line => line.trim())
+                .join('\n');
+            
+            navigator.clipboard.writeText(cleanText).then(() => {
+                const button = element.parentNode.querySelector('.copy-button');
+                if (button) {
+                    const originalText = button.textContent;
+                    
+                    button.textContent = '✅';
+                    button.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.classList.remove('copied');
+                    }, 2000);
+                }
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = cleanText;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                // Show feedback even for fallback
+                const button = element.parentNode.querySelector('.copy-button');
+                if (button) {
+                    const originalText = button.textContent;
+                    button.textContent = '✅';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                    }, 2000);
+                }
+            });
+        }
+
+        // Smooth Scrolling for Navigation Links
+        function initSmoothScrolling() {
+            const links = document.querySelectorAll('a[href^="#"]');
+            
+            links.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80; // Account for fixed header
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Intersection Observer for Animations
+        function initScrollAnimations() {
+            if (!('IntersectionObserver' in window)) return;
+            
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        entry.target.classList.add('animated');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe elements with animation classes
+            const animatedElements = document.querySelectorAll('.feature-card, .example-card');
+            animatedElements.forEach((el, index) => {
+                el.style.animationPlayState = 'paused';
+                el.style.animationDelay = `${index * 0.1}s`;
+                observer.observe(el);
+            });
+        }
+
+        // Header Scroll Effect
+        function initHeaderScroll() {
+            const header = document.querySelector('.header');
+            if (!header) return;
+            
+            let lastScroll = 0;
+
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.pageYOffset;
+                
+                if (currentScroll > 100) {
+                    header.style.background = 'rgba(10, 14, 39, 0.98)';
+                    header.style.backdropFilter = 'blur(15px)';
+                } else {
+                    header.style.background = 'rgba(10, 14, 39, 0.95)';
+                    header.style.backdropFilter = 'blur(10px)';
+                }
+                
+                // Hide/show header on scroll
+                if (currentScroll > lastScroll && currentScroll > 200) {
+                    header.style.transform = 'translateY(-100%)';
+                } else {
+                    header.style.transform = 'translateY(0)';
+                }
+                
+                lastScroll = currentScroll;
+            });
+        }
+
+        // Performance monitoring
+        function logPerformance() {
+            if ('performance' in window) {
+                window.addEventListener('load', () => {
+                    setTimeout(() => {
+                        const perfData = performance.getEntriesByType('navigation')[0];
+                        console.log('Page load time:', perfData.loadEventEnd - perfData.loadEventStart, 'ms');
+                    }, 0);
+                });
+            }
+        }
+
+        // Initialize all components when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize terminal animation
+            const terminalDemo = document.getElementById('terminal-demo');
+            if (terminalDemo) {
+                new TerminalAnimation(terminalDemo);
+            }
+            
+            // Initialize tab system
+            new TabSystem();
+            
+            // Initialize other features
+            initSmoothScrolling();
+            initScrollAnimations();
+            initHeaderScroll();
+            logPerformance();
+            
+            // Add loading animation
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease-in-out';
+                document.body.style.opacity = '1';
+            }, 100);
         });
-    });
-});
+
+        // Keyboard Navigation for Accessibility
+        document.addEventListener('keydown', (e) => {
+            // Tab navigation for terminal tabs
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                const activeTab = document.querySelector('.tab-button.active');
+                if (activeTab && document.activeElement === activeTab) {
+                    e.preventDefault();
+                    const tabs = Array.from(document.querySelectorAll('.tab-button'));
+                    const currentIndex = tabs.indexOf(activeTab);
+                    let nextIndex;
+                    
+                    if (e.key === 'ArrowLeft') {
+                        nextIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
+                    } else {
+                        nextIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
+                    }
+                    
+                    tabs[nextIndex].click();
+                    tabs[nextIndex].focus();
+                }
+            }
+        });
+
+        // Mobile menu toggle (for future enhancement)
+        function initMobileMenu() {
+            const burger = document.querySelector('.burger');
+            const nav = document.querySelector('.nav-links');
+            
+            if (burger && nav) {
+                burger.addEventListener('click', () => {
+                    nav.classList.toggle('nav-active');
+                    burger.classList.toggle('toggle');
+                });
+            }
+        }
+
+        // Error handling for failed animations
+        window.addEventListener('error', (e) => {
+            console.warn('Animation error caught:', e.error);
+        });
+
+        // Reduce motion for accessibility
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        
+        if (prefersReducedMotion.matches) {
+            document.documentElement.style.setProperty('--animation-duration', '0.01ms');
+        }
     </script>
 </body>
 </html>
