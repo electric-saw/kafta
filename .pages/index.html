@@ -1,232 +1,1522 @@
----
-layout: default
-title: "Home"
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kafta - Modern CLI for Apache Kafka</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
 
-<section class="hero">
-    <div class="container">
+    <!-- Meta tags for SEO and social media -->
+    <meta name="description" content="Kafta - Modern CLI tool for managing Apache Kafka clusters. Lightweight and efficient alternative to JVM-based tools.">
+    <meta name="keywords" content="kafka, cli, apache kafka, go, golang, devops, microservices, streaming">
+    <meta name="author" content="Our Team Torres">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://github.com/electric-saw/kafta/">
+    <meta property="og:title" content="Kafta - Modern CLI for Apache Kafka">
+    <meta property="og:description" content="Modern CLI tool for managing Apache Kafka clusters. Lightweight and efficient alternative to JVM-based tools.">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://github.com/electric-saw/kafta/">
+    <meta property="twitter:title" content="Kafta - Modern CLI for Apache Kafka">
+    <meta property="twitter:description" content="Modern CLI tool for managing Apache Kafka clusters. Lightweight and efficient alternative to JVM-based tools.">
+
+    <style>
+        :root {
+            --primary-color: #FF6B35;
+            --secondary-color: #004E64;
+            --accent-color: #00A5CF;
+            --bg-dark: #0A0E1A;
+            --bg-darker: #070B15;
+            --text-light: #E2E8F0;
+            --text-muted: #94A3B8;
+            --border-color: #334155;
+            --success-color: #10B981;
+            --warning-color: #F59E0B;
+            --error-color: #EF4444;
+            --code-bg: #1E293B;
+            --kafka-orange: #FF6B35;
+            --golang-blue: #00A5CF;
+            --gradient-1: linear-gradient(135deg, var(--kafka-orange), var(--golang-blue));
+            --gradient-2: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            --gradient-3: linear-gradient(135deg, var(--bg-darker), var(--bg-dark));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-darker);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--kafka-orange);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--golang-blue);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 14, 26, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--kafka-orange);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: var(--gradient-3);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23334155" stroke-width="0.5" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.1;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-text {
+            animation: fadeInLeft 1s ease-out;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .hero-terminal {
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        /* Terminal */
+        .terminal {
+            background: var(--code-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+        }
+
+        .terminal-header {
+            background: var(--bg-darker);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.red {
+            background: var(--error-color);
+        }
+
+        .dot.yellow {
+            background: var(--warning-color);
+        }
+
+        .dot.green {
+            background: var(--success-color);
+        }
+
+        .terminal-title {
+            margin-left: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .terminal-body {
+            padding: 1.5rem;
+            font-family: 'Fira Code', 'Monaco', 'Cascadia Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            min-height: 300px;
+        }
+
+        .terminal-line {
+            display: flex;
+            margin-bottom: 0.5rem;
+        }
+
+        .terminal-prompt {
+            color: var(--kafka-orange);
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .terminal-input {
+            color: var(--text-light);
+            flex: 1;
+        }
+
+        .terminal-output {
+            color: var(--text-muted);
+            white-space: pre-line;
+            margin-left: 1rem;
+            flex: 1;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: var(--kafka-orange);
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--kafka-orange);
+            color: var(--kafka-orange);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 0;
+            background: var(--bg-dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 4rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--code-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+            animation-play-state: paused;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--kafka-orange);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .feature-description {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Installation Section */
+        .installation {
+            padding: 6rem 0;
+            background: var(--bg-darker);
+        }
+
+        .tab-container {
+            margin-top: 3rem;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px 8px 0 0;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        .tab-button.active {
+            background: var(--kafka-orange);
+            color: white;
+            border-color: var(--kafka-orange);
+        }
+
+        .tab-button:not(.active):hover {
+            background: var(--border-color);
+            color: var(--text-light);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0 8px 8px 8px;
+            padding: 1.5rem;
+            font-family: 'Fira Code', 'Monaco', 'Cascadia Code', monospace;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--border-color);
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+            font-family: inherit;
+        }
+
+        .copy-button:hover {
+            background: var(--kafka-orange);
+            opacity: 1;
+        }
+
+        .copy-button.copied {
+            background: var(--success-color);
+        }
+
+        .code-line {
+            margin-bottom: 0.5rem;
+        }
+
+        .comment {
+            color: var(--text-muted);
+        }
+
+        .command {
+            color: var(--golang-blue);
+        }
+
+        .string {
+            color: var(--kafka-orange);
+        }
+
+        /* Examples Section */
+        .examples {
+            padding: 6rem 0;
+            background: var(--bg-dark);
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .example-card {
+            background: var(--code-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+            animation-play-state: paused;
+        }
+
+        .example-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--kafka-orange);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.1);
+        }
+
+        .example-header {
+            padding: 1rem 1.5rem;
+            background: var(--bg-darker);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .example-title {
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .example-description {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .example-body {
+            padding: 1.5rem;
+        }
+
+        .example-input {
+            background: var(--bg-darker);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-family: 'Fira Code', monospace;
+            color: var(--golang-blue);
+        }
+
+        .example-output {
+            background: var(--bg-darker);
+            border: 1px solid var(--success-color);
+            border-radius: 6px;
+            padding: 1rem;
+            font-family: 'Fira Code', monospace;
+            color: var(--success-color);
+            white-space: pre-line;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-darker);
+            padding: 3rem 0 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-section p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--kafka-orange);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+            align-items: center;
+        }
+
+        .tech-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--code-bg);
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2rem;
+                padding: 0 1rem;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-buttons {
+                flex-direction: column;
+            }
+
+            .tab-button {
+                border-radius: 8px;
+            }
+
+            .code-block {
+                border-radius: 8px;
+            }
+
+            .tech-stack {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .terminal-body {
+                padding: 1rem;
+                font-size: 0.8rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        .btn:focus,
+        .tab-button:focus,
+        .copy-button:focus {
+            outline: 2px solid var(--kafka-orange);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">☕ Kafta</div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#examples">Examples</a></li>
+                <li><a href="https://github.com/electric-saw/kafta" target="_blank">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
         <div class="hero-content">
             <div class="hero-text">
-                <h1 class="hero-title">
-                    <img src="img/kafta.png" alt="Kafta Logo" class="hero-logo">
-                    Kafta
-                </h1>
+                <h1 class="hero-title">Modern CLI for Apache Kafka</h1>
                 <p class="hero-subtitle">
-                    Modern, <strong>non-JVM</strong> command-line interface for managing <strong>Apache Kafka</strong> clusters
+                    Lightweight and efficient command-line tool for managing Kafka clusters.
+                    A modern alternative to JVM-based tools, inspired by kubectl.
                 </p>
-                <p class="hero-description">
-                    Inspired by kubectl, Kafta provides a simple and efficient way to manage topics, brokers,
-                    consumer groups, and more across multiple Kafka clusters.
-                </p>
-
-                <div class="hero-badges">
-                    <img src="https://goreportcard.com/badge/github.com/electric-saw/kafta" alt="Go Report Card">
-                    <img src="https://img.shields.io/badge/License-AGPL%20v3-blue.svg" alt="License">
-                    <img src="https://img.shields.io/github/release/electric-saw/kafta.svg" alt="Release">
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <span>🐹</span>
+                        <span>Go</span>
+                    </div>
+                    <div class="tech-item">
+                        <span>☕</span>
+                        <span>Apache Kafka</span>
+                    </div>
+                    <div class="tech-item">
+                        <span>⚡</span>
+                        <span>CLI</span>
+                    </div>
                 </div>
-
-                <div class="hero-actions">
-                    <a href="pages/installation.html" class="btn btn-primary">
-                        <i class="fas fa-download"></i> Get Started
+                <div class="btn-group">
+                    <a href="#installation" class="btn btn-primary">
+                        🚀 Get Started
                     </a>
-                    <a href="https://github.com/electric-saw/kafta" class="btn btn-secondary" target="_blank">
-                        <i class="fab fa-github"></i> View on GitHub
+                    <a href="https://github.com/electric-saw/kafta" target="_blank" class="btn btn-secondary">
+                        📖 View on GitHub
                     </a>
                 </div>
             </div>
-
-            <div class="hero-demo">
+            <div class="hero-terminal">
                 <div class="terminal">
                     <div class="terminal-header">
-                        <div class="terminal-controls">
-                            <span class="control close"></span>
-                            <span class="control minimize"></span>
-                            <span class="control maximize"></span>
+                        <div class="terminal-dots">
+                            <div class="dot red"></div>
+                            <div class="dot yellow"></div>
+                            <div class="dot green"></div>
                         </div>
-                        <div class="terminal-title">kafta</div>
+                        <div class="terminal-title">Terminal - Kafta Demo</div>
                     </div>
-                    <div class="terminal-body">
-                        <div class="terminal-line">
-                            <span class="prompt">$</span> kafta topic list
-                        </div>
-                        <div class="terminal-output">
-                            <div class="table-header">TOPIC NAME    PARTITIONS  REPLICATION  SIZE</div>
-                            <div>orders       3           2            1.2GB</div>
-                            <div>payments     6           3            856MB</div>
-                            <div>users        2           2            234MB</div>
-                        </div>
-                        <div class="terminal-line">
-                            <span class="prompt">$</span> kafta consumer lag order-service
-                        </div>
-                        <div class="terminal-output">
-                            <div class="status-green">✅ Consumer group: order-service</div>
-                            <div>Total lag: 0 messages</div>
-                            <div>Status: HEALTHY</div>
-                        </div>
-                        <div class="terminal-line">
-                            <span class="prompt">$</span> <span class="cursor">|</span>
-                        </div>
+                    <div class="terminal-body" id="terminal-demo">
+                        <!-- Content will be filled via JavaScript -->
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="features">
-    <div class="container">
-        <h2 class="section-title">Why Choose Kafta?</h2>
-
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-fire"></i>
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Powerful Features</h2>
+            <p class="section-subtitle">
+                Simplify Kafka cluster management with a modern, fast and intuitive CLI tool.
+            </p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">📊</span>
+                    <h3 class="feature-title">Topic Management</h3>
+                    <p class="feature-description">
+                        Create, delete, list and describe Kafka topics with simple and intuitive commands.
+                    </p>
                 </div>
-                <h3>No Java Required</h3>
-                <p>Binary executable, no JVM setup needed. Just download and run.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-tachometer-alt"></i>
+                <div class="feature-card">
+                    <span class="feature-icon">👥</span>
+                    <h3 class="feature-title">Consumer Groups</h3>
+                    <p class="feature-description">
+                        Monitor, describe and manage consumer groups, including real-time lag analysis.
+                    </p>
                 </div>
-                <h3>Fast & Lightweight</h3>
-                <p>Written in Go for speed and efficiency. Lightning-fast operations.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-layer-group"></i>
+                <div class="feature-card">
+                    <span class="feature-icon">💬</span>
+                    <h3 class="feature-title">Produce & Consume</h3>
+                    <p class="feature-description">
+                        Produce and consume messages directly from the terminal with interactive interface.
+                    </p>
                 </div>
-                <h3>Multi-cluster</h3>
-                <p>Easy switching between different Kafka environments and clusters.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-brain"></i>
+                <div class="feature-card">
+                    <span class="feature-icon">🔧</span>
+                    <h3 class="feature-title">Schema Registry</h3>
+                    <p class="feature-description">
+                        Manage Avro schemas, list subjects, compare versions and much more.
+                    </p>
                 </div>
-                <h3>Smart Suggestions</h3>
-                <p>Intelligent command corrections and helpful hints for better UX.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-shield-alt"></i>
+                <div class="feature-card">
+                    <span class="feature-icon">🌐</span>
+                    <h3 class="feature-title">Multi-cluster</h3>
+                    <p class="feature-description">
+                        Native support for multiple Kafka clusters across different environments.
+                    </p>
                 </div>
-                <h3>Security First</h3>
-                <p>Built-in support for SASL authentication and TLS encryption.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-code"></i>
+                <div class="feature-card">
+                    <span class="feature-icon">🚀</span>
+                    <h3 class="feature-title">Performance</h3>
+                    <p class="feature-description">
+                        Lightweight binary with no JVM dependency, ensuring fast and efficient execution.
+                    </p>
                 </div>
-                <h3>kubectl-inspired</h3>
-                <p>Familiar interface for Kubernetes users with consistent patterns.</p>
+                <div class="feature-card">
+                    <span class="feature-icon">🔒</span>
+                    <h3 class="feature-title">Security</h3>
+                    <p class="feature-description">
+                        Complete support for SASL authentication and secure communication via TLS.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📱</span>
+                    <h3 class="feature-title">Output Formats</h3>
+                    <p class="feature-description">
+                        Display data in Table, JSON and YAML formats for different needs.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">💡</span>
+                    <h3 class="feature-title">Auto-complete</h3>
+                    <p class="feature-description">
+                        Smart suggestions and auto-complete for bash, zsh and fish shells.
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="quick-start">
-    <div class="container">
-        <h2 class="section-title">Quick Start</h2>
+    <!-- Installation Section -->
+    <section class="installation" id="installation">
+        <div class="container">
+            <h2 class="section-title">Get Started</h2>
+            <p class="section-subtitle">
+                Install Kafta quickly using Go and configure your Kafka clusters. Requires Go 1.18+ and access to Apache Kafka.
+            </p>
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-button active" data-tab="go-install">
+                        🐹 Installation
+                    </button>
+                    <button class="tab-button" data-tab="context-setup">
+                        🔧 Context Setup
+                    </button>
+                    <button class="tab-button" data-tab="advanced">
+                        ⚙️ Advanced Config
+                    </button>
+                    <button class="tab-button" data-tab="completion">
+                        💡 Auto-complete
+                    </button>
+                </div>
 
-        <div class="quick-start-tabs">
-            <div class="tabs">
-                <button class="tab-button active" data-tab="macos">
-                    <i class="fab fa-apple"></i> macOS
-                </button>
-                <button class="tab-button" data-tab="linux">
-                    <i class="fab fa-linux"></i> Linux
-                </button>
-                <button class="tab-button" data-tab="windows">
-                    <i class="fab fa-windows"></i> Windows
-                </button>
-            </div>
-
-            <div class="tab-content">
-                <div class="tab-pane active" id="macos">
+                <div class="tab-content active" id="go-install">
                     <div class="code-block">
-                        <div class="code-header">
-                            <span>Installation</span>
-                            <button class="copy-btn" data-copy="go install github.com/electric-saw/kafta/cmd/kafta@latest">
-                                <i class="fas fa-copy"></i>
-                            </button>
+                        <button class="copy-button" onclick="copyToClipboard('go-install-code')">📋</button>
+                        <div id="go-install-code">
+                            <div class="code-line"><span class="comment"># Install latest version</span></div>
+                            <div class="code-line"><span class="command">go install github.com/electric-saw/kafta/cmd/kafta@latest</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Verify installation</span></div>
+                            <div class="code-line"><span class="command">kafta --help</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Check version</span></div>
+                            <div class="code-line"><span class="command">kafta version</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># For Go < 1.18 (legacy)</span></div>
+                            <div class="code-line"><span class="command">go get -u github.com/electric-saw/kafta</span></div>
                         </div>
-                        <pre><code># Install Kafta
-go install github.com/electric-saw/kafta/cmd/kafta@latest
-
-# Add to PATH
-echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.zshrc
-source ~/.zshrc
-
-# Verify installation
-kafta --help</code></pre>
                     </div>
                 </div>
 
-                <div class="tab-pane" id="linux">
+                <div class="tab-content" id="context-setup">
                     <div class="code-block">
-                        <div class="code-header">
-                            <span>Installation</span>
-                            <button class="copy-btn">
-                                <i class="fas fa-copy"></i>
-                            </button>
+                        <button class="copy-button" onclick="copyToClipboard('context-code')">📋</button>
+                        <div id="context-code">
+                            <div class="code-line"><span class="comment"># Configure local development cluster</span></div>
+                            <div class="code-line"><span class="command">kafta config set-cluster local \</span></div>
+                            <div class="code-line"><span class="command">  --bootstrap-servers localhost:9092</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Configure production cluster with SASL</span></div>
+                            <div class="code-line"><span class="command">kafta config set-cluster production \</span></div>
+                            <div class="code-line"><span class="command">  --bootstrap-servers prod-kafka-1:9092,prod-kafka-2:9092 \</span></div>
+                            <div class="code-line"><span class="command">  --security-protocol SASL_SSL \</span></div>
+                            <div class="code-line"><span class="command">  --sasl-mechanism PLAIN \</span></div>
+                            <div class="code-line"><span class="command">  --sasl-username myuser \</span></div>
+                            <div class="code-line"><span class="command">  --sasl-password mypassword</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Configure staging cluster</span></div>
+                            <div class="code-line"><span class="command">kafta config set-cluster staging \</span></div>
+                            <div class="code-line"><span class="command">  --bootstrap-servers staging-kafka:9092 \</span></div>
+                            <div class="code-line"><span class="command">  --schema-registry http://staging-schema-registry:8081</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># List all configured clusters</span></div>
+                            <div class="code-line"><span class="command">kafta config get-contexts</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Switch to production cluster</span></div>
+                            <div class="code-line"><span class="command">kafta config use-context production</span></div>
                         </div>
-                        <pre><code># Install Kafta
-go install github.com/electric-saw/kafta/cmd/kafta@latest
-
-# Add to PATH
-echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
-source ~/.bashrc
-
-# Verify installation
-kafta --help</code></pre>
                     </div>
                 </div>
 
-                <div class="tab-pane" id="windows">
+                <div class="tab-content" id="advanced">
                     <div class="code-block">
-                        <div class="code-header">
-                            <span>PowerShell</span>
-                            <button class="copy-btn">
-                                <i class="fas fa-copy"></i>
-                            </button>
+                        <button class="copy-button" onclick="copyToClipboard('advanced-code')">📋</button>
+                        <div id="advanced-code">
+                            <div class="code-line"><span class="comment"># Set default output format</span></div>
+                            <div class="code-line"><span class="command">kafta config set output json</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Configure TLS with certificates</span></div>
+                            <div class="code-line"><span class="command">kafta config set-cluster secure \</span></div>
+                            <div class="code-line"><span class="command">  --bootstrap-servers secure-kafka:9092 \</span></div>
+                            <div class="code-line"><span class="command">  --security-protocol SSL \</span></div>
+                            <div class="code-line"><span class="command">  --ssl-ca-location /path/to/ca-cert \</span></div>
+                            <div class="code-line"><span class="command">  --ssl-certificate-location /path/to/client-cert \</span></div>
+                            <div class="code-line"><span class="command">  --ssl-key-location /path/to/client-key</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Set request timeout</span></div>
+                            <div class="code-line"><span class="command">kafta config set request-timeout 30s</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Enable debug mode</span></div>
+                            <div class="code-line"><span class="command">kafta config set debug true</span></div>
                         </div>
-                        <pre><code># Install Kafta
-go install github.com/electric-saw/kafta/cmd/kafta@latest
+                    </div>
+                </div>
 
-# Add to PATH via System Properties
-# Verify installation
-kafta --help</code></pre>
+                <div class="tab-content" id="completion">
+                    <div class="code-block">
+                        <button class="copy-button" onclick="copyToClipboard('completion-code')">📋</button>
+                        <div id="completion-code">
+                            <div class="code-line"><span class="comment"># Bash completion</span></div>
+                            <div class="code-line"><span class="command">kafta completion bash > /etc/bash_completion.d/kafta</span></div>
+                            <div class="code-line"><span class="command"># Or for current user</span></div>
+                            <div class="code-line"><span class="command">kafta completion bash >> ~/.bashrc</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Zsh completion</span></div>
+                            <div class="code-line"><span class="command">kafta completion zsh > "${fpath[1]}/_kafta"</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Fish completion</span></div>
+                            <div class="code-line"><span class="command">kafta completion fish > ~/.config/fish/completions/kafta.fish</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># PowerShell (Windows)</span></div>
+                            <div class="code-line"><span class="command">kafta completion powershell > kafta.ps1</span></div>
+                            <div class="code-line"><span class="command">. ./kafta.ps1</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="stats">
-    <div class="container">
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-number" data-count="95">0</div>
-                <div class="stat-label">GitHub Stars</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" data-count="8">0</div>
-                <div class="stat-label">Forks</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" data-count="6">0</div>
-                <div class="stat-label">Contributors</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" data-count="100">0</div>
-                <div class="stat-label">% Go</div>
+    <!-- Examples Section -->
+    <section class="examples" id="examples">
+        <div class="container">
+            <h2 class="section-title">Usage Examples</h2>
+            <p class="section-subtitle">
+                See how to use Kafta to manage your Kafka clusters efficiently.
+            </p>
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">List Topics</div>
+                        <div class="example-description">View all topics in the cluster</div>
+                    </div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            $ kafta topic list
+                        </div>
+                        <div class="example-output">✓ user-events
+✓ order-events
+✓ payment-events</div>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">Create Topic</div>
+                        <div class="example-description">Create new topics with specific configurations</div>
+                    </div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            $ kafta topic create my-topic --partitions 3 --replication-factor 1
+                        </div>
+                        <div class="example-output">✓ Topic 'my-topic' created successfully</div>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">Consumer Lag</div>
+                        <div class="example-description">Monitor consumer group lag</div>
+                    </div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            $ kafta consumer lag my-group
+                        </div>
+                        <div class="example-output">TOPIC      PARTITION  LAG
+my-topic   0          15
+my-topic   1          3</div>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">Switch Contexts</div>
+                        <div class="example-description">Switch between different Kafka clusters</div>
+                    </div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            $ kafta config get-contexts
+                        </div>
+                        <div class="example-output">CURRENT  NAME         CLUSTER
+*        local        localhost:9092
+         production   prod-kafka:9092
+         staging      staging-kafka:9092</div>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">Schema Registry</div>
+                        <div class="example-description">Manage Avro schemas</div>
+                    </div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            $ kafta schema subjects-list
+                        </div>
+                        <div class="example-output">user-value
+order-key
+payment-value</div>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">Consume Messages</div>
+                        <div class="example-description">Consume messages in real-time</div>
+                    </div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            $ kafta console consumer --topic my-topic --group my-group
+                        </div>
+                        <div class="example-output">{"id": 1, "message": "Hello Kafka!"}
+{"id": 2, "message": "Another message"}</div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>About Kafta</h3>
+                    <p>
+                        A modern and efficient CLI tool for managing Apache Kafka clusters,
+                        offering a lightweight alternative to JVM-based tools.
+                    </p>
+                </div>
+                <div class="footer-section">
+                    <h3>Useful Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/electric-saw/kafta">Source Code</a></li>
+                        <li><a href="https://github.com/electric-saw/kafta/blob/main/README.md">Documentation</a></li>
+                        <li><a href="https://github.com/electric-saw/kafta/issues">Report Bug</a></li>
+                        <li><a href="https://github.com/electric-saw/kafta/discussions">Discussions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Technologies</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://golang.org">Go (Golang)</a></li>
+                        <li><a href="https://kafka.apache.org">Apache Kafka</a></li>
+                        <li><a href="https://avro.apache.org">Apache Avro</a></li>
+                        <li><a href="https://kubernetes.io">Kubernetes (inspiration)</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Community</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/electric-saw/kafta/blob/main/CONTRIBUTING.md">How to Contribute</a></li>
+                        <li><a href="https://github.com/electric-saw/kafta/issues/new">Request Feature</a></li>
+                        <li><a href="https://github.com/electric-saw">Author Profile</a></li>
+                        <li><a href="mailto:contact@example.com">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Kafta CLI. Open source project developed by <a href="https://github.com/electric-saw" style="color: var(--kafka-orange);">Our Team Torres</a>.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Terminal Animation with real Kafta commands
+        class TerminalAnimation {
+            constructor(element) {
+                this.element = element;
+                this.commands = [
+                    {
+                        input: 'kafta config get-contexts',
+                        output: 'CURRENT  NAME         CLUSTER\n*        local        localhost:9092\n         production   prod-kafka:9092'
+                    },
+                    {
+                        input: 'kafta topic list',
+                        output: '✓ user-events\n✓ order-events\n✓ payment-events'
+                    },
+                    {
+                        input: 'kafta consumer lag analytics-group',
+                        output: 'TOPIC      PARTITION  LAG\nanalytics  0          25\nanalytics  1          8\nanalytics  2          0'
+                    },
+                    {
+                        input: 'kafta config use-context production',
+                        output: '✓ Switched to context: production'
+                    },
+                    {
+                        input: 'kafta schema subjects-list',
+                        output: 'user-value\norder-key\npayment-value\nanalytics-schema'
+                    }
+                ];
+                this.currentCommand = 0;
+                this.isTyping = false;
+                this.init();
+            }
+
+            init() {
+                this.element.innerHTML = `
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-input" id="current-input"></span>
+                        <span class="cursor" id="cursor"></span>
+                    </div>
+                `;
+                this.startAnimation();
+            }
+
+            async startAnimation() {
+                while (true) {
+                    await this.typeCommand();
+                    await this.showOutput();
+                    await this.wait(3500);
+                    this.nextCommand();
+                    await this.wait(1000);
+                }
+            }
+
+            async typeCommand() {
+                const command = this.commands[this.currentCommand].input;
+                const inputElement = document.getElementById('current-input');
+                const cursor = document.getElementById('cursor');
+
+                if (!inputElement || !cursor) return;
+
+                cursor.style.display = 'inline-block';
+                inputElement.textContent = '';
+
+                for (let i = 0; i < command.length; i++) {
+                    if (!inputElement) break;
+                    inputElement.textContent += command[i];
+                    await this.wait(60 + Math.random() * 40);
+                }
+
+                await this.wait(800);
+            }
+
+            async showOutput() {
+                const output = this.commands[this.currentCommand].output;
+                const cursor = document.getElementById('cursor');
+
+                if (cursor) cursor.style.display = 'none';
+
+                const outputLine = document.createElement('div');
+                outputLine.className = 'terminal-line';
+
+                const outputSpan = document.createElement('span');
+                outputSpan.className = 'terminal-output';
+                outputSpan.textContent = output.replace(/\\n/g, '\n');
+                outputSpan.style.whiteSpace = 'pre-line';
+
+                outputLine.appendChild(outputSpan);
+                this.element.appendChild(outputLine);
+
+                await this.wait(2500);
+            }
+
+            nextCommand() {
+                this.currentCommand = (this.currentCommand + 1) % this.commands.length;
+
+                // Clear terminal and restart
+                this.element.innerHTML = `
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-input" id="current-input"></span>
+                        <span class="cursor" id="cursor"></span>
+                    </div>
+                `;
+            }
+
+            wait(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // Tab System
+        class TabSystem {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                const tabButtons = document.querySelectorAll('.tab-button');
+                const tabContents = document.querySelectorAll('.tab-content');
+
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const targetTab = button.getAttribute('data-tab');
+
+                        // Remove active class from all buttons and contents
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        tabContents.forEach(content => content.classList.remove('active'));
+
+                        // Add active class to clicked button and corresponding content
+                        button.classList.add('active');
+                        const targetContent = document.getElementById(targetTab);
+                        if (targetContent) {
+                            targetContent.classList.add('active');
+                        }
+                    });
+
+                    // Keyboard support
+                    button.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            button.click();
+                        }
+                    });
+                });
+            }
+        }
+
+        // Copy to Clipboard Function
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+
+            const text = element.textContent || element.innerText;
+
+            // Remove comments and empty lines for cleaner copy
+            const cleanText = text
+                .split('\n')
+                .filter(line => line.trim() && !line.trim().startsWith('#'))
+                .map(line => line.trim())
+                .join('\n');
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(cleanText).then(() => {
+                    showCopyFeedback(element);
+                }).catch(err => {
+                    console.error('Error copying:', err);
+                    fallbackCopy(cleanText, element);
+                });
+            } else {
+                fallbackCopy(cleanText, element);
+            }
+        }
+
+        function fallbackCopy(text, element) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+
+            try {
+                document.execCommand('copy');
+                showCopyFeedback(element);
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+            }
+
+            document.body.removeChild(textarea);
+        }
+
+        function showCopyFeedback(element) {
+            const button = element.parentNode.querySelector('.copy-button');
+            if (button) {
+                const originalText = button.textContent;
+
+                button.textContent = '✅';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }
+        }
+
+        // Smooth Scrolling for Navigation Links
+        function initSmoothScrolling() {
+            const links = document.querySelectorAll('a[href^="#"]');
+
+            links.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+
+                    if (targetElement) {
+                        const offsetTop = targetElement.offsetTop - 80; // Account for fixed header
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Intersection Observer for Animations
+        function initScrollAnimations() {
+            if (!('IntersectionObserver' in window)) return;
+
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        entry.target.classList.add('animated');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe elements with animation classes
+            const animatedElements = document.querySelectorAll('.feature-card, .example-card');
+            animatedElements.forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+                observer.observe(el);
+            });
+        }
+
+        // Header Scroll Effect
+        function initHeaderScroll() {
+            const header = document.querySelector('.header');
+            if (!header) return;
+
+            let lastScroll = 0;
+
+            window.addEventListener('scroll', () => {
+                const currentScroll = window.pageYOffset;
+
+                if (currentScroll > 100) {
+                    header.style.background = 'rgba(10, 14, 26, 0.98)';
+                    header.style.backdropFilter = 'blur(15px)';
+                } else {
+                    header.style.background = 'rgba(10, 14, 26, 0.95)';
+                    header.style.backdropFilter = 'blur(10px)';
+                }
+
+                // Hide/show header on scroll
+                if (currentScroll > lastScroll && currentScroll > 200) {
+                    header.style.transform = 'translateY(-100%)';
+                } else {
+                    header.style.transform = 'translateY(0)';
+                }
+
+                lastScroll = currentScroll;
+            }, { passive: true });
+        }
+
+        // Initialize all components when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize terminal animation
+            const terminalDemo = document.getElementById('terminal-demo');
+            if (terminalDemo) {
+                // Small delay to ensure element is ready
+                setTimeout(() => {
+                    new TerminalAnimation(terminalDemo);
+                }, 500);
+            }
+
+            // Initialize tab system
+            new TabSystem();
+
+            // Initialize other features
+            initSmoothScrolling();
+            initScrollAnimations();
+            initHeaderScroll();
+
+            // Add loading animation
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease-in-out';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+
+        // Keyboard Navigation for Accessibility
+        document.addEventListener('keydown', (e) => {
+            // Tab navigation for terminal tabs
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                const activeTab = document.querySelector('.tab-button.active');
+                if (activeTab && document.activeElement === activeTab) {
+                    e.preventDefault();
+                    const tabs = Array.from(document.querySelectorAll('.tab-button'));
+                    const currentIndex = tabs.indexOf(activeTab);
+                    let nextIndex;
+
+                    if (e.key === 'ArrowLeft') {
+                        nextIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
+                    } else {
+                        nextIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
+                    }
+
+                    tabs[nextIndex].click();
+                    tabs[nextIndex].focus();
+                }
+            }
+        });
+
+        // Error handling for failed animations
+        window.addEventListener('error', (e) => {
+            console.warn('Animation error caught:', e.error);
+        });
+
+        // Reduce motion for accessibility
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+        if (prefersReducedMotion.matches) {
+            document.documentElement.style.setProperty('--animation-duration', '0.01ms');
+        }
+    </script>
+</body>
+</html>
