@@ -1,418 +1,892 @@
 ![kafta logo](img/kafta.png)
 
-Kafta is a modern non-JVM command line for managing Kafka Clusters written in golang. Usability was inspired by kubectl, the interface is simple and supports managing several clusters at the same time in a simple way.
+[![Go Report Card](https://goreportcard.com/badge/github.com/electric-saw/kafta)](https://goreportcard.com/report/github.com/electric-saw/kafta)
+[![License](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE.txt)
+[![Release](https://img.shields.io/github/release/electric-saw/kafta.svg)](https://github.com/electric-saw/kafta/releases)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/electric-saw/kafta)](https://golang.org/)
 
-# Table of Contents
-- [Table of Contents](#table-of-contents)
-- [Overview](#overview)
-- [Concepts](#concepts)
-- [Installing](#installing)
-- [Configuration](#configuration)
-- [Commands](#commands)
-  - [Topic](#topic)
-  - [Consumer Group](#consumer-group)
-  - [Cluster](#cluster)
-  - [Broker](#broker)
-  - [Producer](#producer)
-  - [Consumer](#consumer)
-  - [Subjects List](#subjects-list)
-  - [Subject Version](#subjects-version)
-  - [Get schema](#schema-get)
-  - [Schema diff](#schema-diff)
-- [💻 Code Contributors](#-code-contributors)
-- [Next features](#next-features)
+A modern, **non-JVM** command-line interface for managing **Apache Kafka** clusters. Inspired by `kubectl`, Kafta provides a simple and efficient way to manage topics, brokers, consumer groups, and more across multiple Kafka clusters.
 
+## Table of Contents
 
-# Overview
+- [Why Kafta?](#-why-kafta)
+- [Installation](#-installation)
+  - [Prerequisites](#prerequisites)
+  - [Quick Install](#quick-install)
+  - [macOS Installation Guide](#-macos-installation-guide)
+  - [Linux Installation](#-linux-installation)
+  - [Windows Installation](#-windows-installation)
+- [Troubleshooting Installation](#-troubleshooting-installation)
+  - [Common Issues](#common-issues)
+  - [Diagnostic Script](#-diagnostic-script)
+- [Configuration](#️-configuration)
+  - [Initial Setup](#initial-setup)
+  - [Configuration with Authentication](#configuration-with-authentication)
+  - [Sample Configuration File](#sample-configuration-file)
+- [Usage Examples](#-usage-examples)
+  - [Cluster Management](#cluster-management)
+  - [Topic Management](#topic-management)
+  - [Consumer Group Management](#consumer-group-management)
+  - [Message Production & Consumption](#message-production--consumption)
+  - [Schema Registry Operations](#schema-registry-operations)
+  - [Output Formats](#output-formats)
+- [Smart Features](#-smart-features)
+  - [Intelligent Suggestions](#intelligent-suggestions)
+  - [Command Completion](#command-completion)
+- [Advanced Features](#️-advanced-features)
+  - [Environment Variables](#environment-variables)
+  - [Configuration Templates](#configuration-templates)
+- [Development](#️-development)
+  - [Building from Source](#building-from-source)
+  - [Running Tests](#running-tests)
+  - [Development Setup](#development-setup)
+    - [macOS Development Setup](#-macos-development-setup)
+    - [Linux Development Setup](#-linux-development-setup)
+    - [Windows Development Setup](#-windows-development-setup)
+  - [Development Environment Verification](#-development-environment-verification)
+  - [Quick Start for Contributors](#️-quick-start-for-contributors)
+  - [Docker Development Environment](#-docker-development-environment)
+  - [Development Workflow](#-development-workflow)
+  - [Code Quality Tools](#-code-quality-tools)
+  - [Testing Guidelines](#-testing-guidelines)
+  - [Performance Profiling](#-performance-profiling)
+- [Contributing](#-contributing)
+- [Roadmap](#-roadmap)
+- [Known Issues](#-known-issues)
+- [License](#-license)
+- [Acknowledgments](#-acknowledgments)
+- [Support & Community](#-support--community)
+- [Star History](#-star-history)
 
-Kafta provides a simple interface to manage topics, brokers, consumer-groups and many things like that. Interfaces are similar to kubectl & go tools.
-It is built using [sarama](https://github.com/IBM/sarama).
+## 🚀 Why Kafta?
 
-Kafta provides:
-* Easy commands CLIs: `kafta topic list`, `kafta cluster describe`, etc.
-* Fully manage topics, consumers, kafka clusters
-* yaml configuration file with all clusters that can be used. You set the current one and can easily switch to another
-* Is a binary, not need install JVM or something like that
-* Auth use sasl
-* Intelligent suggestions (`kafta clustr`... did you mean `kafta cluster`?)
-* Help flag recognition of `-h`, `--help`
+- **🔥 No Java Required**: Binary executable, no JVM setup needed
+- **🎯 kubectl-inspired**: Familiar interface for Kubernetes users  
+- **⚡ Fast & Lightweight**: Written in Go for speed and efficiency
+- **🔧 Multi-cluster**: Easy switching between different Kafka environments
+- **📊 Rich Output**: Table, JSON, and YAML output formats
+- **🤖 Smart Suggestions**: Intelligent command corrections and hints
+- **🔐 Security First**: Built-in support for SASL authentication and TLS
 
-# Concepts
+---
 
-Kafta is built on a structure of commands, arguments & flags. Kafta will always be interacting on one cluster at a time,
-the reason for this is not having to pass which cluster is in each command, as it is with most kafka CLIs.
+## 📦 Installation
 
-Kafta was created by developers for developers. We feel the pain of maintaining a kafka cluster using the bash's provided by apache-kafka,
-it's confusing and the experience is miserable. To facilitate the adoption of the kafka, the kafta began to be born. The focus of this
-project is to be simple to use, it is bad to need to install java, pass the kafka cluster address in every command & mess with xml's.
-Kafta is a golang project that is easy to install, easy to configure and the main thing is simple to use.
+### Prerequisites
 
-To see all options exists relate to same command, run:
+- **Go 1.18+** (for installation from source)
+- **Apache Kafka cluster** (for usage)
 
-```
-$ kafta topic
-Topics management
+### Quick Install
 
-Usage:
-  kafta topic [command]
-
-Available Commands:
-  create      Create topics
-  delete      Delete topics
-  describe    Describe a topic
-  list        List topics
-```
-
-# Installing
-
-Using Kafta is easy. First, use `go get` to install the latest version
-of the library. This command will install the `kafta` executable
-along with the library and its dependencies:
-- go < 1.18: `go get -u github.com/electric-saw/kafta`
-- go >= 1.18: `go install  github.com/electric-saw/kafta/cmd/kafta@latest`
-
-
-# Configuration
-
-Kafta will create a config file in ~/.kafta/config. This yaml is used to support kafka multi-clusters and avoid passing all addresses every time.
-
-To set up a new cluster, create a new config via kafta, you'll need to provide some information, don't worry, it's all in terminal,
-you don't need to edit any XML \o/
-
-Follow the example:
-
-```
-$ kafta config set-context production
-Bootstrap servers: b-1.mydomain:9092,b-2.mydomain:9092,b-3.mydomain:9092
-Schema registry: https://schema-registry.com
-Use SASL: y
-SASL Algorithm: sha512
-User: myuser
-✔ Password: ******
+#### For Go >= 1.18 (Recommended)
+```bash
+go install github.com/electric-saw/kafta/cmd/kafta@latest
 ```
 
-To list the contexts, run:
-
-```
-$ kafta config get-contexts
-+---------------+---------------------------+-----------------------------+------+---------+
-| NAME          | CLUSTER                   | SCHEMA REGISTRY             | KSQL | CURRENT |
-+---------------+---------------------------+-----------------------------+------+---------+
-| dev           | b-1.mydomain:9092         | https://schema-registry.com |      | true    |
-| production    | b-3.productiondomain:9092 | https://schema-registry.com |      | false   |
-+---------------+---------------------------+-----------------------------+------+---------+
+#### For Go < 1.18 (Legacy)
+```bash
+go get -u github.com/electric-saw/kafta
 ```
 
-To change the current cluster, run:
+### 🍎 macOS Installation Guide
 
-```
-$ kafta config use-context production
-Switched to context "production".
-```
+If you're on macOS and encountering PATH issues, follow these steps:
 
-List current context, run:
-
-```
-$ kafta config current-context
-production
+#### 1. Install Kafta
+```bash
+go install github.com/electric-saw/kafta/cmd/kafta@latest
 ```
 
-Delete context, run:
+#### 2. Configure PATH (Choose your shell)
 
-```
-$ kafta config delete-context production
-deleted context production from /home/myuser/.kafta/config
-
-```
-* it's only config files, kafta don't delete anything of kafka cluster
-
-# Commands
-
-After the context was configureted, it's time to use commands for manage kafka cluster
-
-## Topic
-
-Create new topic:
-
-```
-$ kafta topic create my-topic --rf 3 --partitions 10
-Topic created
+**For zsh (default on modern macOS):**
+```bash
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.zshrc
+source ~/.zshrc
 ```
 
-There are default values ​​for partition and replication factor, which is why it can only be used without specifying RF or partition.
-The topic will be created with RF=3 and partition=10. Example:
-
-```
-$ kafta topic create my-topic
-Topic created
+**For bash:**
+```bash
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bash_profile
+source ~/.bash_profile
 ```
 
-Describe topic:
-
-```
-$ kafta topic describe my-topic
-+--------------+------------+----------+
-| NAME         | PARTITIONS | INTERNAL |
-+--------------+------------+----------+
-| my-topic     |         10 | false    |
-+--------------+------------+----------+
-
-+----+---------+--------+----------+------------------+
-| ID | ISR     | LEADER | REPLICAS | OFFLINE REPLICAS |
-+----+---------+--------+----------+------------------+
-|  0 | [3 2 1] |      3 | [3 1 2]  | []               |
-|  1 | [2 1 0] |      2 | [2 0 1]  | []               |
-|  2 | [5 3 1] |      1 | [1 5 3]  | []               |
-|  3 | [5 4 0] |      0 | [0 4 5]  | []               |
-|  4 | [5 1 0] |      5 | [5 1 0]  | []               |
-|  5 | [5 4 0] |      4 | [4 0 5]  | []               |
-|  6 | [5 4 3] |      3 | [3 5 4]  | []               |
-|  7 | [4 3 2] |      2 | [2 4 3]  | []               |
-|  8 | [3 2 1] |      1 | [1 3 2]  | []               |
-|  9 | [2 1 0] |      0 | [0 2 1]  | []               |
-+----+---------+--------+----------+------------------+
+#### 3. Verify Installation
+```bash
+kafta --help
 ```
 
-List topics:
+### 🐧 Linux Installation
 
-```
-$ kafta topic list
-+-------------------------+------------+--------------------+
-| NAME                    | PARTITIONS | REPLICATION FACTOR |
-+-------------------------+------------+--------------------+
-| my-topic                |         10 |                  3 |
-| topic1                  |         10 |                  3 |
-| topic2                  |          6 |                  3 |
-+-------------------------+------------+--------------------+
-```
-List configs of topics:
+```bash
+# Install
+go install github.com/electric-saw/kafta/cmd/kafta@latest
 
-```
-$ kafka topic list-configs my-topic
-
-+-----------------------------------------+---------------------+--------------+
-|               Config Name               |    Config Value     |    Source    |
-+-----------------------------------------+---------------------+--------------+
-| compression.type                        | producer            | Default      |
-| leader.replication.throttled.replicas   | N/A                 | Default      |
-| min.insync.replicas                     | 1                   | StaticBroker |
-| segment.jitter.ms                       | 0                   | Default      |
-| cleanup.policy                          | delete              | Default      |
-| flush.ms                                | 9223372036854775807 | Default      |
-| follower.replication.throttled.replicas | N/A                 | Default      |
-| segment.bytes                           | 1073741824          | Default      |
-| retention.ms                            | 172800000           | Topic        |
-| flush.messages                          | 9223372036854775807 | Default      |
-| delete.retention.ms                     | 86400000            | Default      |
-| segment.ms                              | 604800000           | Default      |
-| message.timestamp.difference.max.ms     | 9223372036854775807 | Default      |
-| segment.index.bytes                     | 10485760            | Default      |
-+-----------------------------------------+---------------------+--------------+
-
-```
-## Consumer Group
-
-List all consumers, run:
-
-```
-$ kafta consumer list
-+------------------------+----------+--------+
-| NAME                   | TYPE     | STATE  |
-+------------------------+----------+--------+
-| app1                   | consumer | Stable |
-| app2                   | consumer | Stable |
-| app3                   | consumer | Empty  |
-+------------------------+----------+--------+
+# Add to PATH (usually automatic, but if needed)
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
+source ~/.bashrc
 ```
 
-Lag of consumer:
+### 🪟 Windows Installation
 
-```
-$ kafta consumer lag app1
-+---------------+----------+-----------+
-| CONSUMER      | TOPIC    | TOTAL LAG |
-+---------------+----------+-----------+
-| app1          | my-topic |        41 |
-+---------------+----------+-----------+
-```
+```powershell
+# Install
+go install github.com/electric-saw/kafta/cmd/kafta@latest
 
-Sarama get Lag on topic *TODO*
-
-Describe consumer, run:
-
-```
-$ kafta consumer describe app1
-+--------------+----------+---------------+--------+--------------+
-| ID           | PROTOCOL | PROTOCOL TYPE | STATE  | MEMBER COUNT |
-+--------------+----------+---------------+--------+--------------+
-| app1         | range    | consumer      | Stable |            4 |
-+--------------+----------+---------------+--------+--------------+
-
-+-----------------------+---------------+-----------------+------------+
-| MEMBER ID             | MEMBER HOST   | TOPIC           | PARTITIONS |
-+-----------------------+---------------+-----------------+------------+
-| app1-service-1        | /100.10.22.21 | my-topic        | [0 1 2]    |
-| app1-service-1        | /100.10.22.22 | my-topic        | [3 4 5]    |
-| app1-service-1        | /100.10.22.23 | my-topic        | [6 7]      |
-| app1-service-1        | /100.10.22.24 | my-topic        | [8 9]      |
-+-----------------------+---------------+-----------------+------------+
+# The binary will be in %GOPATH%\bin or %USERPROFILE%\go\bin
+# Add to PATH if necessary through System Properties > Environment Variables
 ```
 
-To remove a consumer, it's simple. Just run:
+---
 
-```
-$ kafta consumer delete app1
-Consumer app1 deleted
-```
+## 🔧 Troubleshooting Installation
 
-## Cluster
+### Common Issues
 
-Describe kafka cluster
+#### ❌ "kafta: command not found"
 
-```
-$ kafta cluster describe
-+----+-----------------------+------+------------+
-| ID | ADDRESS               | RACK | CONTROLLER |
-+----+-----------------------+------+------------+
-|  0 | b-1.mydomain.com:9092 | 0    | false      |
-|  1 | b-2.mydomain.com:9092 | 1    | false      |
-|  2 | b-3.mydomain.com:9092 | 2    | false      |
-|  3 | b-4.mydomain.com:9092 | 0    | false      |
-|  4 | b-5.mydomain.com:9092 | 1    | false      |
-|  5 | b-6.mydomain.com:9092 | 2    | true       |
-+----+-----------------------+------+------------+
+**Diagnosis:**
+```bash
+# Check if kafta exists
+ls -la $(go env GOPATH)/bin/kafta
 
+# Check current PATH
+echo $PATH
 ```
 
-## Broker
+**Solution:**
+```bash
+# Temporary fix
+export PATH=$PATH:$(go env GOPATH)/bin
 
-Get broker config, run:
-
-```
-$ kafta broker get-configs 2
-+-----------------------------------------+--------------------------------+---------+
-| NAME                                    | VALUE                          | DEFAULT |
-+-----------------------------------------+--------------------------------+---------+
-| log.cleaner.delete.retention.ms         | 86400000                       | true    |
-| log.message.timestamp.type              | CreateTime                     | true    |
-| auto.create.topics.enable               | false                          | false   |
-| log.cleanup.policy                      | delete                         | true    |
-| log.cleaner.min.compaction.lag.ms       | 0                              | true    |
-| message.max.bytes                       | 2097164                        | false   |
-| default.replication.factor              | 3                              | false   |
-| num.partitions                          | 6                              | false   |
-+-----------------------------------------+--------------------------------+---------+
+# Permanent fix (add to shell config)
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.zshrc
+source ~/.zshrc
 ```
 
-## Producer
-Produce data for topic, run:
-```
-kafta console producer topic.test
-> message test
-```
-You can produce a message with key, using the ":" between the key and message:
-```
-kafta console producer topic.test
-> key1:message test
-```
-## Consumer
-Consume data from topic, you can optionally enter the consumer group and the flag `--verbose` for debug the consumer:
-```
-kafta console consumer topic.test  [group=group.test] [--verbose]
+#### ❌ Permission denied
 
-2022/05/17 19:48:47 Initializing Consumer with group [group.test]...
-2022/05/17 19:48:50 Consumer running, waiting for events...
-2022/05/17 19:48:57 Partition: 0 Key: 1 Message: teste event
-2022/05/17 19:49:05 Partition: 0 Key: w Message: {"json":"test"}
-2022/05/17 19:50:05 Partition: 0 Key: 1 Message: event 2
+```bash
+# Fix permissions
+chmod +x $(go env GOPATH)/bin/kafta
 ```
 
-## Subjects version
-To list all versions of a specific subject in the Schema Registry, run:
+#### ❌ Go not found
 
-```
-$ kafta schema versions --subject example
-```
-![alt text](./img/subjects-version.png)
+Install Go from [golang.org](https://golang.org/dl/) or:
 
-## Subjects List
-List subjects in SchemaRegistry
+```bash
+# macOS with Homebrew
+brew install go
 
-```
-$ kafta schema subjects-list
-+-------------------------------------------+
-| NAME                                      |
-+-------------------------------------------+
-| topic1-dlq-value                          |
-| topic1-value                              |
-| topic2-dlq-value                          |
-| topic2-value                              |
-+-------------------------------------------+
+# Ubuntu/Debian
+sudo apt install golang-go
+
+# CentOS/RHEL
+sudo yum install golang
 ```
 
-## Schema GET
-Get a specific schema
+### 🩺 Diagnostic Script
 
-```
-$ kafta schema get --subject example --version 1
+Run this to diagnose installation issues:
 
-{
-  "type": "record",
-  "name": "example",
-  "namespace": "br.com.example",
-  "fields": [
-    {
-      "name": "id",
-      "type": "string"
-    },
-    {
-      "name": "test",
-      "type": "string"
-    },
-    {
-      "name": "version",
-      "type": "string"
-    },
-    {
-      "name": "value",
-      "type": "string"
-    },
-    {
-      "name": "xpto",
-      "type": "string"
-    }
-  ]
-}
+```bash
+#!/bin/bash
+echo "🔍 Kafta Installation Diagnostics"
+echo "================================="
 
+echo "Go version: $(go version 2>/dev/null || echo 'Go not found')"
+echo "GOPATH: $(go env GOPATH 2>/dev/null || echo 'Go not configured')"
+
+GOPATH=$(go env GOPATH 2>/dev/null)
+if [ -f "$GOPATH/bin/kafta" ]; then
+    echo "✅ Kafta found at: $GOPATH/bin/kafta"
+else
+    echo "❌ Kafta not found in GOPATH/bin"
+fi
+
+if command -v kafta >/dev/null 2>&1; then
+    echo "✅ Kafta available in PATH"
+    kafta --version 2>/dev/null || echo "⚠️ Kafta found but with errors"
+else
+    echo "❌ Kafta not in PATH"
+    echo "💡 Run: export PATH=\$PATH:$(go env GOPATH)/bin"
+fi
 ```
 
-## Schema diff
-Compare schemas
+---
 
+## ⚙️ Configuration
+
+Kafta stores configurations in `~/.kafta/config` as a YAML file to support multiple Kafka clusters.
+
+### Initial Setup
+
+```bash
+# Configure your first Kafka cluster
+kafta config set-context my-cluster \
+  --bootstrap-servers "localhost:9092" \
+  --schema-registry "http://localhost:8081"
+
+# Use the configured context
+kafta config use-context my-cluster
+
+# Verify current context
+kafta config current-context
 ```
-$ kafta schema diff --subject example --version 1 --schema "$(cat ./your-schema.json)"
+
+### Configuration with Authentication
+
+```bash
+# Configure cluster with SASL authentication
+kafta config set-context production \
+  --bootstrap-servers "broker1:9092,broker2:9092,broker3:9092" \
+  --schema-registry "https://schema-registry.prod.com" \
+  --use-sasl true \
+  --sasl-algorithm "sha512" \
+  --user "your-username" \
+  --password "your-password"
 ```
-![alt text](./img/diff-schema.png)
-Compare versions
 
+### Sample Configuration File
+
+```yaml
+# ~/.kafta/config
+contexts:
+  development:
+    bootstrap_servers: "localhost:9092"
+    schema_registry: "http://localhost:8081"
+    use_sasl: false
+  
+  production:
+    bootstrap_servers: "prod-broker1:9092,prod-broker2:9092"
+    schema_registry: "https://schema-registry.prod.com"
+    use_sasl: true
+    sasl_algorithm: "sha512"
+    user: "kafta-user"
+    password: "secure-password"
+
+current_context: "development"
 ```
-$ export SCHEMA_OUTPUT=$(kafta schema get --subject example --version 1 2>&1)
-$ kafta schema diff --subject example --version 1 --schema "$SCHEMA_OUTPUT"
+
+---
+
+## 🎯 Usage Examples
+
+### Cluster Management
+
+```bash
+# List all configured contexts
+kafta config get-contexts
+
+# Switch between clusters
+kafta config use-context production
+
+# Describe current cluster
+kafta cluster describe
 ```
-![alt text](./img/diff-versions.png)
 
-# 💻 Code Contributors
+### Topic Management
 
-<a href="https://github.com/electric-saw/kafta/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=electric-saw/kafta" />
-</a>
+```bash
+# List all topics
+kafta topic list
 
+# Create a new topic
+kafta topic create my-topic \
+  --partitions 3 \
+  --replication-factor 2
 
-# Next features
+# Describe topic details
+kafta topic describe my-topic
 
-* Full support and management for schema-registry
-* Full support and management for KSQL
-* Tail data of topics (WIP)
-* Producer data of topics (WIP)
-* Change configs for topics (WIP)
-* Dump/Restore data of topics
+# Delete a topic
+kafta topic delete my-topic
+
+# List topic configurations
+kafta topic list-configs my-topic
+```
+
+### Consumer Group Management
+
+```bash
+# List all consumer groups
+kafta consumer list
+
+# Check consumer lag
+kafta consumer lag my-consumer-group
+
+# Describe consumer group
+kafta consumer describe my-consumer-group
+
+# Delete consumer group
+kafta consumer delete my-consumer-group
+```
+
+### Message Production & Consumption
+
+```bash
+# Produce messages to a topic
+kafta producer --topic my-topic
+# Type your messages and press Enter
+# Use Ctrl+C to exit
+
+# Consume messages from a topic
+kafta console consumer --topic my-topic
+
+# Consume with specific consumer group
+kafta console consumer --topic my-topic --group my-group
+
+# Consume with verbose output
+kafta console consumer --topic my-topic --verbose
+```
+
+### Schema Registry Operations
+
+```bash
+# List all schema subjects
+kafta schema subjects-list
+
+# Get latest schema for a subject
+kafta schema get my-topic-value
+
+# Get specific version of schema
+kafta schema get my-topic-value --version 2
+
+# List all versions for a subject
+kafta schema versions my-topic-value
+
+# Compare schema versions (shows diff)
+kafta schema diff my-topic-value --from-version 1 --to-version 2
+```
+
+### Output Formats
+
+```bash
+# Default table output
+kafta topic list
+
+# JSON output
+kafta topic list --output json
+
+# YAML output  
+kafta topic list --output yaml
+
+# Save output to file
+kafta topic list --output json > topics.json
+```
+
+---
+
+## 🎪 Smart Features
+
+### Intelligent Suggestions
+
+Kafta provides helpful suggestions when you make typos:
+
+```bash
+$ kafta clustr describe
+Command 'clustr' not found. Did you mean 'cluster'?
+
+$ kafta topic craete my-topic
+Command 'craete' not found. Did you mean 'create'?
+```
+
+### Command Completion
+
+Enable bash/zsh completion:
+
+```bash
+# For bash
+kafta completion bash > /etc/bash_completion.d/kafta
+
+# For zsh  
+kafta completion zsh > "${fpath[1]}/_kafta"
+
+# For fish
+kafta completion fish > ~/.config/fish/completions/kafta.fish
+```
+
+---
+
+## 🏗️ Advanced Features
+
+### Environment Variables
+
+Override configuration with environment variables:
+
+```bash
+export KAFTA_BOOTSTRAP_SERVERS="localhost:9092"
+export KAFTA_SCHEMA_REGISTRY="http://localhost:8081"
+export KAFTA_SASL_USERNAME="my-user"
+export KAFTA_SASL_PASSWORD="my-password"
+
+kafta cluster describe  # Uses environment variables
+```
+
+### Configuration Templates
+
+Create reusable configuration templates:
+
+```bash
+# Create template for development environments
+kafta config create-template dev-template \
+  --bootstrap-servers "{{.host}}:9092" \
+  --schema-registry "http://{{.host}}:8081"
+
+# Apply template
+kafta config apply-template dev-template \
+  --set host=localhost \
+  --context my-dev-cluster
+```
+
+---
+
+## 🛠️ Development
+
+### Building from Source
+
+```bash
+# Clone repository
+git clone https://github.com/electric-saw/kafta.git
+cd kafta
+
+# Build binary
+go build -o kafta cmd/kafta/main.go
+
+# Install locally
+go install ./cmd/kafta
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+go test ./...
+
+# Run tests with coverage
+go test -cover ./...
+
+# Run integration tests (requires Kafka)
+go test -tags=integration ./...
+```
+
+### Development Setup
+
+#### 🍎 macOS Development Setup
+
+```bash
+# 1. Install Homebrew (if not already installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# 2. Install Go (if not already installed)
+brew install go
+
+# 3. Install development tools
+brew install golangci-lint pre-commit
+
+# 4. Clone and setup project
+git clone https://github.com/electric-saw/kafta.git
+cd kafta
+
+# 5. Install Go dependencies
+go mod download
+
+# 6. Setup pre-commit hooks
+pre-commit install
+
+# 7. Run initial checks
+golangci-lint run
+go test ./...
+
+# 8. Verify installation
+echo "✅ Development environment ready!"
+kafta --version || echo "Build the project first: go build -o kafta cmd/kafta/main.go"
+```
+
+#### 🐧 Linux Development Setup
+
+**Ubuntu/Debian:**
+```bash
+# 1. Update package manager
+sudo apt update
+
+# 2. Install Go (if not already installed)
+sudo apt install golang-go
+
+# 3. Install Python and pip (for pre-commit)
+sudo apt install python3 python3-pip
+
+# 4. Install pre-commit
+pip3 install pre-commit
+
+# 5. Install golangci-lint
+curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
+
+# 6. Add Go bin to PATH
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
+source ~/.bashrc
+
+# 7. Clone and setup project
+git clone https://github.com/electric-saw/kafta.git
+cd kafta
+
+# 8. Install Go dependencies
+go mod download
+
+# 9. Setup pre-commit hooks
+pre-commit install
+
+# 10. Run initial checks
+golangci-lint run
+go test ./...
+```
+
+**CentOS/RHEL/Fedora:**
+```bash
+# 1. Install Go (if not already installed)
+sudo dnf install golang  # Fedora
+# OR
+sudo yum install golang  # CentOS/RHEL
+
+# 2. Install Python and pip
+sudo dnf install python3 python3-pip  # Fedora
+# OR
+sudo yum install python3 python3-pip  # CentOS/RHEL
+
+# 3. Install pre-commit
+pip3 install --user pre-commit
+
+# 4. Install golangci-lint
+curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.55.2
+
+# 5. Add to PATH
+echo 'export PATH=$PATH:$(go env GOPATH)/bin:$HOME/.local/bin' >> ~/.bashrc
+source ~/.bashrc
+
+# 6. Continue with project setup (same as Ubuntu)
+git clone https://github.com/electric-saw/kafta.git
+cd kafta
+go mod download
+pre-commit install
+golangci-lint run
+go test ./...
+```
+
+#### 🪟 Windows Development Setup
+
+**PowerShell (Run as Administrator):**
+```powershell
+# 1. Install Chocolatey (package manager for Windows)
+Set-ExecutionPolicy Bypass -Scope Process -Force
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+# 2. Install Go (if not already installed)
+choco install golang
+
+# 3. Install Python (for pre-commit)
+choco install python
+
+# 4. Install Git (if not already installed)
+choco install git
+
+# 5. Refresh environment variables
+refreshenv
+
+# 6. Install pre-commit
+pip install pre-commit
+
+# 7. Install golangci-lint
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+# 8. Clone and setup project
+git clone https://github.com/electric-saw/kafta.git
+cd kafta
+
+# 9. Install Go dependencies
+go mod download
+
+# 10. Setup pre-commit hooks
+pre-commit install
+
+# 11. Run initial checks
+golangci-lint run
+go test ./...
+```
+
+**Alternative Windows Setup (without Chocolatey):**
+```powershell
+# 1. Download and install Go manually from https://golang.org/dl/
+# 2. Download and install Python from https://python.org/downloads/
+# 3. Download and install Git from https://git-scm.com/download/win
+
+# 4. Install pre-commit via pip
+pip install pre-commit
+
+# 5. Install golangci-lint via Go
+go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+# 6. Ensure Go bin is in PATH (usually automatic, but check)
+# Add %USERPROFILE%\goin to your PATH environment variable if needed
+
+# 7. Continue with project setup
+git clone https://github.com/electric-saw/kafta.git
+cd kafta
+go mod download
+pre-commit install
+golangci-lint run
+go test ./...
+```
+
+### 🩺 Development Environment Verification
+
+Run this script to verify your development setup:
+
+```bash
+#!/bin/bash
+echo "🔍 Kafta Development Environment Check"
+echo "====================================="
+
+echo ""
+echo "📦 Go Environment:"
+go version 2>/dev/null || echo "❌ Go not installed"
+echo "GOPATH: $(go env GOPATH 2>/dev/null)"
+echo "GOROOT: $(go env GOROOT 2>/dev/null)"
+
+echo ""
+echo "🔧 Development Tools:"
+golangci-lint --version 2>/dev/null || echo "❌ golangci-lint not installed"
+pre-commit --version 2>/dev/null || echo "❌ pre-commit not installed"
+git --version 2>/dev/null || echo "❌ git not installed"
+
+echo ""
+echo "📁 Project Setup:"
+[ -f "go.mod" ] && echo "✅ go.mod found" || echo "❌ go.mod not found"
+[ -f ".golangci.yml" ] && echo "✅ .golangci.yml found" || echo "❌ .golangci.yml not found"
+[ -f ".pre-commit-config.yaml" ] && echo "✅ .pre-commit-config.yaml found" || echo "❌ .pre-commit-config.yaml not found"
+
+echo ""
+echo "🧪 Running Quick Tests:"
+echo "• go mod tidy: $(go mod tidy 2>&1 && echo "✅ OK" || echo "❌ Failed")"
+echo "• go build: $(go build cmd/kafta/main.go 2>&1 && echo "✅ OK" || echo "❌ Failed")"
+echo "• golangci-lint: $(golangci-lint run --timeout=60s 2>&1 >/dev/null && echo "✅ OK" || echo "⚠️ Issues found")"
+
+echo ""
+if command -v kafta >/dev/null 2>&1; then
+    echo "✅ kafta command available: $(kafta --version 2>/dev/null || echo "version command not available")"
+else
+    echo "ℹ️  kafta not in PATH (build and install: go install ./cmd/kafta)"
+fi
+```
+
+### 🏃‍♂️ Quick Start for Contributors
+
+```bash
+# One-liner setup for macOS
+brew install go golangci-lint pre-commit && git clone https://github.com/electric-saw/kafta.git && cd kafta && go mod download && pre-commit install
+
+# One-liner setup for Ubuntu/Debian
+sudo apt update && sudo apt install golang-go python3-pip && pip3 install pre-commit && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin
+
+# Verify everything works
+go test ./... && golangci-lint run && echo "🎉 Ready to contribute!"
+```
+
+### 🐳 Docker Development Environment
+
+If you prefer to use Docker for development:
+
+```bash
+# Build development Docker image
+docker build -t kafta-dev -f Dockerfile.dev .
+
+# Run development container
+docker run -it --rm -v $(pwd):/workspace kafta-dev
+
+# Inside container, run development commands
+go test ./...
+golangci-lint run
+```
+
+### 📋 Development Workflow
+
+1. **Fork the repository** on GitHub
+2. **Clone your fork** locally:
+   ```bash
+   git clone https://github.com/YOUR-USERNAME/kafta.git
+   cd kafta
+   ```
+3. **Install dependencies**:
+   ```bash
+   go mod download
+   ```
+4. **Setup development tools**:
+   ```bash
+   pre-commit install
+   ```
+5. **Create a feature branch**:
+   ```bash
+   git checkout -b feature/my-awesome-feature
+   ```
+6. **Make your changes** and test:
+   ```bash
+   go test ./...
+   golangci-lint run
+   ```
+7. **Commit your changes**:
+   ```bash
+   git add .
+   git commit -m "feat: add awesome feature"
+   ```
+8. **Push and create Pull Request**:
+   ```bash
+   git push origin feature/my-awesome-feature
+   ```
+
+### 🔍 Code Quality Tools
+
+```bash
+# Format code
+go fmt ./...
+
+# Vet code for issues
+go vet ./...
+
+# Run linter with auto-fix
+golangci-lint run --fix
+
+# Run pre-commit on all files
+pre-commit run --all-files
+
+# Update dependencies
+go mod tidy
+go mod vendor  # if using vendor
+
+# Security scan
+go list -json -m all | nancy sleuth  # requires nancy to be installed
+```
+
+### 🧪 Testing Guidelines
+
+```bash
+# Run specific test
+go test ./pkg/cmd/...
+
+# Run tests with verbose output
+go test -v ./...
+
+# Run tests with race detection
+go test -race ./...
+
+# Generate coverage report
+go test -coverprofile=coverage.out ./...
+go tool cover -html=coverage.out
+
+# Benchmark tests
+go test -bench=. ./...
+```
+
+### 📈 Performance Profiling
+
+```bash
+# CPU profiling
+go test -cpuprofile=cpu.prof ./...
+go tool pprof cpu.prof
+
+# Memory profiling
+go test -memprofile=mem.prof ./...
+go tool pprof mem.prof
+
+# Build with profiling enabled
+go build -tags=profile ./cmd/kafta
+```
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+### Quick Start for Contributors
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📋 Roadmap
+
+### ✅ Completed Features
+- [x] Basic topic management (CRUD)
+- [x] Consumer group management  
+- [x] Multi-cluster configuration
+- [x] SASL authentication support
+- [x] Schema Registry integration
+- [x] Smart command suggestions
+- [x] Multiple output formats
+
+### 🚧 Work In Progress
+- [ ] Advanced schema management (evolution, compatibility)
+- [ ] KSQL support and management
+- [ ] Real-time topic data tailing
+- [ ] Performance benchmarking tools
+- [ ] Monitoring and alerting
+- [ ] ACL management
+
+### 🎯 Planned Features
+- [ ] Kafka Connect management
+- [ ] Transaction support
+- [ ] Kafka Streams integration
+- [ ] Web UI dashboard
+- [ ] Plugin system
+- [ ] Docker/Kubernetes integration
+
+---
+
+## 🐛 Known Issues
+
+- Schema registry operations may timeout with large schemas
+- Consumer lag calculation might be inaccurate during rebalancing
+- Some SASL mechanisms are not yet supported
+
+See [Issues](https://github.com/electric-saw/kafta/issues) for the latest bugs and feature requests.
+
+---
+
+## 📄 License
+
+This project is licensed under the AGPL-3.0 License - see the [LICENSE.txt](LICENSE.txt) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- Inspired by [kubectl](https://kubernetes.io/docs/reference/kubectl/) for the command structure
+- Built with [Sarama](https://github.com/IBM/sarama) Kafka library
+- Uses [Cobra](https://github.com/spf13/cobra) for CLI framework
+
+---
+
+## 📞 Support & Community
+
+- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/electric-saw/kafta/issues)
+- 💡 **Feature Requests**: [GitHub Discussions](https://github.com/electric-saw/kafta/discussions)  
+- 📖 **Documentation**: [Wiki](https://github.com/electric-saw/kafta/wiki)
+- 💬 **Community**: [Slack Channel](https://join.slack.com/t/kafta-community/shared_invite/...)
+
+---
+
+## ⭐ Star History
+
+If you find Kafta useful, please consider giving it a star! ⭐
+
+[![Star History Chart](https://api.star-history.com/svg?repos=electric-saw/kafta&type=Date)](https://star-history.com/#electric-saw/kafta&Date)
+
+---
+
+**Made with ❤️ by the Kafta team**

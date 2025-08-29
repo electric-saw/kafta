@@ -1,0 +1,21 @@
+title: "Kafta"
+description: "Modern, non-JVM command-line interface for managing Apache Kafka clusters"
+baseurl: ""
+url: "https://electric-saw.github.io/kafta"
+markdown: kramdown
+highlighter: rouge
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+author:
+  name: "Electric Saw Team"
+social:
+  name: "Kafta"
+  links:
+    - "https://github.com/electric-saw/kafta"
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
