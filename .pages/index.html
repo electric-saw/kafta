@@ -517,6 +517,18 @@
             background: var(--success-color);
         }
 
+        .example-input .copy-button {
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.25rem;
+            font-size: 0.8rem;
+        }
+
+        .command-prompt {
+            color: var(--text-muted);
+            font-weight: normal;
+        }
+
         .code-line {
             margin-bottom: 0.5rem;
         }
@@ -587,10 +599,11 @@
             background: var(--bg-darker);
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            padding: 1rem;
+            padding: 1rem 3.5rem 1rem 1rem;
             margin-bottom: 1rem;
             font-family: 'Fira Code', monospace;
             color: var(--golang-blue);
+            position: relative;
         }
 
         .example-output {
@@ -1043,7 +1056,8 @@
                     </div>
                     <div class="example-body">
                         <div class="example-input">
-                            $ kafta topic list
+                            <button class="copy-button" onclick="copyToClipboard('list-topics-code')">📋</button>
+                            <span class="command-prompt">$ </span><span id="list-topics-code">kafta topic list</span>
                         </div>
                         <div class="example-output">✓ user-events
 ✓ order-events
@@ -1058,7 +1072,8 @@
                     </div>
                     <div class="example-body">
                         <div class="example-input">
-                            $ kafta topic create my-topic --partitions 3 --replication-factor 1
+                            <button class="copy-button" onclick="copyToClipboard('create-topic-code')">📋</button>
+                            <span class="command-prompt">$ </span><span id="create-topic-code">kafta topic create my-topic --partitions 3 --replication-factor 1</span>
                         </div>
                         <div class="example-output">✓ Topic 'my-topic' created successfully</div>
                     </div>
@@ -1071,7 +1086,8 @@
                     </div>
                     <div class="example-body">
                         <div class="example-input">
-                            $ kafta consumer lag my-group
+                            <button class="copy-button" onclick="copyToClipboard('consumer-lag-code')">📋</button>
+                            <span class="command-prompt">$ </span><span id="consumer-lag-code">kafta consumer lag my-group</span>
                         </div>
                         <div class="example-output">TOPIC      PARTITION  LAG
 my-topic   0          15
@@ -1086,7 +1102,8 @@ my-topic   1          3</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
-                            $ kafta config get-contexts
+                            <button class="copy-button" onclick="copyToClipboard('switch-contexts-code')">📋</button>
+                            <span class="command-prompt">$ </span><span id="switch-contexts-code">kafta config get-contexts</span>
                         </div>
                         <div class="example-output">CURRENT  NAME         CLUSTER
 *        local        localhost:9092
@@ -1102,7 +1119,8 @@ my-topic   1          3</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
-                            $ kafta schema subjects-list
+                            <button class="copy-button" onclick="copyToClipboard('schema-registry-code')">📋</button>
+                            <span class="command-prompt">$ </span><span id="schema-registry-code">kafta schema subjects-list</span>
                         </div>
                         <div class="example-output">user-value
 order-key
@@ -1117,7 +1135,8 @@ payment-value</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
-                            $ kafta console consumer --topic my-topic --group my-group
+                            <button class="copy-button" onclick="copyToClipboard('consume-messages-code')">📋</button>
+                            <span class="command-prompt">$ </span><span id="consume-messages-code">kafta console consumer --topic my-topic --group my-group</span>
                         </div>
                         <div class="example-output">{"id": 1, "message": "Hello Kafka!"}
 {"id": 2, "message": "Another message"}</div>
@@ -1144,7 +1163,6 @@ payment-value</div>
                         <li><a href="https://github.com/electric-saw/kafta">Source Code</a></li>
                         <li><a href="https://github.com/electric-saw/kafta/blob/main/README.md">Documentation</a></li>
                         <li><a href="https://github.com/electric-saw/kafta/issues">Report Bug</a></li>
-                        <li><a href="https://github.com/electric-saw/kafta/discussions">Discussions</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -1162,7 +1180,6 @@ payment-value</div>
                         <li><a href="https://github.com/electric-saw/kafta/blob/main/CONTRIBUTING.md">How to Contribute</a></li>
                         <li><a href="https://github.com/electric-saw/kafta/issues/new">Request Feature</a></li>
                         <li><a href="https://github.com/electric-saw">Author Profile</a></li>
-                        <li><a href="mailto:contact@example.com">Contact</a></li>
                     </ul>
                 </div>
             </div>
