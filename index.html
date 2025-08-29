@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kafta - Modern CLI for Apache Kafka</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
-    
+
     <!-- Meta tags for SEO and social media -->
     <meta name="description" content="Kafta - Modern CLI tool for managing Apache Kafka clusters. Lightweight and efficient alternative to JVM-based tools.">
     <meta name="keywords" content="kafka, cli, apache kafka, go, golang, devops, microservices, streaming">
     <meta name="author" content="Our Team Torres">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://github.com/electric-saw/kafta/">
     <meta property="og:title" content="Kafta - Modern CLI for Apache Kafka">
     <meta property="og:description" content="Modern CLI tool for managing Apache Kafka clusters. Lightweight and efficient alternative to JVM-based tools.">
-    
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://github.com/electric-saw/kafta/">
@@ -788,7 +788,7 @@
             <div class="hero-text">
                 <h1 class="hero-title">Modern CLI for Apache Kafka</h1>
                 <p class="hero-subtitle">
-                    Lightweight and efficient command-line tool for managing Kafka clusters. 
+                    Lightweight and efficient command-line tool for managing Kafka clusters.
                     A modern alternative to JVM-based tools, inspired by kubectl.
                 </p>
                 <div class="tech-stack">
@@ -929,7 +929,7 @@
                         💡 Auto-complete
                     </button>
                 </div>
-                
+
                 <div class="tab-content active" id="go-install">
                     <div class="code-block">
                         <button class="copy-button" onclick="copyToClipboard('go-install-code')">📋</button>
@@ -948,7 +948,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="tab-content" id="context-setup">
                     <div class="code-block">
                         <button class="copy-button" onclick="copyToClipboard('context-code')">📋</button>
@@ -978,7 +978,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="tab-content" id="advanced">
                     <div class="code-block">
                         <button class="copy-button" onclick="copyToClipboard('advanced-code')">📋</button>
@@ -1002,7 +1002,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="tab-content" id="completion">
                     <div class="code-block">
                         <button class="copy-button" onclick="copyToClipboard('completion-code')">📋</button>
@@ -1050,7 +1050,7 @@
 ✓ payment-events</div>
                     </div>
                 </div>
-                
+
                 <div class="example-card">
                     <div class="example-header">
                         <div class="example-title">Create Topic</div>
@@ -1063,7 +1063,7 @@
                         <div class="example-output">✓ Topic 'my-topic' created successfully</div>
                     </div>
                 </div>
-                
+
                 <div class="example-card">
                     <div class="example-header">
                         <div class="example-title">Consumer Lag</div>
@@ -1078,7 +1078,7 @@ my-topic   0          15
 my-topic   1          3</div>
                     </div>
                 </div>
-                
+
                 <div class="example-card">
                     <div class="example-header">
                         <div class="example-title">Switch Contexts</div>
@@ -1094,7 +1094,7 @@ my-topic   1          3</div>
          staging      staging-kafka:9092</div>
                     </div>
                 </div>
-                
+
                 <div class="example-card">
                     <div class="example-header">
                         <div class="example-title">Schema Registry</div>
@@ -1109,7 +1109,7 @@ order-key
 payment-value</div>
                     </div>
                 </div>
-                
+
                 <div class="example-card">
                     <div class="example-header">
                         <div class="example-title">Consume Messages</div>
@@ -1134,7 +1134,7 @@ payment-value</div>
                 <div class="footer-section">
                     <h3>About Kafta</h3>
                     <p>
-                        A modern and efficient CLI tool for managing Apache Kafka clusters, 
+                        A modern and efficient CLI tool for managing Apache Kafka clusters,
                         offering a lightweight alternative to JVM-based tools.
                     </p>
                 </div>
@@ -1229,44 +1229,44 @@ payment-value</div>
                 const command = this.commands[this.currentCommand].input;
                 const inputElement = document.getElementById('current-input');
                 const cursor = document.getElementById('cursor');
-                
+
                 if (!inputElement || !cursor) return;
-                
+
                 cursor.style.display = 'inline-block';
                 inputElement.textContent = '';
-                
+
                 for (let i = 0; i < command.length; i++) {
                     if (!inputElement) break;
                     inputElement.textContent += command[i];
                     await this.wait(60 + Math.random() * 40);
                 }
-                
+
                 await this.wait(800);
             }
 
             async showOutput() {
                 const output = this.commands[this.currentCommand].output;
                 const cursor = document.getElementById('cursor');
-                
+
                 if (cursor) cursor.style.display = 'none';
-                
+
                 const outputLine = document.createElement('div');
                 outputLine.className = 'terminal-line';
-                
+
                 const outputSpan = document.createElement('span');
                 outputSpan.className = 'terminal-output';
                 outputSpan.textContent = output.replace(/\\n/g, '\n');
                 outputSpan.style.whiteSpace = 'pre-line';
-                
+
                 outputLine.appendChild(outputSpan);
                 this.element.appendChild(outputLine);
-                
+
                 await this.wait(2500);
             }
 
             nextCommand() {
                 this.currentCommand = (this.currentCommand + 1) % this.commands.length;
-                
+
                 // Clear terminal and restart
                 this.element.innerHTML = `
                     <div class="terminal-line">
@@ -1295,11 +1295,11 @@ payment-value</div>
                 tabButtons.forEach(button => {
                     button.addEventListener('click', () => {
                         const targetTab = button.getAttribute('data-tab');
-                        
+
                         // Remove active class from all buttons and contents
                         tabButtons.forEach(btn => btn.classList.remove('active'));
                         tabContents.forEach(content => content.classList.remove('active'));
-                        
+
                         // Add active class to clicked button and corresponding content
                         button.classList.add('active');
                         const targetContent = document.getElementById(targetTab);
@@ -1323,16 +1323,16 @@ payment-value</div>
         function copyToClipboard(elementId) {
             const element = document.getElementById(elementId);
             if (!element) return;
-            
+
             const text = element.textContent || element.innerText;
-            
+
             // Remove comments and empty lines for cleaner copy
             const cleanText = text
                 .split('\n')
                 .filter(line => line.trim() && !line.trim().startsWith('#'))
                 .map(line => line.trim())
                 .join('\n');
-            
+
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(cleanText).then(() => {
                     showCopyFeedback(element);
@@ -1354,14 +1354,14 @@ payment-value</div>
             document.body.appendChild(textarea);
             textarea.focus();
             textarea.select();
-            
+
             try {
                 document.execCommand('copy');
                 showCopyFeedback(element);
             } catch (err) {
                 console.error('Fallback copy failed:', err);
             }
-            
+
             document.body.removeChild(textarea);
         }
 
@@ -1369,10 +1369,10 @@ payment-value</div>
             const button = element.parentNode.querySelector('.copy-button');
             if (button) {
                 const originalText = button.textContent;
-                
+
                 button.textContent = '✅';
                 button.classList.add('copied');
-                
+
                 setTimeout(() => {
                     button.textContent = originalText;
                     button.classList.remove('copied');
@@ -1383,13 +1383,13 @@ payment-value</div>
         // Smooth Scrolling for Navigation Links
         function initSmoothScrolling() {
             const links = document.querySelectorAll('a[href^="#"]');
-            
+
             links.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     const targetId = link.getAttribute('href').substring(1);
                     const targetElement = document.getElementById(targetId);
-                    
+
                     if (targetElement) {
                         const offsetTop = targetElement.offsetTop - 80; // Account for fixed header
                         window.scrollTo({
@@ -1404,7 +1404,7 @@ payment-value</div>
         // Intersection Observer for Animations
         function initScrollAnimations() {
             if (!('IntersectionObserver' in window)) return;
-            
+
             const observerOptions = {
                 threshold: 0.1,
                 rootMargin: '0px 0px -50px 0px'
@@ -1431,12 +1431,12 @@ payment-value</div>
         function initHeaderScroll() {
             const header = document.querySelector('.header');
             if (!header) return;
-            
+
             let lastScroll = 0;
 
             window.addEventListener('scroll', () => {
                 const currentScroll = window.pageYOffset;
-                
+
                 if (currentScroll > 100) {
                     header.style.background = 'rgba(10, 14, 26, 0.98)';
                     header.style.backdropFilter = 'blur(15px)';
@@ -1444,14 +1444,14 @@ payment-value</div>
                     header.style.background = 'rgba(10, 14, 26, 0.95)';
                     header.style.backdropFilter = 'blur(10px)';
                 }
-                
+
                 // Hide/show header on scroll
                 if (currentScroll > lastScroll && currentScroll > 200) {
                     header.style.transform = 'translateY(-100%)';
                 } else {
                     header.style.transform = 'translateY(0)';
                 }
-                
+
                 lastScroll = currentScroll;
             }, { passive: true });
         }
@@ -1466,15 +1466,15 @@ payment-value</div>
                     new TerminalAnimation(terminalDemo);
                 }, 500);
             }
-            
+
             // Initialize tab system
             new TabSystem();
-            
+
             // Initialize other features
             initSmoothScrolling();
             initScrollAnimations();
             initHeaderScroll();
-            
+
             // Add loading animation
             document.body.style.opacity = '0';
             setTimeout(() => {
@@ -1493,13 +1493,13 @@ payment-value</div>
                     const tabs = Array.from(document.querySelectorAll('.tab-button'));
                     const currentIndex = tabs.indexOf(activeTab);
                     let nextIndex;
-                    
+
                     if (e.key === 'ArrowLeft') {
                         nextIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
                     } else {
                         nextIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
                     }
-                    
+
                     tabs[nextIndex].click();
                     tabs[nextIndex].focus();
                 }
@@ -1513,7 +1513,7 @@ payment-value</div>
 
         // Reduce motion for accessibility
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-        
+
         if (prefersReducedMotion.matches) {
             document.documentElement.style.setProperty('--animation-duration', '0.01ms');
         }

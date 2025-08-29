@@ -50,6 +50,7 @@ A modern, **non-JVM** command-line interface for managing **Apache Kafka** clust
   - [Code Quality Tools](#-code-quality-tools)
   - [Testing Guidelines](#-testing-guidelines)
   - [Performance Profiling](#-performance-profiling)
+  - [Documentation Site](#-documentation-site)
 - [Contributing](#-contributing)
 - [Roadmap](#-roadmap)
 - [Known Issues](#-known-issues)
@@ -258,7 +259,7 @@ contexts:
     bootstrap_servers: "localhost:9092"
     schema_registry: "http://localhost:8081"
     use_sasl: false
-  
+
   production:
     bootstrap_servers: "prod-broker1:9092,prod-broker2:9092"
     schema_registry: "https://schema-registry.prod.com"
@@ -802,6 +803,59 @@ go tool pprof mem.prof
 # Build with profiling enabled
 go build -tags=profile ./cmd/kafta
 ```
+
+---
+
+## 📚 Documentation Site
+
+The project documentation site is generated with **Jekyll** from the contents of the `/.page` directory and automatically deployed to **GitHub Pages**.
+
+### Local Preview
+
+```bash
+cd .page
+bundle install
+bundle exec jekyll serve --livereload
+```
+
+Then open: http://127.0.0.1:4000/kafta
+
+### Structure
+
+- `.page/_config.yml` – Jekyll configuration
+- `.page/*.md` – Documentation Markdown pages (add your docs here)
+- `Gemfile` – GitHub Pages gem declaration
+
+### Adding Pages
+
+Create a new Markdown file inside `.page` (or a subfolder) with front matter:
+
+```markdown
+---
+layout: page
+title: My Feature
+permalink: /my-feature/
+---
+
+Content here.
+```
+
+Commit and push—GitHub Actions will build and deploy it.
+
+### Deployment Workflow
+
+Workflow file: `.github/workflows/static.yml`
+
+It performs:
+1. Checkout
+2. Ruby setup & bundle install (cached)
+3. Jekyll build (production mode) output to `_site`
+4. Upload artifact
+5. Deploy to GitHub Pages
+
+If you change dependencies, bump the `github-pages` gem version if needed and re-run.
+
+---
 
 ---
 
