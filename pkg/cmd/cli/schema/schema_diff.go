@@ -2,7 +2,9 @@ package schema
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"log"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/schema"
@@ -40,7 +42,9 @@ func NewCmdSchemaDiff(config *configuration.Configuration) *cobra.Command {
 	}
 	cmd.Flags().String("version", "", "The version of the subject to retrieve (default: latest)")
 	cmd.Flags().String("schema", "", "The schema to compare against (required)")
-	cmd.MarkFlagRequired("schema")
+	if err := cmd.MarkFlagRequired("schema"); err != nil {
+		log.Fatal(err)
+	}
 
 	return cmd
 }
@@ -57,14 +61,14 @@ func (o *schemaDiff) run() {
 			if message, msgExists := errorResponse["message"]; msgExists {
 				cmdutil.CheckErr(fmt.Errorf("%v", message))
 			} else {
-				cmdutil.CheckErr(fmt.Errorf("Schema Registry error (code: %v)", errorCode))
+				cmdutil.CheckErr(fmt.Errorf("schema Registry error (code: %v)", errorCode))
 			}
 		}
 	}
 
 	prettyJSON := cmdutil.PrettyJSON([]byte(jsonBytes))
 	if prettyJSON == "" {
-		cmdutil.CheckErr(fmt.Errorf("Failed to prettify JSON"))
+		cmdutil.CheckErr(errors.New("failed to prettify JSON"))
 	}
 
 	cmdutil.DiffJSONs(prettyJSON, o.schema)

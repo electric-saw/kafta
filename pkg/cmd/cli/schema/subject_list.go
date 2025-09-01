@@ -22,7 +22,7 @@ func NewCmdSubjects(config *configuration.Configuration) *cobra.Command {
 				if err != nil {
 					cmdutil.CheckErr(err)
 				}
-				
+
 				header := table.Row{"SUBJECT", "COMPATIBILITY", "VERSIONS"}
 				rows := []table.Row{}
 
@@ -53,7 +53,8 @@ func NewCmdSubjects(config *configuration.Configuration) *cobra.Command {
 		},
 	}
 
-	cmd.Flags().BoolVar(&detail, "detail", false, "Show detailed information including compatibility levels and version counts (slower)")
+	cmd.Flags().
+		BoolVar(&detail, "detail", false, "Show detailed information including compatibility levels and version counts (slower)")
 
 	return cmd
 }
