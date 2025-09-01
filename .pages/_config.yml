@@ -1,7 +1,7 @@
 title: "Kafta"
 description: "Modern, non-JVM command-line interface for managing Apache Kafka clusters"
-baseurl: ""
-url: "https://electric-saw.github.io/kafta"
+baseurl: "/kafta"  # Adicione isso se for um projeto em repositório
+url: "https://torresglauco.github.io"  # Mude para seu username
 markdown: kramdown
 highlighter: rouge
 theme: minima
@@ -10,11 +10,11 @@ plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
 author:
-  name: "Electric Saw Team"
+  name: "Glauco Torres"  # Mude para seu nome
 social:
   name: "Kafta"
   links:
-    - "https://github.com/electric-saw/kafta"
+    - "https://github.com/torresglauco/kafta"  # URL correta do seu repo
 exclude:
   - README.md
   - Gemfile
