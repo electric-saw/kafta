@@ -11,8 +11,8 @@ func NewCmdSchema(config *configuration.Configuration) *cobra.Command {
 		Short: "Schema Registry management",
 	}
 
-	cmd.AddCommand(NewCmdSubjectList(config))
-	cmd.AddCommand(NewCmdSubjectVersion(config))
+	cmd.AddCommand(NewCmdSubjects(config))
+	cmd.AddCommand(NewCmdVersions(config))
 	cmd.AddCommand(NewCmdSchemaList(config))
 	cmd.AddCommand(NewCmdSchemaDiff(config))
 
