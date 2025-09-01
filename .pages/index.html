@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kafta - Modern CLI for Apache Kafka</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☕</text></svg>">
 
     <!-- Meta tags for SEO and social media -->
-    <meta name="description" content="Kafta - Modern CLI tool for managing Apache Kafka clusters. Lightweight and efficient alternative to JVM-based tools.">
+    <meta name="description"
+        content="Kafta - Modern CLI tool for managing Apache Kafka clusters. Lightweight and efficient alternative to JVM-based tools.">
     <meta name="keywords" content="kafka, cli, apache kafka, go, golang, devops, microservices, streaming">
     <meta name="author" content="Our Team electric-saw">
 
@@ -15,13 +18,15 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://github.com/electric-saw/kafta/">
     <meta property="og:title" content="Kafta - Modern CLI for Apache Kafka">
-    <meta property="og:description" content="Modern CLI tool for managing Apache Kafka clusters. Lightweight and efficient alternative to JVM-based tools.">
+    <meta property="og:description"
+        content="Modern CLI tool for managing Apache Kafka clusters. Lightweight and efficient alternative to JVM-based tools.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://github.com/electric-saw/kafta/">
     <meta property="twitter:title" content="Kafta - Modern CLI for Apache Kafka">
-    <meta property="twitter:description" content="Modern CLI tool for managing Apache Kafka clusters. Lightweight and efficient alternative to JVM-based tools.">
+    <meta property="twitter:description"
+        content="Modern CLI tool for managing Apache Kafka clusters. Lightweight and efficient alternative to JVM-based tools.">
 
     <style>
         :root {
@@ -82,6 +87,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -93,6 +99,7 @@
                 opacity: 0;
                 transform: translateX(-30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -100,18 +107,25 @@
         }
 
         @keyframes blink {
-            0%, 50% {
+
+            0%,
+            50% {
                 opacity: 1;
             }
-            51%, 100% {
+
+            51%,
+            100% {
                 opacity: 0;
             }
         }
 
         @keyframes float {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translateY(0px);
             }
+
             50% {
                 transform: translateY(-10px);
             }
@@ -765,7 +779,10 @@
 
         /* Accessibility */
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
+
+            *,
+            *::before,
+            *::after {
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
@@ -781,6 +798,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <header class="header">
@@ -878,7 +896,8 @@
                     <span class="feature-icon">🔧</span>
                     <h3 class="feature-title">Schema Registry</h3>
                     <p class="feature-description">
-                        Manage Avro schemas, list subjects, compare versions and much more.
+                        Manage Avro schemas with fast and detailed views. List subjects quickly or view compatibility
+                        levels and version counts.
                     </p>
                 </div>
                 <div class="feature-card">
@@ -910,6 +929,14 @@
                     </p>
                 </div>
                 <div class="feature-card">
+                    <span class="feature-icon">🆕</span>
+                    <h3 class="feature-title">Enhanced Schema Commands</h3>
+                    <p class="feature-description">
+                        Simplified syntax with positional arguments, automatic latest version detection, and smart error
+                        handling.
+                    </p>
+                </div>
+                <div class="feature-card">
                     <span class="feature-icon">💡</span>
                     <h3 class="feature-title">Auto-complete</h3>
                     <p class="feature-description">
@@ -925,7 +952,8 @@
         <div class="container">
             <h2 class="section-title">Get Started</h2>
             <p class="section-subtitle">
-                Install Kafta quickly using Go and configure your Kafka clusters. Requires Go 1.18+ and access to Apache Kafka.
+                Install Kafta quickly using Go and configure your Kafka clusters. Requires Go 1.18+ and access to Apache
+                Kafka.
             </p>
             <div class="tab-container">
                 <div class="tab-buttons">
@@ -938,6 +966,9 @@
                     <button class="tab-button" data-tab="advanced">
                         ⚙️ Advanced Config
                     </button>
+                    <button class="tab-button" data-tab="schema-examples">
+                        🔧 Schema Registry
+                    </button>
                     <button class="tab-button" data-tab="completion">
                         💡 Auto-complete
                     </button>
@@ -948,7 +979,8 @@
                         <button class="copy-button" onclick="copyToClipboard('go-install-code')">📋</button>
                         <div id="go-install-code">
                             <div class="code-line"><span class="comment"># Install latest version</span></div>
-                            <div class="code-line"><span class="command">go install github.com/electric-saw/kafta/cmd/kafta@latest</span></div>
+                            <div class="code-line"><span class="command">go install
+                                    github.com/electric-saw/kafta/cmd/kafta@latest</span></div>
                             <div class="code-line"></div>
                             <div class="code-line"><span class="comment"># Verify installation</span></div>
                             <div class="code-line"><span class="command">kafta --help</span></div>
@@ -956,8 +988,10 @@
                             <div class="code-line"><span class="comment"># Check version</span></div>
                             <div class="code-line"><span class="command">kafta version</span></div>
                             <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># For Go < 1.18 (legacy)</span></div>
-                            <div class="code-line"><span class="command">go get -u github.com/electric-saw/kafta</span></div>
+                            <div class="code-line"><span class="comment"># For Go < 1.18 (legacy)</span>
+                            </div>
+                            <div class="code-line"><span class="command">go get -u github.com/electric-saw/kafta</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -966,28 +1000,36 @@
                     <div class="code-block">
                         <button class="copy-button" onclick="copyToClipboard('context-code')">📋</button>
                         <div id="context-code">
-                            <div class="code-line"><span class="comment"># Configure local development cluster</span></div>
+                            <div class="code-line"><span class="comment"># Configure local development cluster</span>
+                            </div>
                             <div class="code-line"><span class="command">kafta config set-cluster local \</span></div>
-                            <div class="code-line"><span class="command">  --bootstrap-servers localhost:9092</span></div>
+                            <div class="code-line"><span class="command"> --bootstrap-servers localhost:9092</span>
+                            </div>
                             <div class="code-line"></div>
-                            <div class="code-line"><span class="comment"># Configure production cluster with SASL</span></div>
-                            <div class="code-line"><span class="command">kafta config set-cluster production \</span></div>
-                            <div class="code-line"><span class="command">  --bootstrap-servers prod-kafka-1:9092,prod-kafka-2:9092 \</span></div>
-                            <div class="code-line"><span class="command">  --security-protocol SASL_SSL \</span></div>
-                            <div class="code-line"><span class="command">  --sasl-mechanism PLAIN \</span></div>
-                            <div class="code-line"><span class="command">  --sasl-username myuser \</span></div>
-                            <div class="code-line"><span class="command">  --sasl-password mypassword</span></div>
+                            <div class="code-line"><span class="comment"># Configure production cluster with SASL</span>
+                            </div>
+                            <div class="code-line"><span class="command">kafta config set-cluster production \</span>
+                            </div>
+                            <div class="code-line"><span class="command"> --bootstrap-servers
+                                    prod-kafka-1:9092,prod-kafka-2:9092 \</span></div>
+                            <div class="code-line"><span class="command"> --security-protocol SASL_SSL \</span></div>
+                            <div class="code-line"><span class="command"> --sasl-mechanism PLAIN \</span></div>
+                            <div class="code-line"><span class="command"> --sasl-username myuser \</span></div>
+                            <div class="code-line"><span class="command"> --sasl-password mypassword</span></div>
                             <div class="code-line"></div>
                             <div class="code-line"><span class="comment"># Configure staging cluster</span></div>
                             <div class="code-line"><span class="command">kafta config set-cluster staging \</span></div>
-                            <div class="code-line"><span class="command">  --bootstrap-servers staging-kafka:9092 \</span></div>
-                            <div class="code-line"><span class="command">  --schema-registry http://staging-schema-registry:8081</span></div>
+                            <div class="code-line"><span class="command"> --bootstrap-servers staging-kafka:9092
+                                    \</span></div>
+                            <div class="code-line"><span class="command"> --schema-registry
+                                    http://staging-schema-registry:8081</span></div>
                             <div class="code-line"></div>
                             <div class="code-line"><span class="comment"># List all configured clusters</span></div>
                             <div class="code-line"><span class="command">kafta config get-contexts</span></div>
                             <div class="code-line"></div>
                             <div class="code-line"><span class="comment"># Switch to production cluster</span></div>
-                            <div class="code-line"><span class="command">kafta config use-context production</span></div>
+                            <div class="code-line"><span class="command">kafta config use-context production</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1001,17 +1043,65 @@
                             <div class="code-line"></div>
                             <div class="code-line"><span class="comment"># Configure TLS with certificates</span></div>
                             <div class="code-line"><span class="command">kafta config set-cluster secure \</span></div>
-                            <div class="code-line"><span class="command">  --bootstrap-servers secure-kafka:9092 \</span></div>
-                            <div class="code-line"><span class="command">  --security-protocol SSL \</span></div>
-                            <div class="code-line"><span class="command">  --ssl-ca-location /path/to/ca-cert \</span></div>
-                            <div class="code-line"><span class="command">  --ssl-certificate-location /path/to/client-cert \</span></div>
-                            <div class="code-line"><span class="command">  --ssl-key-location /path/to/client-key</span></div>
+                            <div class="code-line"><span class="command"> --bootstrap-servers secure-kafka:9092 \</span>
+                            </div>
+                            <div class="code-line"><span class="command"> --security-protocol SSL \</span></div>
+                            <div class="code-line"><span class="command"> --ssl-ca-location /path/to/ca-cert \</span>
+                            </div>
+                            <div class="code-line"><span class="command"> --ssl-certificate-location
+                                    /path/to/client-cert \</span></div>
+                            <div class="code-line"><span class="command"> --ssl-key-location /path/to/client-key</span>
+                            </div>
                             <div class="code-line"></div>
                             <div class="code-line"><span class="comment"># Set request timeout</span></div>
-                            <div class="code-line"><span class="command">kafta config set request-timeout 30s</span></div>
+                            <div class="code-line"><span class="command">kafta config set request-timeout 30s</span>
+                            </div>
                             <div class="code-line"></div>
                             <div class="code-line"><span class="comment"># Enable debug mode</span></div>
                             <div class="code-line"><span class="command">kafta config set debug true</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="schema-examples">
+                    <div class="code-block">
+                        <button class="copy-button" onclick="copyToClipboard('schema-examples-code')">📋</button>
+                        <div id="schema-examples-code">
+                            <div class="code-line"><span class="comment"># List all schema subjects (fast - single API
+                                    call)</span></div>
+                            <div class="code-line"><span class="command">kafta schema subjects</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># List subjects with detailed compatibility
+                                    info (slower)</span></div>
+                            <div class="code-line"><span class="command">kafta schema subjects --detail</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Get latest schema version (automatically uses
+                                    latest)</span></div>
+                            <div class="code-line"><span class="command">kafta schema get user-events-value</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Get specific schema version</span></div>
+                            <div class="code-line"><span class="command">kafta schema get user-events-value --version
+                                    2</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># List all versions with compatibility
+                                    information</span></div>
+                            <div class="code-line"><span class="command">kafta schema versions user-events-value</span>
+                            </div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Compare schemas and see differences</span>
+                            </div>
+                            <div class="code-line"><span class="command">kafta schema diff user-events-value \</span>
+                            </div>
+                            <div class="code-line"><span class="command"> --schema
+                                    '{"type":"record","name":"Test","fields":[]}'</span></div>
+                            <div class="code-line"></div>
+                            <div class="code-line"><span class="comment"># Smart error handling - shows helpful
+                                    messages</span></div>
+                            <div class="code-line"><span class="command">kafta schema get</span></div>
+                            <div class="code-line"><span class="comment"># Output: Error: error: Subject not
+                                    informed</span></div>
+                            <div class="code-line"><span class="comment"># Usage: kafta schema get SUBJECT
+                                    [flags]</span></div>
                         </div>
                     </div>
                 </div>
@@ -1021,18 +1111,22 @@
                         <button class="copy-button" onclick="copyToClipboard('completion-code')">📋</button>
                         <div id="completion-code">
                             <div class="code-line"><span class="comment"># Bash completion</span></div>
-                            <div class="code-line"><span class="command">kafta completion bash > /etc/bash_completion.d/kafta</span></div>
+                            <div class="code-line"><span class="command">kafta completion bash >
+                                    /etc/bash_completion.d/kafta</span></div>
                             <div class="code-line"><span class="command"># Or for current user</span></div>
                             <div class="code-line"><span class="command">kafta completion bash >> ~/.bashrc</span></div>
                             <div class="code-line"></div>
                             <div class="code-line"><span class="comment"># Zsh completion</span></div>
-                            <div class="code-line"><span class="command">kafta completion zsh > "${fpath[1]}/_kafta"</span></div>
+                            <div class="code-line"><span class="command">kafta completion zsh >
+                                    "${fpath[1]}/_kafta"</span></div>
                             <div class="code-line"></div>
                             <div class="code-line"><span class="comment"># Fish completion</span></div>
-                            <div class="code-line"><span class="command">kafta completion fish > ~/.config/fish/completions/kafta.fish</span></div>
+                            <div class="code-line"><span class="command">kafta completion fish >
+                                    ~/.config/fish/completions/kafta.fish</span></div>
                             <div class="code-line"></div>
                             <div class="code-line"><span class="comment"># PowerShell (Windows)</span></div>
-                            <div class="code-line"><span class="command">kafta completion powershell > kafta.ps1</span></div>
+                            <div class="code-line"><span class="command">kafta completion powershell > kafta.ps1</span>
+                            </div>
                             <div class="code-line"><span class="command">. ./kafta.ps1</span></div>
                         </div>
                     </div>
@@ -1060,8 +1154,8 @@
                             <span class="command-prompt">$ </span><span id="list-topics-code">kafta topic list</span>
                         </div>
                         <div class="example-output">✓ user-events
-✓ order-events
-✓ payment-events</div>
+                            ✓ order-events
+                            ✓ payment-events</div>
                     </div>
                 </div>
 
@@ -1073,7 +1167,8 @@
                     <div class="example-body">
                         <div class="example-input">
                             <button class="copy-button" onclick="copyToClipboard('create-topic-code')">📋</button>
-                            <span class="command-prompt">$ </span><span id="create-topic-code">kafta topic create my-topic --partitions 3 --replication-factor 1</span>
+                            <span class="command-prompt">$ </span><span id="create-topic-code">kafta topic create
+                                my-topic --partitions 3 --replication-factor 1</span>
                         </div>
                         <div class="example-output">✓ Topic 'my-topic' created successfully</div>
                     </div>
@@ -1087,11 +1182,12 @@
                     <div class="example-body">
                         <div class="example-input">
                             <button class="copy-button" onclick="copyToClipboard('consumer-lag-code')">📋</button>
-                            <span class="command-prompt">$ </span><span id="consumer-lag-code">kafta consumer lag my-group</span>
+                            <span class="command-prompt">$ </span><span id="consumer-lag-code">kafta consumer lag
+                                my-group</span>
                         </div>
-                        <div class="example-output">TOPIC      PARTITION  LAG
-my-topic   0          15
-my-topic   1          3</div>
+                        <div class="example-output">TOPIC PARTITION LAG
+                            my-topic 0 15
+                            my-topic 1 3</div>
                     </div>
                 </div>
 
@@ -1103,43 +1199,102 @@ my-topic   1          3</div>
                     <div class="example-body">
                         <div class="example-input">
                             <button class="copy-button" onclick="copyToClipboard('switch-contexts-code')">📋</button>
-                            <span class="command-prompt">$ </span><span id="switch-contexts-code">kafta config get-contexts</span>
+                            <span class="command-prompt">$ </span><span id="switch-contexts-code">kafta config
+                                get-contexts</span>
                         </div>
-                        <div class="example-output">CURRENT  NAME         CLUSTER
-*        local        localhost:9092
-         production   prod-kafka:9092
-         staging      staging-kafka:9092</div>
+                        <div class="example-output">CURRENT NAME CLUSTER
+                            * local localhost:9092
+                            production prod-kafka:9092
+                            staging staging-kafka:9092</div>
                     </div>
                 </div>
 
                 <div class="example-card">
                     <div class="example-header">
-                        <div class="example-title">Schema Registry</div>
-                        <div class="example-description">Manage Avro schemas</div>
+                        <div class="example-title">List Schema Subjects (Fast)</div>
+                        <div class="example-description">View all schema subjects quickly with a single API call</div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
-                            <button class="copy-button" onclick="copyToClipboard('schema-registry-code')">📋</button>
-                            <span class="command-prompt">$ </span><span id="schema-registry-code">kafta schema subjects-list</span>
+                            <button class="copy-button" onclick="copyToClipboard('schema-subjects-code')">📋</button>
+                            <span class="command-prompt">$ </span><span id="schema-subjects-code">kafta schema
+                                subjects</span>
                         </div>
-                        <div class="example-output">user-value
-order-key
-payment-value</div>
+                        <div class="example-output">user-events-value
+                            order-events-key
+                            payment-events-value</div>
                     </div>
                 </div>
 
                 <div class="example-card">
                     <div class="example-header">
-                        <div class="example-title">Consume Messages</div>
-                        <div class="example-description">Consume messages in real-time</div>
+                        <div class="example-title">Schema Subjects with Details</div>
+                        <div class="example-description">View subjects with compatibility levels and version counts
+                        </div>
                     </div>
                     <div class="example-body">
                         <div class="example-input">
-                            <button class="copy-button" onclick="copyToClipboard('consume-messages-code')">📋</button>
-                            <span class="command-prompt">$ </span><span id="consume-messages-code">kafta console consumer --topic my-topic --group my-group</span>
+                            <button class="copy-button"
+                                onclick="copyToClipboard('schema-subjects-detail-code')">📋</button>
+                            <span class="command-prompt">$ </span><span id="schema-subjects-detail-code">kafta schema
+                                subjects --detail</span>
                         </div>
-                        <div class="example-output">{"id": 1, "message": "Hello Kafka!"}
-{"id": 2, "message": "Another message"}</div>
+                        <div class="example-output">SUBJECT COMPATIBILITY VERSIONS
+                            user-events-value BACKWARD 3
+                            order-events-key FULL 2
+                            payment-events-value FORWARD 1</div>
+                    </div>
+                </div>
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">Get Latest Schema</div>
+                        <div class="example-description">Retrieve the latest version of a schema</div>
+                    </div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            $ kafta schema get user-events-value
+                        </div>
+                        <div class="example-output">{
+                            "type": "record",
+                            "name": "UserEvent",
+                            "fields": [
+                            {"name": "userId", "type": "string"},
+                            {"name": "action", "type": "string"}
+                            ]
+                            }</div>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">Schema Versions with Compatibility</div>
+                        <div class="example-description">List all versions with compatibility information for each</div>
+                    </div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            $ kafta schema versions user-events-value
+                        </div>
+                        <div class="example-output">VERSION ID COMPATIBILITY
+                            1 101 BACKWARD
+                            2 102 BACKWARD
+                            3 103 BACKWARD</div>
+                    </div>
+                </div>
+
+                <div class="example-card">
+                    <div class="example-header">
+                        <div class="example-title">Schema Comparison</div>
+                        <div class="example-description">Compare schemas and see differences</div>
+                    </div>
+                    <div class="example-body">
+                        <div class="example-input">
+                            $ kafta schema diff user-events-value --schema
+                            '{"type":"record","name":"UserEvent","fields":[{"name":"id","type":"string"}]}'
+                        </div>
+                        <div class="example-output">Schema differences found:
+                            - field 'userId' removed
+                            - field 'action' removed
+                            + field 'id' added</div>
                     </div>
                 </div>
             </div>
@@ -1177,14 +1332,16 @@ payment-value</div>
                 <div class="footer-section">
                     <h3>Community</h3>
                     <ul class="footer-links">
-                        <li><a href="https://github.com/electric-saw/kafta/blob/main/CONTRIBUTING.md">How to Contribute</a></li>
+                        <li><a href="https://github.com/electric-saw/kafta/blob/main/CONTRIBUTING.md">How to
+                                Contribute</a></li>
                         <li><a href="https://github.com/electric-saw/kafta/issues/new">Request Feature</a></li>
                         <li><a href="https://github.com/electric-saw">Author Profile</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 Kafta CLI. Open source project developed by <a href="https://github.com/electric-saw" style="color: var(--kafka-orange);">Our Team electric-saw</a>.</p>
+                <p>&copy; 2025 Kafta CLI. Open source project developed by <a href="https://github.com/electric-saw"
+                        style="color: var(--kafka-orange);">Our Team electric-saw</a>.</p>
             </div>
         </div>
     </footer>
@@ -1208,12 +1365,20 @@ payment-value</div>
                         output: 'TOPIC      PARTITION  LAG\nanalytics  0          25\nanalytics  1          8\nanalytics  2          0'
                     },
                     {
-                        input: 'kafta config use-context production',
-                        output: '✓ Switched to context: production'
+                        input: 'kafta schema subjects',
+                        output: 'user-events-value\norder-events-key\npayment-events-value\nanalytics-schema'
                     },
                     {
-                        input: 'kafta schema subjects-list',
-                        output: 'user-value\norder-key\npayment-value\nanalytics-schema'
+                        input: 'kafta schema subjects --detail',
+                        output: 'SUBJECT               COMPATIBILITY  VERSIONS\nuser-events-value     BACKWARD       3\norder-events-key      FULL           2\npayment-events-value  FORWARD        1'
+                    },
+                    {
+                        input: 'kafta schema get user-events-value',
+                        output: '{\n  "type": "record",\n  "name": "UserEvent",\n  "fields": [\n    {"name": "userId", "type": "string"},\n    {"name": "action", "type": "string"}\n  ]\n}'
+                    },
+                    {
+                        input: 'kafta schema versions user-events-value',
+                        output: '[1, 2, 3]'
                     }
                 ];
                 this.currentCommand = 0;
@@ -1536,4 +1701,5 @@ payment-value</div>
         }
     </script>
 </body>
+
 </html>

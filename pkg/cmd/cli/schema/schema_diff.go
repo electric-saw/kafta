@@ -1,7 +1,8 @@
 package schema
 
 import (
-	"log"
+	"encoding/json"
+	"fmt"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/schema"
@@ -19,16 +20,27 @@ type schemaDiff struct {
 func NewCmdSchemaDiff(config *configuration.Configuration) *cobra.Command {
 	options := &schemaDiff{config: config}
 	cmd := &cobra.Command{
-		Use:   "diff",
+		Use:   "diff SUBJECT [flags]",
 		Short: "Compare schemas",
+		Long:  "Compare a subject's schema with another schema",
+		Args: func(cmd *cobra.Command, args []string) error {
+			if len(args) == 0 {
+				return cmdutil.HelpErrorf(cmd, "error: Subject not informed")
+			}
+			if len(args) > 1 {
+				return cmdutil.HelpErrorf(cmd, "error: Too many arguments")
+			}
+			return nil
+		},
 		Run: func(cmd *cobra.Command, args []string) {
+			options.subject = args[0]
 			cmdutil.CheckErr(options.complete(cmd))
 			options.run()
 		},
 	}
-	cmd.Flags().String("subject", "", "The name of the subject to retrieve")
-	cmd.Flags().String("version", "", "The version of the subject to retrieve")
-	cmd.Flags().String("schema", "", "The schema to compare against")
+	cmd.Flags().String("version", "", "The version of the subject to retrieve (default: latest)")
+	cmd.Flags().String("schema", "", "The schema to compare against (required)")
+	cmd.MarkFlagRequired("schema")
 
 	return cmd
 }
@@ -36,37 +48,38 @@ func NewCmdSchemaDiff(config *configuration.Configuration) *cobra.Command {
 func (o *schemaDiff) run() {
 	jsonBytes, err := schema.NewSchemaList(o.config, o.subject, o.version)
 	if err != nil {
-		log.Fatal(err)
+		cmdutil.CheckErr(err)
+	}
+
+	var errorResponse map[string]interface{}
+	if err := json.Unmarshal([]byte(jsonBytes), &errorResponse); err == nil {
+		if errorCode, exists := errorResponse["error_code"]; exists {
+			if message, msgExists := errorResponse["message"]; msgExists {
+				cmdutil.CheckErr(fmt.Errorf("%v", message))
+			} else {
+				cmdutil.CheckErr(fmt.Errorf("Schema Registry error (code: %v)", errorCode))
+			}
+		}
 	}
 
 	prettyJSON := cmdutil.PrettyJSON([]byte(jsonBytes))
 	if prettyJSON == "" {
-		log.Fatal("Failed to prettify JSON")
+		cmdutil.CheckErr(fmt.Errorf("Failed to prettify JSON"))
 	}
 
 	cmdutil.DiffJSONs(prettyJSON, o.schema)
 }
 
 func (o *schemaDiff) complete(cmd *cobra.Command) error {
-	args := cmd.Flags().Args()
-	if len(args) > 1 {
-		return cmdutil.HelpErrorf(cmd, "Unexpected args: %v", args)
-	}
-	if len(args) == 1 {
-		o.subject = args[0]
-	}
-
-	subject, err := cmd.Flags().GetString("subject")
-	if err != nil {
-		return err
-	}
-	o.subject = subject
-
 	version, err := cmd.Flags().GetString("version")
 	if err != nil {
 		return err
 	}
-	o.version = version
+	if version != "" {
+		o.version = version
+	} else {
+		o.version = "latest"
+	}
 
 	schema, err := cmd.Flags().GetString("schema")
 	if err != nil {

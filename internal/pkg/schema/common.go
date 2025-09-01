@@ -12,10 +12,7 @@ import (
 	"github.com/electric-saw/kafta/pkg/cmd/util"
 )
 
-func BuildGetRequestSchemaRegistry(
-	config *configuration.Configuration,
-	path string,
-) *http.Response {
+func BuildGetRequestSchemaRegistry(config *configuration.Configuration, path string,) *http.Response {
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
 		30*time.Second,

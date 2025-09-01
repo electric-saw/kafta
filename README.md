@@ -68,6 +68,8 @@ A modern, **non-JVM** command-line interface for managing **Apache Kafka** clust
 - **📊 Rich Output**: Table, JSON, and YAML output formats
 - **🤖 Smart Suggestions**: Intelligent command corrections and hints
 - **🔐 Security First**: Built-in support for SASL authentication and TLS
+- **🎨 Intuitive CLI**: Clean, modern command structure with smart defaults
+- **⚙️ Auto-completion**: Built-in shell completion for all commands
 
 ---
 
@@ -81,11 +83,13 @@ A modern, **non-JVM** command-line interface for managing **Apache Kafka** clust
 ### Quick Install
 
 #### For Go >= 1.18 (Recommended)
+
 ```bash
 go install github.com/electric-saw/kafta/cmd/kafta@latest
 ```
 
 #### For Go < 1.18 (Legacy)
+
 ```bash
 go get -u github.com/electric-saw/kafta
 ```
@@ -95,6 +99,7 @@ go get -u github.com/electric-saw/kafta
 If you're on macOS and encountering PATH issues, follow these steps:
 
 #### 1. Install Kafta
+
 ```bash
 go install github.com/electric-saw/kafta/cmd/kafta@latest
 ```
@@ -102,18 +107,21 @@ go install github.com/electric-saw/kafta/cmd/kafta@latest
 #### 2. Configure PATH (Choose your shell)
 
 **For zsh (default on modern macOS):**
+
 ```bash
 echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.zshrc
 source ~/.zshrc
 ```
 
 **For bash:**
+
 ```bash
 echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bash_profile
 source ~/.bash_profile
 ```
 
 #### 3. Verify Installation
+
 ```bash
 kafta --help
 ```
@@ -148,6 +156,7 @@ go install github.com/electric-saw/kafta/cmd/kafta@latest
 #### ❌ "kafta: command not found"
 
 **Diagnosis:**
+
 ```bash
 # Check if kafta exists
 ls -la $(go env GOPATH)/bin/kafta
@@ -157,6 +166,7 @@ echo $PATH
 ```
 
 **Solution:**
+
 ```bash
 # Temporary fix
 export PATH=$PATH:$(go env GOPATH)/bin
@@ -346,20 +356,43 @@ kafta console consumer --topic my-topic --verbose
 ### Schema Registry Operations
 
 ```bash
-# List all schema subjects
-kafta schema subjects-list
+# List all schema subjects (fast - single API call)
+kafta schema subjects
 
-# Get latest schema for a subject
+# List subjects with detailed information (slower - includes compatibility and version count)
+kafta schema subjects --detail
+
+# Get latest schema for a subject (uses latest version automatically)
 kafta schema get my-topic-value
 
 # Get specific version of schema
 kafta schema get my-topic-value --version 2
 
-# List all versions for a subject
+# List all versions for a subject with compatibility information
 kafta schema versions my-topic-value
 
-# Compare schema versions (shows diff)
-kafta schema diff my-topic-value --from-version 1 --to-version 2
+# Compare schemas (shows diff between current schema and provided schema)
+kafta schema diff my-topic-value --schema '{"type":"record","name":"MyRecord","fields":[{"name":"id","type":"string"}]}'
+```
+
+#### Schema Registry Examples
+
+**Smart Error Handling:**
+
+```bash
+# When you forget the subject name
+$ kafta schema get
+error: Subject not informed
+Usage:
+  kafta schema get SUBJECT [flags]
+
+# When version doesn't exist
+$ kafta schema get my-topic --version 999
+error: Version 999 not found.
+
+# When subject doesn't exist
+$ kafta schema versions non-existent-topic
+error: Subject 'non-existent-topic' not found.
 ```
 
 ### Output Formats
@@ -509,6 +542,7 @@ kafta --version || echo "Build the project first: go build -o kafta cmd/kafta/ma
 #### 🐧 Linux Development Setup
 
 **Ubuntu/Debian:**
+
 ```bash
 # 1. Update package manager
 sudo apt update
@@ -545,6 +579,7 @@ go test ./...
 ```
 
 **CentOS/RHEL/Fedora:**
+
 ```bash
 # 1. Install Go (if not already installed)
 sudo dnf install golang  # Fedora
@@ -578,6 +613,7 @@ go test ./...
 #### 🪟 Windows Development Setup
 
 **PowerShell (Run as Administrator):**
+
 ```powershell
 # 1. Install Chocolatey (package manager for Windows)
 Set-ExecutionPolicy Bypass -Scope Process -Force
@@ -618,6 +654,7 @@ go test ./...
 ```
 
 **Alternative Windows Setup (without Chocolatey):**
+
 ```powershell
 # 1. Download and install Go manually from https://golang.org/dl/
 # 2. Download and install Python from https://python.org/downloads/
@@ -715,33 +752,46 @@ golangci-lint run
 
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
+
    ```bash
    git clone https://github.com/YOUR-USERNAME/kafta.git
    cd kafta
    ```
+
 3. **Install dependencies**:
+
    ```bash
    go mod download
    ```
+
 4. **Setup development tools**:
+
    ```bash
    pre-commit install
    ```
+
 5. **Create a feature branch**:
+
    ```bash
    git checkout -b feature/my-awesome-feature
    ```
+
 6. **Make your changes** and test:
+
    ```bash
    go test ./...
    golangci-lint run
    ```
+
 7. **Commit your changes**:
+
    ```bash
    git add .
    git commit -m "feat: add awesome feature"
    ```
+
 8. **Push and create Pull Request**:
+
    ```bash
    git push origin feature/my-awesome-feature
    ```
@@ -818,7 +868,7 @@ bundle install
 bundle exec jekyll serve --livereload
 ```
 
-Then open: http://127.0.0.1:4000/kafta
+Then open: <http://127.0.0.1:4000/kafta>
 
 ### Structure
 
@@ -847,6 +897,7 @@ Commit and push—GitHub Actions will build and deploy it.
 Workflow file: `.github/workflows/static.yml`
 
 It performs:
+
 1. Checkout
 2. Ruby setup & bundle install (cached)
 3. Jekyll build (production mode) output to `_site`
@@ -876,6 +927,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 ## 📋 Roadmap
 
 ### ✅ Completed Features
+
 - [x] Basic topic management (CRUD)
 - [x] Consumer group management  
 - [x] Multi-cluster configuration
@@ -883,8 +935,13 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 - [x] Schema Registry integration
 - [x] Smart command suggestions
 - [x] Multiple output formats
+- [x] **NEW**: Improved Schema Registry commands with intuitive syntax
+- [x] **NEW**: Automatic latest version detection for schemas
+- [x] **NEW**: Enhanced error handling with clear user messages
+- [x] **NEW**: Positional arguments for better UX
 
 ### 🚧 Work In Progress
+
 - [ ] Advanced schema management (evolution, compatibility)
 - [ ] KSQL support and management
 - [ ] Real-time topic data tailing
@@ -893,6 +950,7 @@ We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for deta
 - [ ] ACL management
 
 ### 🎯 Planned Features
+
 - [ ] Kafka Connect management
 - [ ] Transaction support
 - [ ] Kafka Streams integration
