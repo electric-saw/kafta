@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/schema"
@@ -55,7 +56,7 @@ func (o *schemaList) run() {
 			if message, msgExists := errorResponse["message"]; msgExists {
 				cmdutil.CheckErr(fmt.Errorf("%v", message))
 			} else {
-				cmdutil.CheckErr(fmt.Errorf("Schema Registry error (code: %v)", errorCode))
+				cmdutil.CheckErr(fmt.Errorf("schema Registry error (code: %v)", errorCode))
 			}
 		}
 	}
@@ -81,7 +82,7 @@ func (o *schemaList) complete(cmd *cobra.Command) error {
 		if err != nil {
 			return err
 		}
-		
+
 		var versions []int
 		if err := json.Unmarshal([]byte(versionsJSON), &versions); err != nil {
 			return err
@@ -89,8 +90,8 @@ func (o *schemaList) complete(cmd *cobra.Command) error {
 		if len(versions) == 0 {
 			return cmdutil.HelpErrorf(cmd, "error: No versions found for subject")
 		}
-		
-		o.version = fmt.Sprintf("%d", versions[len(versions)-1])
+
+		o.version = strconv.Itoa(versions[len(versions)-1])
 	}
 
 	return nil

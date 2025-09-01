@@ -1,7 +1,7 @@
 package schema
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/internal/pkg/schema"
@@ -17,16 +17,16 @@ func NewCmdVersions(config *configuration.Configuration) *cobra.Command {
 		Long:  "List all versions of a schema subject with compatibility information",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) < 1 {
-				return fmt.Errorf("missing required argument: subject")
+				return errors.New("missing required argument: subject")
 			}
 			if len(args) > 1 {
-				return fmt.Errorf("too many arguments")
+				return errors.New("too many arguments")
 			}
 			return nil
 		},
 		Run: func(cmd *cobra.Command, args []string) {
 			subjectName := args[0]
-			
+
 			versions, err := schema.NewSubjectVersionsWithCompatibility(config, subjectName)
 			if err != nil {
 				cmdutil.CheckErr(err)

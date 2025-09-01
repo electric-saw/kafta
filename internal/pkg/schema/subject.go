@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 
 	"github.com/electric-saw/kafta/internal/pkg/configuration"
 	"github.com/electric-saw/kafta/pkg/cmd/util"
@@ -16,11 +17,11 @@ type SubjectConfig struct {
 }
 
 type SubjectVersionInfo struct {
-	Version      int    `json:"version"`
-	ID           int    `json:"id"`
-	Schema       string `json:"schema"`
-	Subject      string `json:"subject"`
-	References   []any  `json:"references"`
+	Version    int    `json:"version"`
+	ID         int    `json:"id"`
+	Schema     string `json:"schema"`
+	Subject    string `json:"subject"`
+	References []any  `json:"references"`
 }
 
 type SubjectWithCompatibility struct {
@@ -101,7 +102,10 @@ func NewSubjectCreate(
 	return string(body), err
 }
 
-func NewSubjectCompatibility(config *configuration.Configuration, subjectName string) (string, error) {
+func NewSubjectCompatibility(
+	config *configuration.Configuration,
+	subjectName string,
+) (string, error) {
 	params := fmt.Sprintf("config/%v", subjectName)
 
 	resp := BuildGetRequestSchemaRegistry(config, params)
@@ -117,7 +121,7 @@ func NewSubjectCompatibility(config *configuration.Configuration, subjectName st
 		return "", err
 	}
 
-	if resp.StatusCode == 404 {
+	if resp.StatusCode == http.StatusNotFound {
 		return NewGlobalCompatibility(config)
 	}
 
@@ -141,7 +145,10 @@ func NewGlobalCompatibility(config *configuration.Configuration) (string, error)
 	return string(body), err
 }
 
-func NewSubjectVersionsWithCompatibility(config *configuration.Configuration, subjectName string) ([]SubjectVersionWithCompatibility, error) {
+func NewSubjectVersionsWithCompatibility(
+	config *configuration.Configuration,
+	subjectName string,
+) ([]SubjectVersionWithCompatibility, error) {
 	versionsJSON, err := NewSubjectVersion(config, subjectName)
 	if err != nil {
 		return nil, err
@@ -169,7 +176,7 @@ func NewSubjectVersionsWithCompatibility(config *configuration.Configuration, su
 	}
 
 	resultChan := make(chan versionResult, len(versions))
-	
+
 	for _, version := range versions {
 		go func(v int) {
 			params := fmt.Sprintf("subjects/%v/versions/%d", subjectName, v)
@@ -216,7 +223,7 @@ func NewSubjectVersionsWithCompatibility(config *configuration.Configuration, su
 	}
 
 	var result []SubjectVersionWithCompatibility
-	for i := 0; i < len(versions); i++ {
+	for range versions {
 		res := <-resultChan
 		result = append(result, SubjectVersionWithCompatibility{
 			Version:            res.version,
@@ -230,7 +237,9 @@ func NewSubjectVersionsWithCompatibility(config *configuration.Configuration, su
 	return result, nil
 }
 
-func NewSubjectListWithCompatibility(config *configuration.Configuration) ([]SubjectWithCompatibility, error) {
+func NewSubjectListWithCompatibility(
+	config *configuration.Configuration,
+) ([]SubjectWithCompatibility, error) {
 	subjects, err := NewSubjectList(config)
 	if err != nil {
 		return nil, err
@@ -254,7 +263,7 @@ func NewSubjectListWithCompatibility(config *configuration.Configuration) ([]Sub
 	}
 
 	resultChan := make(chan subjectResult, len(subjects))
-	
+
 	for _, subject := range subjects {
 		go func(subjectName string) {
 			compatibility := defaultCompatibility
@@ -283,7 +292,7 @@ func NewSubjectListWithCompatibility(config *configuration.Configuration) ([]Sub
 	}
 
 	var result []SubjectWithCompatibility
-	for i := 0; i < len(subjects); i++ {
+	for range subjects {
 		res := <-resultChan
 		result = append(result, SubjectWithCompatibility{
 			Name:               res.subject,
